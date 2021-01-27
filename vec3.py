@@ -1,4 +1,5 @@
 import numpy as np
+import math
 
 class Vec3():
     """Documentation for Vec3. Is a RGB color or point
@@ -20,33 +21,32 @@ class Vec3():
         y = self.e2 + v.e2
         z = self.e3 + v.e3
         #return [self.x, self.y, self.z]
-        return Vec3(x, z, y)
+        return Vec3(x, y, z)
 
     def __mul__(self, t):
-        self.e1 *= t
-        self.e2 *= t
-        self.e3 *= t
-        self.arr = np.array([self.e1, self.e2, self.e3])
-        return Vec3(self.e1, self.e2, self.e3)
+        e1 = self.e1 * t
+        e2 = self.e2 * t
+        e3 = self.e3 * t
+        #self.arr = np.array([self.e1, self.e2, self.e3])
+        return Vec3(e1, e2, e3)
 
     def __sub__(self, v):
-        self.e1 -= v.e1
-        self.e2 -= v.e2
-        self.e3 -= v.e3
-        self.arr = np.array([self.e1, self.e2, self.e3])        
+        e1 = self.e1 - v.e1
+        e2 = self.e2 - v.e2
+        e3 = self.e3 - v.e3
+        #self.arr = np.array([self.e1, self.e2, self.e3])        
         #return [self.x, self.y, self.z]
-        return Vec3(self.e1, self.e2, self.e3)
+        return Vec3(e1, e2, e3)
 
     def __truediv__(self, t):
         # overload / operatorxs
-        self.e1 /= t
-        self.e2 /= t
-        self.e3 /= t
-        self.arr = np.array([self.e1, self.e2, self.e3])        
+        e1 = self.e1 / t
+        e2 = self.e2 / t
+        e3 = self.e3 / t
+        #self.arr = np.array([self.e1, self.e2, self.e3])        
         #return [self.x, self.y, self.z]
-        return Vec3(self.e1, self.e2, self.e3)
+        return Vec3(e1, e2, e3)
 
-        
     def x(self):
         return self.e1
 
@@ -56,13 +56,22 @@ class Vec3():
     def z(self):
         return self.e3
 
-    def length(self):
+    def length_squared(self):
         return self.e1**2+self.e2**2+self.e3**2
         
-    def length_squared(self):
-        return math.sqrt(self.length())
-        
-    
+    def length(self):
+        return math.sqrt(self.length_squared())
+
+
+def dot(u, v):
+    """Function that takes tvo Vec3 vectors and returns their dot product
+    in form of scalar
+
+    """
+    return u.e1 * v.e1 + u.e2 * v.e2 + u.e3 * v.e3
+
+
+
 a = Vec3(1,2,3)
 b = Vec3(1,2,3)
 c = a+b

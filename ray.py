@@ -21,8 +21,8 @@ class Ray():
         # replace name with get_direction()?
         return self.direction
 
-    def origin_at(t):
+    def at(self, t):
         # t of type float
-        return origin+t*direction
+        return self.origin+self.direction*t
     
 
