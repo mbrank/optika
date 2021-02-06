@@ -20,7 +20,7 @@ class HittableList(Hittable):
         temp_rec = rec
         hit_anything = False
         closest_so_far = t_max
-        print('t_max', t_max)
+        #print('t_max', t_max)
 
         for obj in self.hittable_list:
             #print('test1:', obj.name)
@@ -28,6 +28,6 @@ class HittableList(Hittable):
                 #print('sphere:', obj.name)
                 hit_anything = True
                 closest_so_far = temp_rec.t
-                print('closest_so_far', closest_so_far)
+                #print('closest_so_far', closest_so_far)
                 rec = temp_rec
                 return hit_anything
