@@ -1,6 +1,7 @@
 #ifndef VEC3_H
 #define VEC3_H
 
+#include "rtweekend.h"
 #include <cmath>
 #include <iostream>
 
@@ -47,6 +48,14 @@ class vec3 {
 
     public:
         double e[3];
+
+  inline static vec3 random() {
+  return vec3(random_double(), random_double(), random_double());
+}
+  inline static vec3 random(double min, double max) {
+  return vec3(random_double(min,max), random_double(min,max), random_double(min,max));
+}
+
 };
 
 // vec3 Utility Functions
@@ -95,6 +104,16 @@ inline vec3 cross(const vec3 &u, const vec3 &v) {
 inline vec3 unit_vector(vec3 v) {
     return v / v.length();
 }
+
+
+vec3 random_in_unit_sphere() {
+    while (true) {
+        auto p = vec3::random(-1,1);
+        if (p.length_squared() >= 1) continue;
+        return p;
+    }
+}
+
 
 // Type aliases for vec3
 using point3 = vec3;   // 3D point

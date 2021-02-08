@@ -80,9 +80,10 @@ for j in range(ih-1, -1, -1):
         # rorig = r.origin
         # rdir = r.direction
         # pixel_color = ray_color(r, world)
+
         write_color(f, pixel_color, samples_per_pixel)
 
-#    print("Done!")
+print("Done!")
 
 #if __name__ == "__main__":
 #    main()
