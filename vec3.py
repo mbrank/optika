@@ -1,5 +1,6 @@
 import numpy as np
 import math
+import random 
 
 class Vec3():
     """Documentation for Vec3. Is a RGB color or point
@@ -71,12 +72,26 @@ def dot(u, v):
     return u.e1 * v.e1 + u.e2 * v.e2 + u.e3 * v.e3
 
 
+def vec3_random(bottom_lim, top_lim):
+    """ Function that returns random vector of type Vec3
+    """
+    return Vec3(random.uniform(bottom_lim, top_lim),
+                random.uniform(bottom_lim, top_lim),
+                random.uniform(bottom_lim, top_lim))
 
-a = Vec3(1,2,3)
-b = Vec3(1,2,3)
-c = a+b
-print(c.arr)
-a*10
-print(a.arr)
-g=a/2
-print(a.e1, a.e2, a.e3)
+
+def random_in_unit_sphere():
+    while True:
+        p = vec3_random(-1, 1)
+        if p.length_squared() >= 1:
+            continue
+        return p
+
+#a = Vec3(1,2,3)
+#b = Vec3(1,2,3)
+#c = a+b
+#print(c.arr)
+#a*10
+#print(a.arr)
+#g=a/2
+#print(a.e1, a.e2, a.e3)
