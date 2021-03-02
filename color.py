@@ -1,3 +1,5 @@
+import numpy as np
+
 def clamp(x, xmin, xmax):
     if x < xmin:
         return xmin
@@ -18,11 +20,15 @@ def write_color(f, pixel_color, samples_per_pixel):
     g = pixel_color[1]
     b = pixel_color[2]
 
-    # Divide the color of pixel by the number of samples
+    #scale = 1.0/samples_per_pixel
+    #r *= scale
+    #g *= scale
+    #b *= scale
+    ## Divide the color of pixel by the number of samples and gamma-correct for gamma
     scale = 1.0/samples_per_pixel
-    r *= scale
-    g *= scale
-    b *= scale
+    r = np.sqrt(scale*r) 
+    g = np.sqrt(scale*g)
+    b = np.sqrt(scale*b)
 
     # Write the translated [0, 255] value mof each color component
     f.write(str(int(256 * clamp(r, 0, 0.999))) + ' ' +
