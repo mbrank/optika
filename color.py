@@ -9,10 +9,14 @@ def clamp(x, xmin, xmax):
 
 def write_color(f, pixel_color, samples_per_pixel):
     # Write the translated [0,255] value of each color component into f file.
-    # input: object of class Vec3
-    r = pixel_color.x()
-    g = pixel_color.y()
-    b = pixel_color.z()
+    ## input: object of class Vec3
+    #r = pixel_color.x()
+    #g = pixel_color.y()
+    #b = pixel_color.z()
+    # input: numpy array
+    r = pixel_color[0]
+    g = pixel_color[1]
+    b = pixel_color[2]
 
     # Divide the color of pixel by the number of samples
     scale = 1.0/samples_per_pixel

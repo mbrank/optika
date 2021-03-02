@@ -1,6 +1,6 @@
 from ray import Ray
-from vec3 import Vec3, dot
-
+#from vec3 import Vec3, dot
+import numpy as np
 
 class HitRecord():
     """ Input parameters:
@@ -15,7 +15,7 @@ class HitRecord():
         self.front_face = False
 
     def set_face_normal(self, r, outward_normal):
-        self.front_face = dot(r.direction, outward_normal) < 0
+        self.front_face = np.dot(r.direction, outward_normal) < 0
         # normal always points out of surface
         self.normal = outward_normal if self.front_face else outward_normal*-1
 

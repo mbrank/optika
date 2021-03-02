@@ -1,6 +1,7 @@
 import math
 from hittable import HitRecord, Hittable
-from vec3 import Vec3, dot
+#from vec3 import Vec3, dot
+import numpy as np
 
 class Sphere(Hittable):
     """Documentation for Sphere. Class to create sphere.
@@ -19,9 +20,11 @@ class Sphere(Hittable):
     #def sphere_hit(self, r, t_min, t_max, rec):
     def hit(self, r, t_min, t_max, rec):
         oc = r.origin - self.center
-        a = r.direction.length_squared()
-        half_b = dot(oc, r.direction)
-        c = oc.length_squared() - self.radius*self.radius
+        #a = r.direction.length_squared()
+        a = np.sum(r.direction**2)
+        half_b = np.dot(oc, r.direction)
+        #c = oc.length_squared() - self.radius*self.radius
+        c = np.sum(oc**2) - self.radius*self.radius
         discriminant = half_b*half_b - a*c
         if discriminant < 0:
             return False

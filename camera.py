@@ -1,5 +1,6 @@
-from vec3 import Vec3, dot
+#from vec3 import Vec3, dot
 from ray import Ray
+import numpy as np
 
 class Camera():
     """Documentation for Camera. Defines camera and its properties.
@@ -12,10 +13,10 @@ class Camera():
         self.focal_length = focal_length
         self.viewport_width = aspect_ratio*viewport_height
 
-        self.origin = Vec3(0, 0, 0)
-        self.horizontal = Vec3(self.viewport_width, 0, 0)
-        self.vertical = Vec3(0, self.viewport_height, 0)
-        self.lower_left_corner = self.origin - self.horizontal/2 - self.vertical/2 - Vec3(0, 0, +self.focal_length)
+        self.origin = np.array([0, 0, 0])
+        self.horizontal = np.array([self.viewport_width, 0, 0])
+        self.vertical = np.array([0, self.viewport_height, 0])
+        self.lower_left_corner = self.origin - self.horizontal/2 - self.vertical/2 - np.array([0, 0, +self.focal_length])
 
     def get_ray(self, u, v):
         return Ray(self.origin,
