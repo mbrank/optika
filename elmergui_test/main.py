@@ -1,3 +1,4 @@
+import os
 import sys
 from PyQt5.QtWidgets import (QInputDialog, QLineEdit, QDialog,
                              QApplication, QWidget, QLabel,
@@ -8,7 +9,11 @@ from PyQt5.QtWidgets import (QInputDialog, QLineEdit, QDialog,
 from PyQt5.QtCore import QProcess, pyqtSlot, QTimer
 from sif_reader import SifReader
 from general_setup import GeneralSetup
-import sys
+from base_sif import BaseSIF
+from equations import Equations
+from materials import Materials
+from body_forces import BodyForces
+from boundary_conditions import BoundaryConditions
 #from PyQt5 import (QDialog, QPushButton, pyqtSlot, QVBoxLayout,
 #                   QMessageBox, QProcess, QLineEdit,
 #                   QLabel, QCheckBox, QComboBox)
@@ -67,10 +72,10 @@ class ElmerGui(QDialog):
         self.about.clicked.connect(self.onAbout)
         self.reader.clicked.connect(self.onReadSif)
         self.general.clicked.connect(self.onGeneralSettings)
-        #self.eq.clicked.connect(self.onShowEquations)
-        #self.mat.clicked.connect(self.onShowMaterials)
-        #self.bf.clicked.connect(self.onShowBodyForces)
-        #self.bc.clicked.connect(self.onShowBoundaryConditions)
+        self.eq.clicked.connect(self.onEquations)
+        self.mat.clicked.connect(self.onMaterials)
+        self.bf.clicked.connect(self.onBodyForces)
+        self.bc.clicked.connect(self.onBoundaryConditions)
         #self.ic.clicked.connect(self.onShowInitialConditions)
         #self.ep.clicked.connect(self.onDefineElementProperties)
         #self.parallel.clicked.connect(self.onParallelSettings)
@@ -141,6 +146,55 @@ class ElmerGui(QDialog):
             # load dictionary into gui
             pass
 
+    @pyqtSlot()
+    def onEquations(self, data=0):
+        if not data:
+            print('test')
+            # load default data
+            #app = QApplication(sys.argv)
+            ex = Equations(data)
+            #sys.exit(app.exec_())
+        else:
+            # load dictionary into gui
+            pass
+
+    @pyqtSlot()
+    def onMaterials(self, data=0):
+        if not data:
+            print('test')
+            # load default data
+            #app = QApplication(sys.argv)
+            ex = Materials(data)
+            #sys.exit(app.exec_())
+        else:
+            # load dictionary into gui
+            pass
+
+    @pyqtSlot()
+    def onBodyForces(self, data=0):
+        if not data:
+            print('test')
+            # load default data
+            #app = QApplication(sys.argv)
+            ex = BodyForces(data)
+            #sys.exit(app.exec_())
+        else:
+            # load dictionary into gui
+            pass
+
+    @pyqtSlot()
+    def onBoundaryConditions(self, data=0):
+        if not data:
+            print('test')
+            # load default data
+            #app = QApplication(sys.argv)
+            ex = BoundaryConditions(data)
+            #sys.exit(app.exec_())
+        else:
+            # load dictionary into gui
+            pass
+
+
 def main():
 
     app = QApplication(sys.argv)
@@ -156,7 +210,6 @@ def main():
     timer = QTimer()
     timer.timeout.connect(lambda: None)
     timer.start(100)
-    
     sys.exit(app.exec_())
 
 
