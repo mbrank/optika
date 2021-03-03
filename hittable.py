@@ -17,7 +17,7 @@ class HitRecord():
     def set_face_normal(self, r, outward_normal):
         self.front_face = dot(r.direction, outward_normal) < 0
         # normal always points out of surface
-        self.normal = outward_normal if self.front_face else -outward_normal
+        self.normal = outward_normal if self.front_face else outward_normal*-1
 
 
 class Hittable():

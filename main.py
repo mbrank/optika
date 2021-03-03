@@ -1,6 +1,6 @@
 import numpy as np
 import math
-from vec3 import Vec3, dot
+from vec3 import Vec3, dot, vec3_random, random_in_unit_sphere
 from ray import Ray
 from color import write_color
 from hittable import Hittable, HitRecord
@@ -9,7 +9,7 @@ from sphere import Sphere
 from camera import Camera
 from rtweekend import random_double
 
-def ray_color(r, world):
+def ray_color(r, world, depth):
     """ Input parameters:
     ray -> r of type Ray
     scene -> world of type HittableList
@@ -18,8 +18,13 @@ def ray_color(r, world):
     r_orig = r.origin
     r_dir = r.direction
     rec = HitRecord(r_orig, r_dir, infinity)
+    if depth <= 0:
+        return Vec3(0, 0, 0)
+
     if world.hittable_object(r, 0, infinity, rec):
-        return (rec.normal+Vec3(1,1,1))*0.5 # Vec3 contains value for color
+        #return (rec.normal+Vec3(1,1,1))*0.5 # Vec3 contains value for color
+        target = rec.p +rec.normal + random_in_unit_sphere()
+        return ray_color(Ray(rec.p, target -  rec.p), world, depth-1)*0.5
 
     vals = r.direction # if r.direction() -> error: object is not callable
     r_unit = np.array([vals.e1,
@@ -38,12 +43,13 @@ aspect_ratio = 16/9
 iw = 400
 ih = int(iw/aspect_ratio)
 samples_per_pixel = 100
+max_depth = 50
 
 #World
 world = HittableList([])
 world.add_to_hittable_list(Sphere(Vec3(0, 0, -1), 0.5, 'sphere1'))
 world.add_to_hittable_list(Sphere(Vec3(0, -100.5, -1), 100, 'sphere2'))
-world.add_to_hittable_list(Sphere(Vec3(0, 0.5, -1), 0.5, 'sphere3'))
+#world.add_to_hittable_list(Sphere(Vec3(0, 0.5, -1), 0.5, 'sphere3'))
 # Camera
 focal_length = 1.0
 viewport_height = 2.0
@@ -73,7 +79,7 @@ for j in range(ih-1, -1, -1):
             u = (i+random_double(0, 0.9999))/(iw-1)
             v = (j+random_double(0, 0.9999))/(ih-1)
             r = camera.get_ray(u, v)
-            pixel_color += ray_color(r, world) 
+            pixel_color += ray_color(r, world, max_depth) 
         # u = i / (iw-1)
         # v = j / (ih-1)
         # r = Ray(origin, lower_left_corner + horizontal*u + vertical*v - origin)
