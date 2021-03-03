@@ -1,10 +1,14 @@
 import sys
 from PyQt5.QtWidgets import (QInputDialog, QLineEdit, QDialog,
                              QApplication, QWidget, QLabel,
-                             QApplication, QHBoxLayout, QMainWindow,
-                             QCheckBox, QPushButton, QHBoxLayout,
-                             QVBoxLayout)
-from PyQt5.QtCore import QProcess
+                             QHBoxLayout, QMainWindow,
+                             QCheckBox, QPushButton,
+                             QVBoxLayout, QMessageBox, QFileDialog,
+                             QStackedWidget, QCheckBox)
+from PyQt5.QtCore import QProcess, pyqtSlot, QTimer
+from sif_reader import SifReader
+from general_setup import GeneralSetup
+import sys
 #from PyQt5 import (QDialog, QPushButton, pyqtSlot, QVBoxLayout,
 #                   QMessageBox, QProcess, QLineEdit,
 #                   QLabel, QCheckBox, QComboBox)
@@ -60,9 +64,9 @@ class ElmerGui(QDialog):
         self.parallel = QPushButton('Parallel settings')
         self.savecase = QPushButton('Save case to ELMER study')
 
-        #self.about.clicked.connect(self.onAbout)
-        #self.reader.clicked.connect(self.onReadSif)
-        #self.general.clicked.connect(self.onGeneralSetup)
+        self.about.clicked.connect(self.onAbout)
+        self.reader.clicked.connect(self.onReadSif)
+        self.general.clicked.connect(self.onGeneralSettings)
         #self.eq.clicked.connect(self.onShowEquations)
         #self.mat.clicked.connect(self.onShowMaterials)
         #self.bf.clicked.connect(self.onShowBodyForces)
@@ -93,11 +97,66 @@ class ElmerGui(QDialog):
         self.layout.addWidget(self.savecase)
         self.setLayout(self.layout)
 
+    @pyqtSlot()
+    def onAbout(self):
+        '''This method displays details about ELMER interface for SMTER
+
+        '''
+
+        title = "ELMER interface for SMITER editor"
+        msg = "Interface that allows setup of an Elmer simulation with the " \
+              "help of the Salome Mesh editor and generation of necessary " \
+              "sif-file.\nThe mesh is exported as *.unv and converted with " \
+              "ElmerGrid. ElmerSolver can be started in a single process or " \
+              "using multiprocessing.\n\n"
+        QMessageBox.about(None, title, msg)
+
+    @pyqtSlot()
+    def onReadSif(self, file=''):
+        #self.main[self.entry].sif_read()
+        # create new instance of SifReader-class
+        sr = SifReader(self)
+        if file == '':
+            file = QFileDialog.getOpenFileName(parent=None,
+                                               caption="Select sif-File",
+                                               filter='*.sif')
+            file = str(file[0])
+        try:
+            sr.readSif(file)
+            self.sifFile = file
+            self.meshDirectory = os.path.dirname(file)
+        except Exception:
+            QMessageBox.warning(None, 'Error', 'Error')
+
+    @pyqtSlot()
+    def onGeneralSettings(self, data=0):
+        if not data:
+            print('test')
+            # load default data
+            #app = QApplication(sys.argv)
+            ex = GeneralSetup(data)
+            #ex.show()
+            #sys.exit(app.exec_())
+        else:
+            # load dictionary into gui
+            pass
+
 def main():
 
     app = QApplication(sys.argv)
     ex = ElmerGui()
     ex.show()
+
+    # Purpose of timer
+    #  |
+    #  |
+    #  V
+    # https://machinekoder.com/how-to-not-shoot-yourself
+    # -in-the-foot-using-python-qt/
+    timer = QTimer()
+    timer.timeout.connect(lambda: None)
+    timer.start(100)
+    
     sys.exit(app.exec_())
 
 
