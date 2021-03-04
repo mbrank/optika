@@ -15,7 +15,7 @@ import os
 class SifReader():
     """SifReader"""
 
-    def __init__(self, ewh):
+    def __init__(self, _ewh):
         """Constructor
 
         Args:
@@ -25,7 +25,7 @@ class SifReader():
             containing all data
         """
 
-        self._ewh = ewh
+        self._ewh = _ewh
         self._solvIds = {}
         self._sifIds = {}
         self.errormsg = ''
@@ -91,10 +91,14 @@ class SifReader():
                 initial.append(block)
             elif block.startswith('Solver'):
                 solvers.append(block)
+        print(solvers)
 
         # apply general settings
         for block in general:
+            print("test 1")
             self._general(block)
+            print("test 2")
+
         # make a new equations window and change settings of first equation
         # also creates the default solvers
         self._ewh.showAddEquation(visible=False)
@@ -102,6 +106,7 @@ class SifReader():
         for idx, element in enumerate(self._ewh.solverParameterEditor):
             self._solvIds.update({element.solverName: idx})
 
+        '''
         # apply settings
         for block in solvers:
             self._solvers(block)
@@ -150,6 +155,7 @@ class SifReader():
             self.errormsg = "Possible mismatch in number of boundaries in" \
                 " sif-file and number of boundary faces in study"
             raise
+        '''
 
     def _changeSettings(self, parameter, value):
         """Change settings of hashed parameter in element.
@@ -609,65 +615,104 @@ class SifReader():
         """
 
         # get the general setups window
-        ui = self._ewh.gsWindow
+        ui = self._ewh.general_setup
+        print('ui:-->', ui)
+        self._ewh.general_setup.coordinate_mapping_lineedit.setText("tresarsdamsdv")
+        print('test 4')
 
         # split rows
         data = block.split('\n')
-
+        print('test 5')
         title = data.pop(0)
-
+        print('test 6')
         if title == 'Header':
             if 'CHECK KEYWORDS' in data[0]:
-                ui.checkKeywordsWarn.setChecked(True)
+                ui.checkWarning.setChecked(True)
                 data.pop(0)
-            ui.checkKeywordsWarn.setChecked(False)
+            print('test 6.1')
+            ui.checkWarning.setChecked(False)
+            print('test 6.2')
             a, b = data.pop(0).strip().split(' ')[2:]
-            ui.meshDBEdit1.setText(a.replace('"', ''))
-            ui.meshDBEdit2.setText(b.replace('"', ''))
+            print('test 6.3')
+            ui.meshDB_lineedit1.setText(a.replace('"', ''))
+            print('test 6.4')
+            ui.meshDB_lineedit2.setText(b.replace('"', ''))
+            print('test 6.5')
             a = data.pop(0).strip().split(' ')[2:][0]
-            ui.includePathEdit.setText(a.replace('"', ''))
+            print('test 6.6')
+            ui.includePath_lineedit.setText(a.replace('"', ''))
+            print('test 6.7')
             a = data.pop(0).strip().split(' ')[2:][0]
-            ui.resultsDirectoryEdit.setText(a.replace('"', ''))
+            print('test 6.8')
+            ui.resultsDir_lineedit.setText(a.replace('"', ''))
+            print('test 6.9')
             text = '\n'.join(data)
-            ui.headerFreeTextEdit.setText(text.replace('"', ''))
+        print('test 7')
+            #ui.headerFreeTextEdit.setText(text.replace('"', ''))
+        
         if title == 'Simulation':
+            print('test 7.0')
             a = data.pop(0).split('=')[1].strip()
-            idx = ui.maxOutputLevelCombo.findText(a)
-            ui.maxOutputLevelCombo.setCurrentIndex(idx)
+            print('test 7.0.1')
+            idx = ui.max_output_level_combobox.findText(a)
+            print('test 7.1')
+            ui.max_output_level_combobox.setCurrentIndex(idx)
             a = data.pop(0).split('=')[1].strip()
-            idx = ui.coordinateSystemCombo.findText(a)
-            ui.coordinateSystemCombo.setCurrentIndex(idx)
+            idx = ui.coordinate_system_combobox.findText(a)
+            print('test 7.1')
+            ui.coordinate_system_combobox.setCurrentIndex(idx)
             a = data.pop(0).split('=')[1].strip()
-            ui.coordinateMappingEdit.setText(a)
+            print('test 7.2')
+            ui.coordinate_mapping_lineedit.setText(a)
             a = data.pop(0).split('=')[1].strip()
-            idx = ui.simulationTypeCombo.findText(a)
-            ui.simulationTypeCombo.setCurrentIndex(idx)
+            idx = ui.simulation_type_combobox.findText(a)
+            print('test 7.3')
+            ui.simulation_type_combobox.setCurrentIndex(idx)
             a = data.pop(0).split('=')[1].strip()
-            ui.steadyStateMaxIterEdit.setText(a)
+            ui.steady_state_max_iter_lineedit.setText(a)
+            print('test 7.4')
             a = data.pop(0).split('=')[1].strip()
-            ui.outputIntervalsEdit.setText(a)
+            ui.output_intervals_lineedit.setText(a)
             a = data.pop(0).split('=')[1].strip()
-            idx = ui.timesteppingMethodCombo.findText(a)
-            ui.timesteppingMethodCombo.setCurrentIndex(idx)
+            idx = ui.timestepping_method_combobox.findText(a)
+            print('test 7.5')
+            ui.timestepping_method_combobox.setCurrentIndex(idx)
             a = data.pop(0).split('=')[1].strip()
-            idx = ui.bdfOrderCombo.findText(a)
-            ui.bdfOrderCombo.setCurrentIndex(idx)
+            idx = ui.bdf_order_combobox.findText(a)
+            print('test 7.6')
+            ui.bdf_order_combobox.setCurrentIndex(idx)
             a = data.pop(0).split('=')[1].strip()
-            ui.solverInputFileEdit.setText(a)
+            ui.solver_input_file_lineedit.setText(a)
+            print('test 7.7')
             a = data.pop(0).split('=')[1].strip()
-            ui.postFileEdit.setText(a)
+            ui.post_file_lineedit.setText(a)
             text = '\n'.join(data)
-            ui.simulationFreeTextEdit.setText(text)
+            #ui.simulationFreeTextEdit.setText(text)
+        print('test 8')
         if title == 'Constants':
             a = data.pop(0).split('=')[1].strip()
-            idx = ui.gravityEdit.setText(a)
+            print('test 8.1', a)
+            print(type(ui.gravity_lineedit))
+            print('test 8.1.1')
+            idx = ui.gravity_lineedit.setText(a)
+            print('test 8.2')
             a = data.pop(0).split('=')[1].strip()
-            idx = ui.stefanBoltzmannEdit.setText(a)
+            print('test 8.3')
+            idx = ui.stefan_boltzmann_lineedit.setText(a)
+            print('test 8.4')
             a = data.pop(0).split('=')[1].strip()
-            idx = ui.vacuumPermittivityEdit.setText(a)
+            print('test 8.5')
+            idx = ui.vacuum_permittivity_lineedit.setText(a)
+            print('test 8.6')
             a = data.pop(0).split('=')[1].strip()
-            idx = ui.boltzmannEdit.setText(a)
+            print('test 8.7')
+            idx = ui.boltzmann_lineedit.setText(a)
+            print('test 8.8')
             a = data.pop(0).split('=')[1].strip()
-            idx = ui.unitChargeEdit.setText(a)
+            print('test 8.9')
+            idx = ui.unit_change_lineedit.setText(a)
+            print('test 8.10')
             text = '\n'.join(data)
-            ui.constantsFreeTextEdit.setText(text)
+            print('test 8.11')
+            #ui.constantsFreeTextEdit.setText(text)
+        print('test 9')

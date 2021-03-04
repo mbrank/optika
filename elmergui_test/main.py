@@ -102,6 +102,8 @@ class ElmerGui(QDialog):
         self.layout.addWidget(self.savecase)
         self.setLayout(self.layout)
 
+        self.general_setup = GeneralSetup(0)
+
     @pyqtSlot()
     def onAbout(self):
         '''This method displays details about ELMER interface for SMTER
@@ -139,7 +141,8 @@ class ElmerGui(QDialog):
             print('test')
             # load default data
             #app = QApplication(sys.argv)
-            ex = GeneralSetup(data)
+            #ex = GeneralSetup(data)
+            self.general_setup.exec()
             #ex.show()
             #sys.exit(app.exec_())
         else:

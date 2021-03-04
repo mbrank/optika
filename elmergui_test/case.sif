@@ -1,0 +1,97 @@
+Header
+  Mesh DB "testmeshdb1" "testmeshdb2"
+  Include Path "testincludepath"
+  Results Directory "test results directory"
+End
+
+Simulation
+  Max Output Level = 8
+  Coordinate System = Axi Symmetric
+  Coordinate Mapping(3) = Test coordinate mapping
+  Simulation Type = Transient
+  Steady State Max Iterations = 2
+  Output Intervals = 2
+  Timestepping Method = BDF
+  BDF Order = 2
+  Solver Input File = case_test.sif
+  Post File = case_test.vtu
+  Use Mesh Names = Logical True
+End
+
+Constants
+  Gravity(4) = test1 test2 test3 test4
+  Stefan Boltzmann = test sf constant
+  Permittivity of Vacuum = test pov
+  Boltzmann Constant = test b constant
+  Unit Charge = unit charge test
+End
+
+Body 1
+  ! Target Bodies(1) = TODO
+  Name = "steel"
+  Equation = 1
+  Material = 1
+End
+
+Solver 1
+  Equation = Heat Equation
+  Procedure = "HeatSolve" "HeatSolver"
+  Variable = Temperature
+  Exec Solver = Always
+  Stabilize = True
+  Bubbles = False
+  Lumped Mass Matrix = False
+  Optimize Bandwidth = True
+  Steady State Convergence Tolerance = 1.0e-5
+  Nonlinear System Convergence Tolerance = 1.0e-7
+  Nonlinear System Max Iterations = 20
+  Nonlinear System Relaxation Factor = 1
+  Nonlinear System Newton After Iterations = 3
+  Nonlinear System Newton After Tolerance = 1.0e-3
+  Linear System Solver = Iterative
+  Linear System Iterative Method = BiCGStab
+  Linear System Max Iterations = 500
+  Linear System Convergence Tolerance = 1.0e-10
+  BiCGstabl polynomial degree = 2
+  Linear System Preconditioning = Diagonal
+  Linear System ILUT Tolerance = 1.0e-3
+  Linear System Abort Not Converged = False
+  Linear System Residual Output = 1
+  Linear System Precondition Recompute = 1
+End
+
+Equation 1
+  Name = "heattransfer"
+  Active Solvers(1) = 1
+End
+
+Material 1
+  Name = "Steel (stainless - generic)"
+  Density = 7925.0
+  Heat Capacity = 460.0
+  Heat expansion Coefficient = 14.9e-6
+  Mesh Poisson ratio = 0.285
+  Heat Conductivity = 24.0
+  Sound speed = 5100.0
+  Yasuda Coefficient = 2
+End
+
+Boundary Condition 1
+  Name = "plasmaBC"
+  Heat Flux = 75
+! ToDo: Periodic BCs
+End
+
+Boundary Condition 2
+  Name = "htcBC"
+  Heat Transfer Coefficient = 12000
+  External Temperature = 90
+! ToDo: Periodic BCs
+End
+
+Boundary Condition 3
+  Name = "adiabaticBC"
+  Heat Flux = 0.001
+! ToDo: Periodic BCs
+End
+
