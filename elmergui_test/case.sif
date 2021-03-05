@@ -12,10 +12,12 @@ Simulation
   Steady State Max Iterations = 2
   Output Intervals = 2
   Timestepping Method = BDF
+  Timestep intervals = 86
+  Timestep sizes = 47
   BDF Order = 2
-  Solver Input File = case_test.sif
-  Post File = case_test.vtu
-  Use Mesh Names = Logical True
+  Solver Input File = case_test432.sif
+  Post File = case_test123.vtu
+  Use Mesh Names = Test
 End
 
 Constants
@@ -60,9 +62,19 @@ Solver 1
   Linear System Precondition Recompute = 1
 End
 
-Equation 1
+Equation 4
   Name = "heattransfer"
   Active Solvers(1) = 1
+End
+
+Equation 5
+  Name = "heattransfer test eq2"
+  Active Solvers(2) = 1
+End
+
+Equation 9
+  Name = "heattransfer eq3"
+  Active Solvers(3) = 1 2 3
 End
 
 Material 1

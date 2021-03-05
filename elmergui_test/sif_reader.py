@@ -15,7 +15,7 @@ import os
 class SifReader():
     """SifReader"""
 
-    def __init__(self, _ewh):
+    def __init__(self, _elmer_gui):
         """Constructor
 
         Args:
@@ -25,8 +25,9 @@ class SifReader():
             containing all data
         """
 
-        self._ewh = _ewh
-        self._solvIds = {}
+        self._elmer_gui = _elmer_gui
+        #self._solvIds = {}
+        self._eq_data = {}
         self._sifIds = {}
         self.errormsg = ''
 
@@ -61,50 +62,65 @@ class SifReader():
         blocks.sort()
 
         # collect block types
-        bodies = []
-        boundaries = []
-        equations = []
-        general = []
-        initial = []
-        materials = []
-        solvers = []
-        bforces = []
+        bodies_blocks = []
+        boundaries_blocks = []
+        equations_blocks = []
+        general_blocks = []
+        initial_blocks = []
+        materials_blocks = []
+        solvers_blocks = []
+        bforces_blocks = []
 
         for block in blocks:
             if block.startswith('Body Force'):
-                bforces.append(block)
+                bforces_blocks.append(block)
             elif block.startswith('Body'):
-                bodies.append(block)
+                bodies_blocks.append(block)
             elif block.startswith('Boundary'):
-                boundaries.append(block)
+                boundaries_blocks.append(block)
             elif block.startswith('Equation'):
-                equations.append(block)
+                equations_blocks.append(block)
             elif block.startswith('Header'):
-                general.append(block)
+                general_blocks.append(block)
             elif block.startswith('Simulation'):
-                general.append(block)
+                general_blocks.append(block)
             elif block.startswith('Constants'):
-                general.append(block)
+                general_blocks.append(block)
             elif block.startswith('Material'):
-                materials.append(block)
+                materials_blocks.append(block)
             elif block.startswith('Initial'):
-                initial.append(block)
+                initial_blocks.append(block)
             elif block.startswith('Solver'):
-                solvers.append(block)
-        print(solvers)
+                solvers_blocks.append(block)
+        print(solvers_blocks)
 
         # apply general settings
-        for block in general:
+        for block in general_blocks:
             print("test 1")
             self._general(block)
             print("test 2")
 
-        # make a new equations window and change settings of first equation
-        # also creates the default solvers
-        self._ewh.showAddEquation(visible=False)
-        # get all solvers by name and index
-        for idx, element in enumerate(self._ewh.solverParameterEditor):
-            self._solvIds.update({element.solverName: idx})
+        for block in enumerate(equations_blocks):
+            print("test eq1")
+            self._equation(block)
+            print("test eq2")
+
+        for block in enumerate(boundaries_blocks):
+            print("test eq1")
+            self._bcondition(block)
+            print("test eq2")
+
+        for block in enumerate(materials_blocks):
+            print("test eq1")
+            self._materials(block)
+            print("test eq2")
+
+        ## make a new equations window and change settings of first equation
+        ## also creates the default solvers
+        #self._elmer_gui.showAddEquation(visible=False)
+        ## get all solvers by name and index
+        #for idx, element in enumerate(self._elmer_gui.solverParameterEditor):
+        #    self._solvIds.update({element.solverName: idx})
 
         '''
         # apply settings
@@ -146,16 +162,162 @@ class SifReader():
             for block in boundaries:
                 lines = block.split('\n')
                 target = lines[1].split('=')[1].strip()
-                editor = self._ewh.showBoundaryPropertyDefinition(
+                editor = self._elmer_gui.showBoundaryPropertyDefinition(
                     target, visible=False)
                 editor.boundaryConditionCombo.setCurrentIndex(
                     editor.boundaryConditionCombo.findText(target[1:-1]))
-                self._ewh.elementProperties.update({target[1:-1]: editor})
+                self._elmer_gui.elementProperties.update({target[1:-1]: editor})
         except Exception:
             self.errormsg = "Possible mismatch in number of boundaries in" \
                 " sif-file and number of boundary faces in study"
             raise
         '''
+
+    def _bcondition(self, block):
+        """Change settings for a new boundary condition
+
+        Args:
+        -----
+        block: str
+            String containing the settings of the given boundary condition
+        """
+
+        bc_nr = block[0] # not needed
+        block = block[1]
+        print("bc test 1")
+        ui = self._elmer_gui.boundary_conditions
+        print("bc test 1.1.1")
+        data = block.split('\n')
+        print("bc test 1.1.2", data)
+        bc_id = int(data.pop(0).split(' ')[2])
+        # set name
+        bc_block_data = {}
+        print("bc test 1.2")
+        name = data.pop(0).split('=')[1].strip()
+        bc_block_data["Name"] = name.replace('"', '')
+        print("bc test 1.3")
+        ui.list_of_elements.addItem(name.replace('"', ''))
+        print("bc test 2")
+        while data:
+            if '=' in data[0]:
+                parameter, setting = data.pop(0).split('=')
+                bc_block_data[parameter.strip()] = setting
+
+        print("bc test 3")
+        ui.data[bc_id] = bc_block_data
+        '''
+        # create boundary condition set
+        count = len(self._elmer_gui.boundaryConditionEditor)
+
+        name = data.pop(0).split('=')[1].strip()
+        if count == 0:
+            self._elmer_gui.showAddBoundaryCondition(visible=False)
+            bc = self._elmer_gui.boundaryConditionEditor[-1]
+        else:
+            flag = 1
+            for i in self._elmer_gui.boundaryConditionEditor:
+                # If bc with same name exists, replace it, otherwise
+                # create new
+                if i.nameEdit.text() == name.replace('"', ''):
+                    bc = self._elmer_gui.boundaryConditionEditor[i.ID]
+                    flag = 0
+            if flag:
+                self._elmer_gui.boundaryConditionEditorFinishedSlot(3, count)
+                bc = self._elmer_gui.boundaryConditionEditor[-1]
+
+        bc.nameEdit.setText(name.replace('"', ''))
+
+        # set boundary condition data
+        while data:
+            if '=' not in data[0]:
+                data.pop(0)
+            parameter, setting = data.pop(0).split('=')
+            parameter = parameter.strip()
+            setting = setting.strip()
+            freeText = True
+            for key, value in bc.qhash.items():
+                sifName = str(value.elem.firstChildElement(
+                    'SifName').text()).strip()
+                if sifName == '':
+                    sifName = str(value.elem.firstChildElement(
+                        'Name').text()).strip()
+                if sifName == parameter:
+                    self._changeSettings(value.widget, setting)
+                    freeText = False
+            if freeText:
+                value = bc.qhash['/General/BoundaryCondition/Free text/{}'.format(
+                    count)]
+                self._changeSettings(value.widget, ' = '.join(
+                    ['  {}'.format(parameter), setting]))
+        bc.applyButton.click()
+        '''
+
+
+    def _equation(self, block):
+        '''Change settings of the equation
+        Args:
+        ----
+        block: str
+            String containing the settings of the given equation        
+        '''
+
+        eq_nr = block[0]  # not needed, delete it!
+        block = block[1]
+        ui = self._elmer_gui.equations
+        data = block.split('\n')
+        # get equation set
+        eq_id = int(data.pop(0).split(' ')[1])
+        # set name
+        eq_block_data = {}
+        name = data.pop(0).split('=')[1].strip()
+        eq_block_data["Name"] = name.replace('"', '')
+        ui.list_of_elements.addItem(name.replace('"', ''))
+        # set active solver
+        while data:
+            parameter, setting = data.pop(0).split('=')
+            parameter = parameter.strip()
+            print("parameter")
+            setting = setting.strip()
+            if 'Active Solvers' in parameter:
+                setting = setting.split(' ')
+                print("parameter-setting", setting)
+                if setting and int(parameter[-2]) == len(setting):
+                    eq_block_data[parameter] = setting
+                else:
+                    print("Error! Numbers of active solvers do not match")
+
+        self._eq_data[eq_id] = eq_block_data  # self._eq_data not needed. Delete it!
+
+        # ui.data = self._eq_data # Delete all previous equations
+        ui.data[eq_id] = eq_block_data # Instead of creating
+                                       # completely new set of
+                                       # equations, consisting only of
+                                       # ones from imported sif file,
+                                       # we append new equations to
+                                       # existing ones and pass them
+                                       # to Equations object to update
+                                       # its GUI elements
+        '''
+            freeText = True
+            for key, value in eq.qhash.items():
+                sifName = str(value.elem.firstChildElement(
+                    'SifName').text()).strip()
+                if sifName == '':
+                    sifName = str(value.elem.firstChildElement(
+                        'Name').text()).strip()
+                if sifName == parameter:
+                    self._changeSettings(value.widget, setting)
+                    freeText = False
+            if freeText:
+                for key in eq.qhash.keys():
+                    if 'Free text' in key and 'input' not in key:
+                        value = eq.qhash[key]
+                        self._changeSettings(value.widget, ' = '.join(
+                            ['  {}'.format(parameter), setting]))
+                        break
+        eq.applyButton.click()
+        '''
+
 
     def _changeSettings(self, parameter, value):
         """Change settings of hashed parameter in element.
@@ -196,73 +358,18 @@ class SifReader():
         target = data[1].split('=')[1].strip()
 
         # create new window
-        editor = self._ewh.showBodyPropertyDefinition(target, visible=False)
+        editor = self._elmer_gui.showBodyPropertyDefinition(target, visible=False)
         for segment in data[1:]:
             name, idx = segment.split('=')
             if 'Equation' in name:
                 editor.equationCombo.setCurrentIndex(int(idx.strip()))
             elif 'Material' in name:
                 editor.materialCombo.setCurrentIndex(int(idx.strip()))
-            elif 'orce' in name:
+            elif 'Force' in name:
                 editor.bodyForceCombo.setCurrentIndex(int(idx.strip()))
             elif 'Initial' in name:
                 editor.initialConditionCombo.setCurrentIndex(int(idx.strip()))
-        self._ewh.elementProperties.update({target[1:-1]: editor})
-
-    def _bcondition(self, block):
-        """Change settings for a new boundary condition
-
-        Args:
-        -----
-        block: str
-            String containing the settings of the given boundary condition
-        """
-
-        data = block.split('\n')
-        # create boundary condition set
-        count = len(self._ewh.boundaryConditionEditor)
-
-        name = data.pop(0).split('=')[1].strip()
-        if count == 0:
-            self._ewh.showAddBoundaryCondition(visible=False)
-            bc = self._ewh.boundaryConditionEditor[-1]
-        else:
-            flag = 1
-            for i in self._ewh.boundaryConditionEditor:
-                # If bc with same name exists, replace it, otherwise
-                # create new
-                if i.nameEdit.text() == name.replace('"', ''):
-                    bc = self._ewh.boundaryConditionEditor[i.ID]
-                    flag = 0
-            if flag:
-                self._ewh.boundaryConditionEditorFinishedSlot(3, count)
-                bc = self._ewh.boundaryConditionEditor[-1]
-
-        bc.nameEdit.setText(name.replace('"', ''))
-
-        # set boundary condition data
-        while data:
-            if '=' not in data[0]:
-                data.pop(0)
-            parameter, setting = data.pop(0).split('=')
-            parameter = parameter.strip()
-            setting = setting.strip()
-            freeText = True
-            for key, value in bc.qhash.items():
-                sifName = str(value.elem.firstChildElement(
-                    'SifName').text()).strip()
-                if sifName == '':
-                    sifName = str(value.elem.firstChildElement(
-                        'Name').text()).strip()
-                if sifName == parameter:
-                    self._changeSettings(value.widget, setting)
-                    freeText = False
-            if freeText:
-                value = bc.qhash['/General/BoundaryCondition/Free text/{}'.format(
-                    count)]
-                self._changeSettings(value.widget, ' = '.join(
-                    ['  {}'.format(parameter), setting]))
-        bc.applyButton.click()
+        self._elmer_gui.elementProperties.update({target[1:-1]: editor})
 
     def _icondition(self, block):
         """Change settings for a new initial condition
@@ -277,12 +384,12 @@ class SifReader():
 
         # get initial condition set
         sifID = int(data.pop(0).split(' ')[2])
-        if len(self._ewh.initialConditionEditor) < sifID:
+        if len(self._elmer_gui.initialConditionEditor) < sifID:
             if sifID == 1:
-                self._ewh.showAddInitialCondition(visible=False)
+                self._elmer_gui.showAddInitialCondition(visible=False)
             else:
-                self._ewh.initialConditionEditorFinishedSlot(3, sifID - 1)
-        ic = self._ewh.initialConditionEditor[sifID - 1]
+                self._elmer_gui.initialConditionEditorFinishedSlot(3, sifID - 1)
+        ic = self._elmer_gui.initialConditionEditor[sifID - 1]
 
         # set name
         name = data.pop(0).split('=')[1].strip()
@@ -325,12 +432,12 @@ class SifReader():
 
         # get body force set
         sifID = int(data.pop(0).split(' ')[2])
-        if len(self._ewh.bodyForceEditor) < sifID:
+        if len(self._elmer_gui.bodyForceEditor) < sifID:
             if sifID == 1:
-                self._ewh.showAddBodyForce(visible=False)
+                self._elmer_gui.showAddBodyForce(visible=False)
             else:
-                self._ewh.bodyForceEditorFinishedSlot(3, sifID - 1)
-        bf = self._ewh.bodyForceEditor[sifID - 1]
+                self._elmer_gui.bodyForceEditorFinishedSlot(3, sifID - 1)
+        bf = self._elmer_gui.bodyForceEditor[sifID - 1]
 
         # set name
         name = data.pop(0).split('=')[1].strip()
@@ -368,17 +475,43 @@ class SifReader():
         block: str
             String containing the settings of the given material
         """
+        mat_nr = block[0] # not needed
+        block = block[1]
+        print("mat test 1")
+        ui = self._elmer_gui.materials
+        print("mat test 1.1.1")
+        data = block.split('\n')
+        print("mat test 1.1.2", data)
+        mat_id = int(data.pop(0).split(' ')[1])
+        # set name
+        mat_block_data = {}
+        print("mat test 1.2")
+        name = data.pop(0).split('=')[1].strip()
+        mat_block_data["Name"] = name.replace('"', '')
+        print("mat test 1.3")
+        ui.list_of_elements.addItem(name.replace('"', ''))
+        print("mat test 2")
+        while data:
+            if '=' in data[0]:
+                parameter, setting = data.pop(0).split('=')
+                mat_block_data[parameter.strip()] = setting
 
+        print("mat test 3")
+        print(ui.data)
+        print(mat_id)
+        print(mat_block_data)
+        ui.data[mat_id] = mat_block_data
+        '''
         data = block.split('\n')
 
         # get equation set
         sifID = int(data.pop(0).split(' ')[1])
-        if len(self._ewh.materialEditor) < sifID:
+        if len(self._elmer_gui.materialEditor) < sifID:
             if sifID == 1:
-                self._ewh.showAddMaterial(visible=False)
+                self._elmer_gui.showAddMaterial(visible=False)
             else:
-                self._ewh.matEditorFinishedSlot(3, sifID - 1)
-        mat = self._ewh.materialEditor[sifID - 1]
+                self._elmer_gui.matEditorFinishedSlot(3, sifID - 1)
+        mat = self._elmer_gui.materialEditor[sifID - 1]
 
         # set name
         name = data.pop(0).split('=')[1].strip()
@@ -407,63 +540,7 @@ class SifReader():
                             ['  {}'.format(parameter), setting]))
                         break
         mat.applyButton.click()
-
-    def _equation(self, block):
-        """Change settings of the equation
-
-        Args:
-        ----
-        block: str
-            String containing the settings of the given equation
-        """
-
-        data = block.split('\n')
-
-        # get equation set
-        sifID = int(data.pop(0).split(' ')[1])
-        if len(self._ewh.equationEditor) < sifID:
-            self._ewh.pdeEditorFinishedSlot(3, sifID - 1)
-        eq = self._ewh.equationEditor[sifID - 1]
-
-        # set name
-        name = data.pop(0).split('=')[1].strip()
-        eq.nameEdit.setText(name.replace('"', ''))
-
-        # set active solver
-        while data:
-            parameter, setting = data.pop(0).split('=')
-            parameter = parameter.strip()
-            setting = setting.strip()
-            if 'Active Solvers' in parameter:
-                setting = setting.split(' ')
-                for key in setting:
-                    #########################################
-                    if key == '':
-                        pass
-                    else:
-                        ####################################
-                        name = self._sifIds[key]
-                        key = '/' + name + '/Equation/Active/' + str(eq.ID)
-                        eq.qhash[key].widget.setChecked(True)
-                break
-            freeText = True
-            for key, value in eq.qhash.items():
-                sifName = str(value.elem.firstChildElement(
-                    'SifName').text()).strip()
-                if sifName == '':
-                    sifName = str(value.elem.firstChildElement(
-                        'Name').text()).strip()
-                if sifName == parameter:
-                    self._changeSettings(value.widget, setting)
-                    freeText = False
-            if freeText:
-                for key in eq.qhash.keys():
-                    if 'Free text' in key and 'input' not in key:
-                        value = eq.qhash[key]
-                        self._changeSettings(value.widget, ' = '.join(
-                            ['  {}'.format(parameter), setting]))
-                        break
-        eq.applyButton.click()
+        '''
 
     def _solvers(self, block):
         """Change settings of the solver.
@@ -483,7 +560,7 @@ class SifReader():
 
         # get the solver from the solver collection
         idx = self._solvIds[name]
-        element = self._ewh.solverParameterEditor[idx]
+        element = self._elmer_gui.solverParameterEditor[idx]
 
         procedure = data.pop(0).split('=')[1].strip()
         variable = data.pop(0).split('=')[1].strip()
@@ -615,104 +692,74 @@ class SifReader():
         """
 
         # get the general setups window
-        ui = self._ewh.general_setup
-        print('ui:-->', ui)
-        self._ewh.general_setup.coordinate_mapping_lineedit.setText("tresarsdamsdv")
-        print('test 4')
+        ui = self._elmer_gui.general_setup
+        self._elmer_gui.general_setup.coordinate_mapping_lineedit.setText("tresarsdamsdv")
 
         # split rows
         data = block.split('\n')
-        print('test 5')
         title = data.pop(0)
-        print('test 6')
         if title == 'Header':
             if 'CHECK KEYWORDS' in data[0]:
                 ui.checkWarning.setChecked(True)
                 data.pop(0)
-            print('test 6.1')
             ui.checkWarning.setChecked(False)
-            print('test 6.2')
             a, b = data.pop(0).strip().split(' ')[2:]
-            print('test 6.3')
             ui.meshDB_lineedit1.setText(a.replace('"', ''))
-            print('test 6.4')
             ui.meshDB_lineedit2.setText(b.replace('"', ''))
-            print('test 6.5')
             a = data.pop(0).strip().split(' ')[2:][0]
-            print('test 6.6')
             ui.includePath_lineedit.setText(a.replace('"', ''))
-            print('test 6.7')
             a = data.pop(0).strip().split(' ')[2:][0]
-            print('test 6.8')
             ui.resultsDir_lineedit.setText(a.replace('"', ''))
-            print('test 6.9')
             text = '\n'.join(data)
-        print('test 7')
             #ui.headerFreeTextEdit.setText(text.replace('"', ''))
-        
+
         if title == 'Simulation':
-            print('test 7.0')
-            a = data.pop(0).split('=')[1].strip()
-            print('test 7.0.1')
-            idx = ui.max_output_level_combobox.findText(a)
-            print('test 7.1')
-            ui.max_output_level_combobox.setCurrentIndex(idx)
-            a = data.pop(0).split('=')[1].strip()
-            idx = ui.coordinate_system_combobox.findText(a)
-            print('test 7.1')
-            ui.coordinate_system_combobox.setCurrentIndex(idx)
-            a = data.pop(0).split('=')[1].strip()
-            print('test 7.2')
-            ui.coordinate_mapping_lineedit.setText(a)
-            a = data.pop(0).split('=')[1].strip()
-            idx = ui.simulation_type_combobox.findText(a)
-            print('test 7.3')
-            ui.simulation_type_combobox.setCurrentIndex(idx)
-            a = data.pop(0).split('=')[1].strip()
-            ui.steady_state_max_iter_lineedit.setText(a)
-            print('test 7.4')
-            a = data.pop(0).split('=')[1].strip()
-            ui.output_intervals_lineedit.setText(a)
-            a = data.pop(0).split('=')[1].strip()
-            idx = ui.timestepping_method_combobox.findText(a)
-            print('test 7.5')
-            ui.timestepping_method_combobox.setCurrentIndex(idx)
-            a = data.pop(0).split('=')[1].strip()
-            idx = ui.bdf_order_combobox.findText(a)
-            print('test 7.6')
-            ui.bdf_order_combobox.setCurrentIndex(idx)
-            a = data.pop(0).split('=')[1].strip()
-            ui.solver_input_file_lineedit.setText(a)
-            print('test 7.7')
-            a = data.pop(0).split('=')[1].strip()
-            ui.post_file_lineedit.setText(a)
-            text = '\n'.join(data)
-            #ui.simulationFreeTextEdit.setText(text)
-        print('test 8')
+            while data:
+                key, val = data.pop(0).split('=')
+                key = key.strip()
+                val = val.strip()
+                if key.lower() == "Max Output Level".lower():
+                    idx = ui.max_output_level_combobox.findText(val)
+                    ui.max_output_level_combobox.setCurrentIndex(idx)
+                if key.lower() == "Coordinate System".lower():
+                    idx = ui.coordinate_system_combobox.findText(val)
+                    ui.coordinate_system_combobox.setCurrentIndex(idx)
+                if key.lower() == "Coordinate Mapping(3)".lower():
+                    ui.coordinate_mapping_lineedit.setText(val)
+                if key.lower() == "Simulation Type".lower():
+                    idx = ui.simulation_type_combobox.findText(val)
+                    ui.simulation_type_combobox.setCurrentIndex(idx)
+                if key.lower() == "Steady State Max Iterations".lower():
+                    ui.steady_state_max_iter_lineedit.setText(val)
+                if key.lower() == "Output intervals".lower():
+                    ui.output_intervals_lineedit.setText(val)
+                if key.lower() == "Timestepping Method".lower():
+                    ui.timestepping_method_combobox.findText(val)
+                    ui.timestepping_method_combobox.setCurrentIndex(idx)
+                if key.lower() == "BDF Order".lower():
+                    idx = ui.bdf_order_combobox.findText(val)
+                    ui.bdf_order_combobox.setCurrentIndex(idx)
+                if key.lower() == "Timestep intervals".lower():
+                    ui.timestep_intervals_lineedit.setText(val)
+                if key.lower() == "Timestep sizes".lower():
+                    ui.timestep_sizes_lineedit.setText(val)
+                if key.lower() == "Use Mesh Names".lower():
+                    ui.mesh_names_lineedit.setText(val)
+                if key.lower() == "Solver input file".lower():
+                    ui.solver_input_file_lineedit.setText(val)
+                if key.lower() == "Post file".lower():
+                    ui.post_file_lineedit.setText(val)
+
         if title == 'Constants':
             a = data.pop(0).split('=')[1].strip()
-            print('test 8.1', a)
-            print(type(ui.gravity_lineedit))
-            print('test 8.1.1')
             idx = ui.gravity_lineedit.setText(a)
-            print('test 8.2')
             a = data.pop(0).split('=')[1].strip()
-            print('test 8.3')
             idx = ui.stefan_boltzmann_lineedit.setText(a)
-            print('test 8.4')
             a = data.pop(0).split('=')[1].strip()
-            print('test 8.5')
             idx = ui.vacuum_permittivity_lineedit.setText(a)
-            print('test 8.6')
             a = data.pop(0).split('=')[1].strip()
-            print('test 8.7')
             idx = ui.boltzmann_lineedit.setText(a)
-            print('test 8.8')
             a = data.pop(0).split('=')[1].strip()
-            print('test 8.9')
             idx = ui.unit_change_lineedit.setText(a)
-            print('test 8.10')
             text = '\n'.join(data)
-            print('test 8.11')
             #ui.constantsFreeTextEdit.setText(text)
-        print('test 9')

@@ -38,6 +38,8 @@ class ElmerGui(QDialog):
         #self.sifstring = sifstring
         #if self.sifstring:
         #    self.main[self.entry].sif_read(self.sifstring)
+
+        self.equationEditor = {}  # stores the equations sets
         self.initUi()
 
     def initUi(self):
@@ -103,7 +105,11 @@ class ElmerGui(QDialog):
         self.setLayout(self.layout)
 
         self.general_setup = GeneralSetup(0)
-
+        self.equations = Equations({})
+        self.boundary_conditions = BoundaryConditions({})
+        self.materials = Materials({})
+        self.body_forces = BodyForces({})
+        
     @pyqtSlot()
     def onAbout(self):
         '''This method displays details about ELMER interface for SMTER
@@ -155,7 +161,7 @@ class ElmerGui(QDialog):
             print('test')
             # load default data
             #app = QApplication(sys.argv)
-            ex = Equations(data)
+            self.equations.exec()
             #sys.exit(app.exec_())
         else:
             # load dictionary into gui
@@ -167,7 +173,8 @@ class ElmerGui(QDialog):
             print('test')
             # load default data
             #app = QApplication(sys.argv)
-            ex = Materials(data)
+            #ex = Materials(data)
+            self.materials.exec()
             #sys.exit(app.exec_())
         else:
             # load dictionary into gui
@@ -179,7 +186,7 @@ class ElmerGui(QDialog):
             print('test')
             # load default data
             #app = QApplication(sys.argv)
-            ex = BodyForces(data)
+            self.body_forces.exec()
             #sys.exit(app.exec_())
         else:
             # load dictionary into gui
@@ -191,7 +198,8 @@ class ElmerGui(QDialog):
             print('test')
             # load default data
             #app = QApplication(sys.argv)
-            ex = BoundaryConditions(data)
+            self.boundary_conditions.exec()
+            #ex = BoundaryConditions(data)
             #sys.exit(app.exec_())
         else:
             # load dictionary into gui

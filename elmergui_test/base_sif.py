@@ -31,14 +31,20 @@ class BaseSIF(QDialog):
         #uic.loadUi(path_forms + "generalsetup.ui", self)
         #self.simulationFreeTextEdit.setText("Use Mesh Names = Logical True")
         #self.acceptButton.clicked.connect(self.applyChanges)
-        self.data = data
+
+        self.data = data  # dictionary that contains set of blocks,
+                          # i. e. set of equations, boundary conditions,
+                          # initial_conditions
+
+        self.dynamic_widgets = {} # dictionary that contains qwidgets
+                                  # of different blocks,
+                                  # i. e. equations, boundary
+                                  # conditions, initial_conditions
+
         self.tab1 = QWidget()
         self.tabs = {'tab1': self.tab1}
         if not self.data:
-            data = {"MeshDB": 0,
-                    "Include path": 0,
-                    "results directory": 0,
-                    "Free text": 0}
+            self.data = {}
             print('test')
 
         #self.initUI(self.data)
@@ -59,7 +65,7 @@ class BaseSIF(QDialog):
         #    print(type(self.tabs[tab]), tab)
         #    self.solver_tabs.addTab(self.tabs[tab], tab)
 
-        self.element_settings = QPushButton('Edit solver settings')
+        self.element_settings = QPushButton()
 
         self.horizontal_layout_name = QHBoxLayout()
         self.label_name_eq = QLabel('Name')
@@ -86,3 +92,49 @@ class BaseSIF(QDialog):
         self.setGeometry(300, 300, 250, 150)
         #self.setWindowTitle('General settings')
         #self.exec()
+
+    def update_tabs(self, item):
+        """Virtual method of class BaseSIF. Only used in children of
+        BaseSIF. It compares dictionaries self.data and self.dynamic_widgets
+        and updates tabs according to parameters in self.data
+
+            Input parameter: variable item of type QListWidget.item
+        """
+
+        print('---------------------------------------')
+        print("clicked item in list", item.text())
+        print("self.data", self.data)
+        for bcs in self.data:
+            print("Comparison", self.data[bcs]["Name"], item.text(), 'len self.data', self.data)
+            if self.data[bcs]["Name"] == item.text():
+                bc = self.data[bcs]
+                print('test equation show')
+                self.lineedit_name_eq.setText(bc["Name"])
+                for label in self.dynamic_widgets:
+                    setting = bc.get(label.text())
+                    widget = self.dynamic_widgets[label]
+                    widget_type = widget.metaObject().className()
+                    if setting == None: # parameter not stored in bc block
+                        if widget_type == "QLineEdit":
+                            widget.setText("")
+                        elif widget_type == "QCheckBox":
+                            widget.setChecked(0)
+                        elif widget_type == "QComboBox":
+                            idx = widget.findText("None")
+                            widget.setCurrentIndex(idx)
+
+                    else:
+                        if widget_type == "QLineEdit":
+                            widget.setText(bc[label.text()])
+                        elif widget_type == "QCheckBox":
+                            if bc[label.text()] == 'Logical True'.lower():
+                                widget.setChecked(1)
+                            else:
+                                widget.setChecked(0)
+                        elif widget_type == "QComboBox":
+                            try:
+                                idx = widget.findText(bc[label.text()])
+                                widget.setCurrentIndex(idx)
+                            except:
+                                print("QCombobox does not contain this parameter!")
+                break

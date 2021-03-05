@@ -136,9 +136,9 @@ class GeneralSetup(QDialog):
         self.simulation_type_combobox.setCurrentIndex(0)
         simulationLayout.addWidget(self.simulation_type_combobox, 3, 1)
         timestep_intervals_label = QLabel("Timestep intervals")
-        timestep_intervals_lineedit = QLineEdit()
+        self.timestep_intervals_lineedit = QLineEdit()
         simulationLayout.addWidget(timestep_intervals_label, 3, 2)
-        simulationLayout.addWidget(timestep_intervals_lineedit, 3, 3)
+        simulationLayout.addWidget(self.timestep_intervals_lineedit, 3, 3)
 
         output_intervals_label = QLabel("Output intervals")
         self.output_intervals_lineedit = QLineEdit()
@@ -155,12 +155,20 @@ class GeneralSetup(QDialog):
         self.solver_input_file_lineedit.setText("case.sif")
         simulationLayout.addWidget(solver_input_file_label, 5, 0)
         simulationLayout.addWidget(self.solver_input_file_lineedit, 5, 1)
+
         post_file_label = QLabel("Post file")
         self.post_file_lineedit = QLineEdit()
         self.post_file_lineedit.setText("case.vtu")
         simulationLayout.addWidget(post_file_label, 5, 2)
         simulationLayout.addWidget(self.post_file_lineedit, 5, 3)
 
+        mesh_names_label = QLabel("Use Mesh Names")
+        self.mesh_names_lineedit = QLineEdit()
+        self.mesh_names_lineedit.setText("Logical True")
+        simulationLayout.addWidget(mesh_names_label, 6, 0)
+        simulationLayout.addWidget(self.mesh_names_lineedit, 6, 1)
+
+        
         # constants
         gravity_label = QLabel("Gravity")
         self.gravity_lineedit = QLineEdit()

@@ -25,10 +25,7 @@ class Materials(BaseSIF):
         #self.acceptButton.clicked.connect(self.applyChanges)
         self.data = data
         if not self.data:
-            data = {"MeshDB": 0,
-                    "Include path": 0,
-                    "results directory": 0,
-                    "Free text": 0}
+            self.data = {}
             print('test equation')
         print('test equation')
         self.general_tab = QWidget()
@@ -38,7 +35,6 @@ class Materials(BaseSIF):
         self.heat_equation_tabUI()
         self.helmholtz_equation_tab = QWidget()
         self.navier_stokes_tab = QWidget()
-                     
         self.tabs = {'General': self.general_tab,
                      'Electrostatics': self.electrostatics_tab,
                      'Mesh Update': self.mesh_update_tab,
@@ -51,11 +47,11 @@ class Materials(BaseSIF):
             print(type(self.tabs[tab]), tab)
             self.solver_tabs.addTab(self.tabs[tab], tab)
 
+        self.list_of_elements.itemClicked.connect(self.update_tabs)
         #self.setLayout(self.layout)
         #self.setGeometry(300, 300, 250, 150)
-        self.setWindowTitle('General settings')
+        self.setWindowTitle('Materials')
         self.element_settings.setText("Show Material Library")
-        self.exec()
 
     def applyChanges(self):
         """Apply button hit"""
@@ -75,37 +71,44 @@ class Materials(BaseSIF):
         label_properties_set.setFont(title_font)
         label_heat_conductivity = QLabel("Heat Conductivity")
         lineedit_heat_conductivity = QLineEdit()
+        self.dynamic_widgets[label_heat_conductivity] = lineedit_heat_conductivity
         layout_heat_equation_tab.addWidget(label_properties_set, 0, 0)
         layout_heat_equation_tab.addWidget(label_heat_conductivity, 1, 0)
         layout_heat_equation_tab.addWidget(lineedit_heat_conductivity, 1, 1)
 
         label_heat_conductivity_model = QLabel("Heat Conductivity Model")
         lineedit_heat_conductivity_model = QLineEdit()
+        self.dynamic_widgets[label_heat_conductivity_model] = lineedit_heat_conductivity_model
         layout_heat_equation_tab.addWidget(label_heat_conductivity_model, 2, 0)
         layout_heat_equation_tab.addWidget(lineedit_heat_conductivity_model, 2, 1)
 
         label_emissivity = QLabel("Emissivity")
         lineedit_emissivity = QLineEdit()
+        self.dynamic_widgets[label_emissivity] = lineedit_emissivity
         layout_heat_equation_tab.addWidget(label_emissivity, 3, 0)
         layout_heat_equation_tab.addWidget(lineedit_emissivity, 3, 1)
 
         label_prandtl = QLabel("Turlbulent Prandtl Number")
         lineedit_prandtl = QLineEdit("0.85")
+        self.dynamic_widgets[label_prandtl] = lineedit_prandtl
         layout_heat_equation_tab.addWidget(label_prandtl, 4, 0)
         layout_heat_equation_tab.addWidget(lineedit_prandtl, 4, 1)
 
         label_enthalpy = QLabel("Enthalpy")
         lineedit_enthalpy = QLineEdit()
+        self.dynamic_widgets[label_enthalpy] = lineedit_enthalpy
         layout_heat_equation_tab.addWidget(label_enthalpy, 5, 0)
         layout_heat_equation_tab.addWidget(lineedit_enthalpy, 5, 1)
 
         label_specific_enthalpy = QLabel("Specific Enthalpy")
         lineedit_specific_enthalpy = QLineEdit()
+        self.dynamic_widgets[label_specific_enthalpy] = lineedit_specific_enthalpy
         layout_heat_equation_tab.addWidget(label_specific_enthalpy, 6, 0)
         layout_heat_equation_tab.addWidget(lineedit_specific_enthalpy, 6, 1)
 
         label_pressure_coefficient = QLabel("Pressure Coefficient")
         lineedit_pressure_coefficient = QLineEdit()
+        self.dynamic_widgets[label_pressure_coefficient] = lineedit_pressure_coefficient
         layout_heat_equation_tab.addWidget(label_pressure_coefficient, 7, 0)
         layout_heat_equation_tab.addWidget(lineedit_pressure_coefficient, 7, 1)
 

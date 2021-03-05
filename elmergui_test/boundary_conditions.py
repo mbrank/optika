@@ -34,10 +34,7 @@ class BoundaryConditions(BaseSIF):
         #self.acceptButton.clicked.connect(self.applyChanges)
         self.data = data
         if not self.data:
-            data = {"MeshDB": 0,
-                    "Include path": 0,
-                    "results directory": 0,
-                    "Free text": 0}
+            data = {}
             print('test equation')
         print('test equation')
         self.general_tab = QWidget()
@@ -60,11 +57,50 @@ class BoundaryConditions(BaseSIF):
             print(type(self.tabs[tab]), tab)
             self.solver_tabs.addTab(self.tabs[tab], tab)
 
+        self.list_of_elements.itemClicked.connect(self.update_tabs)
+
         #self.setLayout(self.layout)
         #self.setGeometry(300, 300, 250, 150)
         self.element_settings.setText('Edit solver settings')
-        self.setWindowTitle('General settings')
-        self.exec()
+        self.setWindowTitle('Boundary Conditions')
+
+    #def update_tabs(self, item):
+    #    print('---------------------------------------')
+    #    print("clicked item in list", item.text())
+    #    print("self.data", self.data)
+    #    for bcs in self.data:
+    #        print("Comparison", self.data[bcs]["Name"], item.text(), 'len self.data', self.data)
+    #        if self.data[bcs]["Name"] == item.text():
+    #            bc = self.data[bcs]
+    #            print('test equation show')
+    #            self.lineedit_name_eq.setText(bc["Name"])
+    #            for label in self.dynamic_widgets:
+    #                setting = bc.get(label.text())
+    #                widget = self.dynamic_widgets[label]
+    #                widget_type = widget.metaObject().className()
+    #                if setting == None: # parameter not stored in bc block
+    #                    if widget_type == "QLineEdit":
+    #                        widget.setText("")
+    #                    elif widget_type == "QCheckBox":
+    #                        widget.setChecked(0)
+    #                    elif widget_type == "QComboBox":
+    #                        idx = widget.findText("None")
+    #                        widget.setCurrentIndex(idx)
+    #                else:
+    #                    if widget_type == "QLineEdit":
+    #                        widget.setText(bc[label.text()])
+    #                    elif widget_type == "QCheckBox":
+    #                        if bc[label.text()] == 'Logical True'.lower():
+    #                            widget.setChecked(1)
+    #                        else:
+    #                            widget.setChecked(0)
+    #                    elif widget_type == "QComboBox":
+    #                        try:
+    #                            idx = widget.findText(bc[label.text()])
+    #                            widget.setCurrentIndex(idx)
+    #                        except:
+    #                            print("QCombobox does not contain this parameter!")
+    #            break
 
     def applyChanges(self):
         """Apply button hit"""
@@ -83,51 +119,58 @@ class BoundaryConditions(BaseSIF):
         label_dirichlet_set.setFont(title_font)
         layout_heat_equation_tab.addWidget(label_dirichlet_set, 0, 0)
 
-        label_temperature = QLabel("Temperature")
-        lineedit_temperature = QLineEdit()
-        layout_heat_equation_tab.addWidget(label_temperature, 1, 0)
-        layout_heat_equation_tab.addWidget(lineedit_temperature, 1, 1)
+        self.label_temperature = QLabel("Temperature")
+        self.lineedit_temperature = QLineEdit()
+        self.dynamic_widgets[self.label_temperature] = self.lineedit_temperature
+        layout_heat_equation_tab.addWidget(self.label_temperature, 1, 0)
+        layout_heat_equation_tab.addWidget(self.lineedit_temperature, 1, 1)
 
-        label_temperature_cond = QLabel("Temperature Condition")
-        checkbox_temperature_cond = QLineEdit()
-        layout_heat_equation_tab.addWidget(label_temperature_cond, 2, 0)
-        layout_heat_equation_tab.addWidget(checkbox_temperature_cond, 2, 1)
+        self.label_temperature_cond = QLabel("Temperature Condition")
+        self.checkbox_temperature_cond = QLineEdit()
+        self.dynamic_widgets[self.label_temperature_cond] = self.checkbox_temperature_cond
+        layout_heat_equation_tab.addWidget(self.label_temperature_cond, 2, 0)
+        layout_heat_equation_tab.addWidget(self.checkbox_temperature_cond, 2, 1)
 
-        label_heat_flux_set = QLabel("Heat Flux Conditions")
-        label_heat_flux_set.setFont(title_font)
-        layout_heat_equation_tab.addWidget(label_heat_flux_set, 3, 0)
+        self.label_heat_flux_set = QLabel("Heat Flux Conditions")
+        self.label_heat_flux_set.setFont(title_font)
+        layout_heat_equation_tab.addWidget(self.label_heat_flux_set, 3, 0)
 
-        label_temperature = QLabel("Heat Flux")
-        lineedit_temperature = QLineEdit()
-        layout_heat_equation_tab.addWidget(label_temperature, 4, 0)
-        layout_heat_equation_tab.addWidget(lineedit_temperature, 4, 1)
+        self.label_heat_flux = QLabel("Heat Flux")
+        self.lineedit_heat_flux = QLineEdit()
+        self.dynamic_widgets[self.label_heat_flux] = self.lineedit_heat_flux
+        layout_heat_equation_tab.addWidget(self.label_heat_flux, 4, 0)
+        layout_heat_equation_tab.addWidget(self.lineedit_heat_flux, 4, 1)
 
-        label_temperature_cond = QLabel("Heat Transfer Coefficient")
-        checkbox_temperature_cond = QLineEdit()
-        layout_heat_equation_tab.addWidget(label_temperature_cond, 5, 0)
-        layout_heat_equation_tab.addWidget(checkbox_temperature_cond, 5, 1)
+        self.label_temperature_cond = QLabel("Heat Transfer Coefficient")
+        self.checkbox_temperature_cond = QLineEdit()
+        self.dynamic_widgets[self.label_temperature_cond] = self.checkbox_temperature_cond
+        layout_heat_equation_tab.addWidget(self.label_temperature_cond, 5, 0)
+        layout_heat_equation_tab.addWidget(self.checkbox_temperature_cond, 5, 1)
 
-        label_ext_temperature_cond = QLabel("External temperature")
-        checkbox_ext_temperature_cond = QLineEdit()
-        layout_heat_equation_tab.addWidget(label_ext_temperature_cond, 6, 0)
-        layout_heat_equation_tab.addWidget(checkbox_ext_temperature_cond, 6, 1)
+        self.label_ext_temperature_cond = QLabel("External temperature")
+        self.checkbox_ext_temperature_cond = QLineEdit()
+        self.dynamic_widgets[self.label_ext_temperature_cond] = self.checkbox_ext_temperature_cond
+        layout_heat_equation_tab.addWidget(self.label_ext_temperature_cond, 6, 0)
+        layout_heat_equation_tab.addWidget(self.checkbox_ext_temperature_cond, 6, 1)
 
-        label_latent_heat_set = QLabel("Latent Heat of Phase Change")
-        label_latent_heat_set.setFont(title_font)
-        layout_heat_equation_tab.addWidget(label_latent_heat_set, 7, 0)
+        self.label_latent_heat_set = QLabel("Latent Heat of Phase Change")
+        self.label_latent_heat_set.setFont(title_font)
+        layout_heat_equation_tab.addWidget(self.label_latent_heat_set, 7, 0)
 
-        label_phase_change = QLabel("Phase Change")
-        checkbox_phase_change = QCheckBox()
-        layout_heat_equation_tab.addWidget(label_phase_change, 8, 0)
-        layout_heat_equation_tab.addWidget(checkbox_phase_change, 8, 1)
+        self.label_phase_change = QLabel("Phase Change")
+        self.checkbox_phase_change = QCheckBox()
+        self.dynamic_widgets[self.label_phase_change] = self.checkbox_phase_change
+        layout_heat_equation_tab.addWidget(self.label_phase_change, 8, 0)
+        layout_heat_equation_tab.addWidget(self.checkbox_phase_change, 8, 1)
 
-        label_heat_gap = QLabel("Heat Gap")
-        label_heat_gap.setFont(title_font)
-        layout_heat_equation_tab.addWidget(label_heat_gap, 9, 0)
+        self.label_heat_gapset = QLabel("Heat Gap")
+        self.label_heat_gapset.setFont(title_font)
+        layout_heat_equation_tab.addWidget(self.label_heat_gapset, 9, 0)
 
-        label_phase_change = QLabel("Phase Change")
-        checkbox_phase_change = QCheckBox()
-        layout_heat_equation_tab.addWidget(label_phase_change, 10, 0)
-        layout_heat_equation_tab.addWidget(checkbox_phase_change, 10, 1)
+        self.label_heat_gap = QLabel("Heat Gap")
+        self.checkbox_heat_gap = QCheckBox()
+        self.dynamic_widgets[self.label_heat_gap] = self.checkbox_heat_gap
+        layout_heat_equation_tab.addWidget(self.label_heat_gap, 10, 0)
+        layout_heat_equation_tab.addWidget(self.checkbox_heat_gap, 10, 1)
 
         self.heat_equation_tab.setLayout(layout_heat_equation_tab)

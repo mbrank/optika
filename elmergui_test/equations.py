@@ -34,10 +34,7 @@ class Equations(BaseSIF):
         #self.acceptButton.clicked.connect(self.applyChanges)
         self.data = data
         if not self.data:
-            data = {"MeshDB": 0,
-                    "Include path": 0,
-                    "results directory": 0,
-                    "Free text": 0}
+            data = {}
             print('test equation')
         print('test equation')
         self.electrostatics_tab = QWidget()
@@ -61,15 +58,33 @@ class Equations(BaseSIF):
 
         #self.setLayout(self.layout)
         #self.setGeometry(300, 300, 250, 150)
+
+        self.list_of_elements.itemClicked.connect(self.update_tabs)
+
         self.element_settings.setText('Edit solver settings')
-        self.setWindowTitle('General settings')
-        self.exec()
+        self.setWindowTitle('Equations')
+        #self.exec()
+
+    def update_tabs(self, item):
+        print("clicked item in list", item.text())
+        print("self.data", self.data)
+        for eqs in self.data:
+            print("Comparison", self.data[eqs]["Name"], item.text())
+            if self.data[eqs]["Name"] == item.text():
+                eq = self.data[eqs]
+                print('test equation show')
+                self.lineedit_name_eq.setText(eq["Name"])
+                break
+
+        #self.checkbox_active = QCheckBox()
+        #self.lineedit_priority = QLineEdit()
+        #self.combobox_options = QComboBox()
+        #self.combobox_convection = QComboBox()
 
     def applyChanges(self):
         """Apply button hit"""
         # Hide window, but keep contents in memory
         self.hide()
-
 
     def heat_equation_tabUI(self):
 
@@ -81,40 +96,40 @@ class Equations(BaseSIF):
         label_active_set = QLabel("Active for this equation set")
         label_active_set.setFont(title_font)
         label_active = QLabel("Active")
-        checkbox_active = QCheckBox()
+        self.checkbox_active = QCheckBox()
         layout_heat_equation_tab.addWidget(label_active_set, 0, 0)
         layout_heat_equation_tab.addWidget(label_active, 1, 0)
-        layout_heat_equation_tab.addWidget(checkbox_active, 1, 1)
+        layout_heat_equation_tab.addWidget(self.checkbox_active, 1, 1)
 
         label_priority_set = QLabel("Give Execution priority")
         label_priority_set.setFont(title_font)
         label_priority = QLabel("Priority")
-        lineedit_priority = QLineEdit()
+        self.lineedit_priority = QLineEdit()
         layout_heat_equation_tab.addWidget(label_priority_set, 2, 0)
         layout_heat_equation_tab.addWidget(label_priority, 3, 0)
-        layout_heat_equation_tab.addWidget(lineedit_priority, 3, 1)
+        layout_heat_equation_tab.addWidget(self.lineedit_priority, 3, 1)
 
         label_options_set = QLabel("Options")
         label_options_set.setFont(title_font)
         label_options = QLabel("Phase Change Model")
-        combobox_options = QComboBox()
-        combobox_options.addItem("None")
-        combobox_options.addItem("Spatial 1")
-        combobox_options.addItem("Spatial 2")
-        combobox_options.addItem("Temporal")
+        self.combobox_options = QComboBox()
+        self.combobox_options.addItem("None")
+        self.combobox_options.addItem("Spatial 1")
+        self.combobox_options.addItem("Spatial 2")
+        self.combobox_options.addItem("Temporal")
         layout_heat_equation_tab.addWidget(label_options_set, 4, 0)
         layout_heat_equation_tab.addWidget(label_options, 5, 0)
-        layout_heat_equation_tab.addWidget(combobox_options, 5, 1)
+        layout_heat_equation_tab.addWidget(self.combobox_options, 5, 1)
 
         label_convection_set = QLabel("Convection")
         label_convection_set.setFont(title_font)
         label_convection = QLabel("Convection")
-        combobox_convection = QComboBox()
-        combobox_convection.addItem("None")
-        combobox_convection.addItem("Constant")
-        combobox_convection.addItem("Computed")
+        self.combobox_convection = QComboBox()
+        self.combobox_convection.addItem("None")
+        self.combobox_convection.addItem("Constant")
+        self.combobox_convection.addItem("Computed")
         layout_heat_equation_tab.addWidget(label_convection_set, 6, 0)
         layout_heat_equation_tab.addWidget(label_convection, 7, 0)
-        layout_heat_equation_tab.addWidget(combobox_convection, 7, 1)
+        layout_heat_equation_tab.addWidget(self.combobox_convection, 7, 1)
 
         self.heat_equation_tab.setLayout(layout_heat_equation_tab)

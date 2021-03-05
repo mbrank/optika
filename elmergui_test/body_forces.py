@@ -34,10 +34,7 @@ class BodyForces(BaseSIF):
         #self.acceptButton.clicked.connect(self.applyChanges)
         self.data = data
         if not self.data:
-            data = {"MeshDB": 0,
-                    "Include path": 0,
-                    "results directory": 0,
-                    "Free text": 0}
+            self.data = {}
             print('test equation')
         print('test equation')
         self.electrostatics_tab = QWidget()
@@ -58,11 +55,11 @@ class BodyForces(BaseSIF):
             print(type(self.tabs[tab]), tab)
             self.solver_tabs.addTab(self.tabs[tab], tab)
 
+        self.list_of_elements.itemClicked.connect(self.update_tabs)
         #self.setLayout(self.layout)
         #self.setGeometry(300, 300, 250, 150)
         self.element_settings.setText('Edit solver settings')
-        self.setWindowTitle('General settings')
-        self.exec()
+        self.setWindowTitle('Body Forces')
 
     def applyChanges(self):
         """Apply button hit"""
