@@ -15,6 +15,7 @@ from PyQt5.QtWidgets import (QInputDialog, QLineEdit, QDialog,
                              QGridLayout, QComboBox)
 from PyQt5.QtGui import QFont
 from base_sif import BaseSIF
+from functools import partial
 
 class BoundaryConditions(BaseSIF):
     """Class that provides the General setup dialog and its functionality"""
@@ -34,7 +35,7 @@ class BoundaryConditions(BaseSIF):
         #self.acceptButton.clicked.connect(self.applyChanges)
         self.data = data
         if not self.data:
-            data = {}
+            data = {"test":"test1"}
             print('test equation')
         print('test equation')
         self.general_tab = QWidget()
@@ -58,7 +59,7 @@ class BoundaryConditions(BaseSIF):
             self.solver_tabs.addTab(self.tabs[tab], tab)
 
         self.list_of_elements.itemClicked.connect(self.update_tabs)
-
+        self.apply_element.clicked.connect(partial(self.on_apply, self.list_of_elements, self.data))
         #self.setLayout(self.layout)
         #self.setGeometry(300, 300, 250, 150)
         self.element_settings.setText('Edit solver settings')

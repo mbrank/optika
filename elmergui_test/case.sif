@@ -36,30 +36,41 @@ Body 1
 End
 
 Solver 1
-  Equation = Heat Equation
-  Procedure = "HeatSolve" "HeatSolver"
-  Variable = Temperature
-  Exec Solver = Always
+  Equation = Heat Equation Test
+  Procedure = "HeatSolveTest" "HeatSolverTest"
+  Variable = TemperatureTest
+  Exec Solver = After Timestep
+  Stabilize = TrueTest
+  Bubbles = True
+  Lumped Mass Matrix = True
+  Optimize Bandwidth = false
+  Steady State Convergence Tolerance = 1.0e-5test
+  Nonlinear System Convergence Tolerance = 1.0e-7test
+  Nonlinear System Max Iterations = 20test
+  Nonlinear System Relaxation Factor = 1test
+  Nonlinear System Newton After Iterations = 3test
+  Nonlinear System Newton After Tolerance = 1.0e-3test
+  Linear System Solver = Iterative
+  Linear System Iterative Method = GCR
+  Linear System Max Iterations = 500test
+  Linear System Convergence Tolerance = 1.0e-10test
+  BiCGstabl polynomial degree = 2test
+  Linear System Preconditioning = Diagonal
+  Linear System ILUT Tolerance = 1.0e-3test
+  Linear System Abort Not Converged = True
+  Linear System Residual Output = 1test
+  Linear System Precondition Recompute = 1test
+End
+
+Solver 2
+  Equation = Heat Equation Solver 2
+  Procedure = "HeatSolveTest 2" "HeatSolverTest 2"
+  Variable = TemperatureTest
+  Exec Solver = Before Timestep
   Stabilize = True
   Bubbles = False
   Lumped Mass Matrix = False
-  Optimize Bandwidth = True
-  Steady State Convergence Tolerance = 1.0e-5
-  Nonlinear System Convergence Tolerance = 1.0e-7
-  Nonlinear System Max Iterations = 20
-  Nonlinear System Relaxation Factor = 1
-  Nonlinear System Newton After Iterations = 3
-  Nonlinear System Newton After Tolerance = 1.0e-3
-  Linear System Solver = Iterative
-  Linear System Iterative Method = BiCGStab
-  Linear System Max Iterations = 500
-  Linear System Convergence Tolerance = 1.0e-10
-  BiCGstabl polynomial degree = 2
-  Linear System Preconditioning = Diagonal
-  Linear System ILUT Tolerance = 1.0e-3
-  Linear System Abort Not Converged = False
-  Linear System Residual Output = 1
-  Linear System Precondition Recompute = 1
+  Linear System Preconditioning = ILU0
 End
 
 Equation 4
@@ -106,4 +117,3 @@ Boundary Condition 3
   Heat Flux = 0.001
 ! ToDo: Periodic BCs
 End
-

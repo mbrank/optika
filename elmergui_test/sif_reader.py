@@ -115,6 +115,11 @@ class SifReader():
             self._materials(block)
             print("test eq2")
 
+        for block in enumerate(solvers_blocks):
+            print("test eq1")
+            self._solvers(block)
+            print("test eq2")
+
         ## make a new equations window and change settings of first equation
         ## also creates the default solvers
         #self._elmer_gui.showAddEquation(visible=False)
@@ -194,14 +199,14 @@ class SifReader():
         bc_block_data = {}
         print("bc test 1.2")
         name = data.pop(0).split('=')[1].strip()
-        bc_block_data["Name"] = name.replace('"', '')
+        bc_block_data["Name".lower()] = name.replace('"', '')
         print("bc test 1.3")
         ui.list_of_elements.addItem(name.replace('"', ''))
         print("bc test 2")
         while data:
             if '=' in data[0]:
                 parameter, setting = data.pop(0).split('=')
-                bc_block_data[parameter.strip()] = setting
+                bc_block_data[parameter.strip().lower()] = setting
 
         print("bc test 3")
         ui.data[bc_id] = bc_block_data
@@ -275,10 +280,10 @@ class SifReader():
         # set active solver
         while data:
             parameter, setting = data.pop(0).split('=')
-            parameter = parameter.strip()
+            parameter = parameter.strip().lower()
             print("parameter")
             setting = setting.strip()
-            if 'Active Solvers' in parameter:
+            if 'Active Solvers'.lower() in parameter:
                 setting = setting.split(' ')
                 print("parameter-setting", setting)
                 if setting and int(parameter[-2]) == len(setting):
@@ -551,6 +556,59 @@ class SifReader():
             String containing the settings of the given solver
         """
 
+        print('_solvers1')
+        solv_nr = block[0]  # not needed, delete it!
+        print('_solvers1.01')
+        block = block[1]
+        print('_solvers1.02')
+        ui = self._elmer_gui.solvers
+        print('_solvers1.1')
+        data = block.split('\n')
+        # get equation set
+        print('_solvers1.2')
+        solv_id = int(data.pop(0).split(' ')[1])
+        # set name
+        solv_block_data = {}
+        #name = data.pop(0).split('=')[1].strip()
+        #solv_block_data["Equation".lower()] = name.replace('"', '')
+        #ui.list_of_elements.addItem(name.replace('"', ''))
+
+        ui.list_of_elements.addItem(str(solv_id).replace('"', ''))
+        print('_solvers1.3')
+        print('Solver test reader start -----------------------')
+        # set active solver
+        while data:
+            parameter, setting = data.pop(0).split('=')
+            parameter = parameter.strip()
+            print("parameter")
+            setting = setting.strip()
+            solv_block_data[parameter.lower()] = setting
+            #if 'Procedure' in parameter:
+            #    pass
+            #else:
+            #    setting = setting.split(' ')
+            #    print("parameter-setting", setting)
+            #    if setting and int(parameter[-2]) == len(setting):
+            #    else:
+            #        print("Error! Numbers of active solvers do not match")
+
+        if 'Name' not in solv_block_data:
+            solv_block_data['name'] = str(solv_id)
+        self._eq_data[solv_id] = solv_block_data  # self._solv_data not needed. Delete it!
+
+            
+        # ui.data = self._solv_data # Delete all previous solvers
+        ui.data[solv_id] = solv_block_data # Instead of creating
+                                       # completely new set of
+                                       # solvers, consisting only of
+                                       # ones from imported sif file,
+                                       # we append new equations to
+                                       # existing ones and pass them
+                                       # to Equations object to update
+                                       # its GUI elements
+        print()
+        print('Solver test reader end -----------------------')
+        '''
         data = block.split('\n')
 
         # mapping of solver name and ID as in sif-file
@@ -681,6 +739,7 @@ class SifReader():
                 element.adaptiveMeshRefinement.setChecked(True)
                 continue
             self._changeSettings(keys[key], value)
+        '''
 
     def _general(self, block):
         """Change settings in the general setup of the Elmer module

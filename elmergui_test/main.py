@@ -113,7 +113,7 @@ class ElmerGui(QDialog):
         self.boundary_conditions = BoundaryConditions({})
         self.materials = Materials({})
         self.body_forces = BodyForces({})
-        self.solver = Solvers({})
+        self.solvers = Solvers({})
         
     @pyqtSlot()
     def onAbout(self):
@@ -191,7 +191,8 @@ class ElmerGui(QDialog):
             print('test')
             # load default data
             #app = QApplication(sys.argv)
-            self.solver.exec()
+            self.solvers.update_tabs()
+            self.solvers.exec()
             #sys.exit(app.exec_())
         else:
             # load dictionary into gui

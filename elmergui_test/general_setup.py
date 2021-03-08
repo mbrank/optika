@@ -102,11 +102,11 @@ class GeneralSetup(QDialog):
         simulationLayout.addWidget(coordinate_system_label, 1, 0)
         self.coordinate_system_combobox = QComboBox()
         self.coordinate_system_combobox.addItems(['Cartesian',
-                                             'Axisymmetric',
+                                             'Axi Symmetric',
                                              'Cylindric symmetric'])
         self.coordinate_system_combobox.setCurrentIndex(0)
         simulationLayout.addWidget(self.coordinate_system_combobox, 1, 1)
-        timestepping_method_label = QLabel("Time stepping method")
+        timestepping_method_label = QLabel("Timestepping method")
         simulationLayout.addWidget(timestepping_method_label, 1, 2)
         self.timestepping_method_combobox = QComboBox()
         self.timestepping_method_combobox.addItems(['BDF'])
