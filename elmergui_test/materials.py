@@ -29,6 +29,7 @@ class Materials(BaseSIF):
             print('test equation')
         print('test equation')
         self.general_tab = QWidget()
+        self.general_tabUI()
         self.electrostatics_tab = QWidget()
         self.mesh_update_tab = QWidget()
         self.heat_equation_tab = QWidget()
@@ -57,7 +58,6 @@ class Materials(BaseSIF):
         """Apply button hit"""
         # Hide window, but keep contents in memory
         self.hide()
-
 
     def heat_equation_tabUI(self):
 
@@ -113,3 +113,52 @@ class Materials(BaseSIF):
         layout_heat_equation_tab.addWidget(lineedit_pressure_coefficient, 7, 1)
 
         self.heat_equation_tab.setLayout(layout_heat_equation_tab)
+
+    def general_tabUI(self):
+
+        title_font = QFont()
+        title_font.setBold(True)
+        title_font.setUnderline(True)
+
+        layout_general = QGridLayout()
+
+        label_properties_set = QLabel("Properties")
+        label_properties_set.setFont(title_font)
+        label_density = QLabel("Density")
+        lineedit_density = QLineEdit()
+        self.dynamic_widgets[label_density] = lineedit_density
+        layout_general.addWidget(label_properties_set, 0, 0)
+        layout_general.addWidget(label_density, 1, 0)
+        layout_general.addWidget(lineedit_density, 1, 1)
+
+        label_heat_capacity = QLabel("Heat Capacity")
+        lineedit_heat_capacity = QLineEdit()
+        self.dynamic_widgets[label_heat_capacity] = lineedit_heat_capacity
+        layout_general.addWidget(label_heat_capacity, 2, 0)
+        layout_general.addWidget(lineedit_heat_capacity, 2, 1)
+
+        label_shr = QLabel("Specific Heat Ratio")
+        lineedit_shr = QLineEdit()
+        self.dynamic_widgets[label_shr] = lineedit_shr
+        layout_general.addWidget(label_shr, 3, 0)
+        layout_general.addWidget(lineedit_shr, 3, 1)
+
+        label_ref_temp = QLabel("Reference Temperature")
+        lineedit_ref_temp = QLineEdit()
+        self.dynamic_widgets[label_ref_temp] = lineedit_ref_temp
+        layout_general.addWidget(label_ref_temp, 4, 0)
+        layout_general.addWidget(lineedit_ref_temp, 4, 1)
+
+        label_ref_pressure = QLabel("Reference Pressure")
+        lineedit_ref_pressure = QLineEdit()
+        self.dynamic_widgets[label_ref_pressure] = lineedit_ref_pressure
+        layout_general.addWidget(label_ref_pressure, 5, 0)
+        layout_general.addWidget(lineedit_ref_pressure, 5, 1)
+
+        label_hec = QLabel("Heat Expansion Coefficient")
+        lineedit_hec = QLineEdit()
+        self.dynamic_widgets[label_hec] = lineedit_hec
+        layout_general.addWidget(label_hec, 6, 0)
+        layout_general.addWidget(lineedit_hec, 6, 1)
+
+        self.general_tab.setLayout(layout_general)

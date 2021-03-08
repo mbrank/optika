@@ -14,6 +14,7 @@ from equations import Equations
 from materials import Materials
 from body_forces import BodyForces
 from boundary_conditions import BoundaryConditions
+from solvers import Solvers
 #from PyQt5 import (QDialog, QPushButton, pyqtSlot, QVBoxLayout,
 #                   QMessageBox, QProcess, QLineEdit,
 #                   QLabel, QCheckBox, QComboBox)
@@ -56,29 +57,31 @@ class ElmerGui(QDialog):
         #self.dimension3.setChecked(not self._toggle)
         #self.dimension3.clicked.connect(self.toggle)
         #self.dimension2.clicked.connect(self.toggle)
-        self.about = QPushButton('About')
-        self.reader = QPushButton('Read sif file')
-        self.general = QPushButton('General settings')
-        self.eq = QPushButton('Equations')
-        self.mat = QPushButton('Materials')
-        self.bf = QPushButton('Body Forces')
-        self.bc = QPushButton('Boundary conditions')
-        self.ic = QPushButton('Initial conditions')
-        self.meshselection = QLabel('Select mesh')
+        self.about_button = QPushButton('About')
+        self.reader_button = QPushButton('Read sif file')
+        self.general_button = QPushButton('General settings')
+        self.solver_button = QPushButton('Solvers')
+        self.eq_button = QPushButton('Equations')
+        self.mat_button = QPushButton('Materials')
+        self.bf_button = QPushButton('Body Forces')
+        self.bc_button = QPushButton('Boundary conditions')
+        self.ic_button = QPushButton('Initial conditions')
+        self.mshsel_button = QLabel('Select mesh')
         #meshes = getListOfMeshes()
         #self.mesh = self.addDropDown("Select mesh", meshes)
         self.ep = QPushButton('Object properties')
         self.parallel = QPushButton('Parallel settings')
         self.savecase = QPushButton('Save case to ELMER study')
 
-        self.about.clicked.connect(self.onAbout)
-        self.reader.clicked.connect(self.onReadSif)
-        self.general.clicked.connect(self.onGeneralSettings)
-        self.eq.clicked.connect(self.onEquations)
-        self.mat.clicked.connect(self.onMaterials)
-        self.bf.clicked.connect(self.onBodyForces)
-        self.bc.clicked.connect(self.onBoundaryConditions)
-        #self.ic.clicked.connect(self.onShowInitialConditions)
+        self.about_button.clicked.connect(self.onAbout)
+        self.reader_button.clicked.connect(self.onReadSif)
+        self.general_button.clicked.connect(self.onGeneralSettings)
+        self.solver_button.clicked.connect(self.onSolver)
+        self.eq_button.clicked.connect(self.onEquations)
+        self.mat_button.clicked.connect(self.onMaterials)
+        self.bf_button.clicked.connect(self.onBodyForces)
+        self.bc_button.clicked.connect(self.onBoundaryConditions)
+        #self.ic_button.clicked.connect(self.onShowInitialConditions)
         #self.ep.clicked.connect(self.onDefineElementProperties)
         #self.parallel.clicked.connect(self.onParallelSettings)
         #self.savecase.clicked.connect(self.onSaveCaseToELMERStudy)
@@ -89,15 +92,16 @@ class ElmerGui(QDialog):
         self.layout.addWidget(self.caseDimension)
         self.layout.addWidget(self.dimension2)
         self.layout.addWidget(self.dimension3)
-        self.layout.addWidget(self.about)
-        self.layout.addWidget(self.reader)
-        self.layout.addWidget(self.general)
-        self.layout.addWidget(self.eq)
-        self.layout.addWidget(self.mat)
-        self.layout.addWidget(self.bf)
-        self.layout.addWidget(self.bc)
-        self.layout.addWidget(self.ic)
-        self.layout.addWidget(self.meshselection)
+        self.layout.addWidget(self.about_button)
+        self.layout.addWidget(self.reader_button)
+        self.layout.addWidget(self.general_button)
+        self.layout.addWidget(self.solver_button)
+        self.layout.addWidget(self.eq_button)
+        self.layout.addWidget(self.mat_button)
+        self.layout.addWidget(self.bf_button)
+        self.layout.addWidget(self.bc_button)
+        self.layout.addWidget(self.ic_button)
+        self.layout.addWidget(self.mshsel_button)
         #self.layout.addWidget(self.mesh)
         self.layout.addWidget(self.ep)
         self.layout.addWidget(self.parallel)
@@ -109,6 +113,7 @@ class ElmerGui(QDialog):
         self.boundary_conditions = BoundaryConditions({})
         self.materials = Materials({})
         self.body_forces = BodyForces({})
+        self.solver = Solvers({})
         
     @pyqtSlot()
     def onAbout(self):
@@ -175,6 +180,18 @@ class ElmerGui(QDialog):
             #app = QApplication(sys.argv)
             #ex = Materials(data)
             self.materials.exec()
+            #sys.exit(app.exec_())
+        else:
+            # load dictionary into gui
+            pass
+
+    @pyqtSlot()
+    def onSolver(self, data=0):
+        if not data:
+            print('test')
+            # load default data
+            #app = QApplication(sys.argv)
+            self.solver.exec()
             #sys.exit(app.exec_())
         else:
             # load dictionary into gui
