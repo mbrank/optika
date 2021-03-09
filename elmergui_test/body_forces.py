@@ -15,6 +15,7 @@ from PyQt5.QtWidgets import (QInputDialog, QLineEdit, QDialog,
                              QGridLayout, QComboBox)
 from PyQt5.QtGui import QFont
 from base_sif import BaseSIF
+from functools import partial
 
 class BodyForces(BaseSIF):
     """Class that provides the General setup dialog and its functionality"""
@@ -35,8 +36,8 @@ class BodyForces(BaseSIF):
         self.data = data
         if not self.data:
             self.data = {}
-            print('test equation')
-        print('test equation')
+            #print('test equation')
+        #print('test equation')
         self.electrostatics_tab = QWidget()
         self.mesh_update_tab = QWidget()
         self.heat_equation_tab = QWidget()
@@ -51,14 +52,18 @@ class BodyForces(BaseSIF):
                      'Navier-Stokes': self.navier_stokes_tab}
 
         for tab in self.tabs:
-            print('Tabs test equations')
-            print(type(self.tabs[tab]), tab)
             self.solver_tabs.addTab(self.tabs[tab], tab)
 
         self.list_of_elements.itemClicked.connect(self.update_tabs)
+        self.apply_element.clicked.connect(partial(self.on_apply, self.list_of_elements, self.data))
+        self.new_element.clicked.connect(partial(self.on_new, self.list_of_elements, self.data))
+        self.ok_element.clicked.connect(partial(self.on_ok, self.list_of_elements, self.data))
+        self.delete_element.clicked.connect(partial(self.on_delete, self.list_of_elements, self.data))
+
         #self.setLayout(self.layout)
         #self.setGeometry(300, 300, 250, 150)
         self.element_settings.setText('Edit solver settings')
+        self.update_name("Body_Force")
         self.setWindowTitle('Body Forces')
 
     def applyChanges(self):

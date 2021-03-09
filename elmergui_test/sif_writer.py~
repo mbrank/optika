@@ -1,0 +1,17 @@
+class SifWriter(object):
+    def __init__(self, _elmer_gui):
+        """Constructor
+
+        Args:
+        -----
+        ewh: ElmerWindowHandler class
+            current instance of the ElmerWindowHandler class
+            containing all data
+        """
+
+        self._elmer_gui = _elmer_gui
+        #self._solvIds = {}
+        self._eq_data = {}
+        self._sifIds = {}
+        self.errormsg = ''
+        

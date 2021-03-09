@@ -189,26 +189,26 @@ class SifReader():
 
         bc_nr = block[0] # not needed
         block = block[1]
-        print("bc test 1")
+        #print("bc test 1")
         ui = self._elmer_gui.boundary_conditions
-        print("bc test 1.1.1")
+        #print("bc test 1.1.1")
         data = block.split('\n')
-        print("bc test 1.1.2", data)
+        #print("bc test 1.1.2", data)
         bc_id = int(data.pop(0).split(' ')[2])
         # set name
         bc_block_data = {}
-        print("bc test 1.2")
+        #print("bc test 1.2")
         name = data.pop(0).split('=')[1].strip()
         bc_block_data["Name".lower()] = name.replace('"', '')
-        print("bc test 1.3")
+        #print("bc test 1.3")
         ui.list_of_elements.addItem(name.replace('"', ''))
-        print("bc test 2")
+        #print("bc test 2")
         while data:
             if '=' in data[0]:
                 parameter, setting = data.pop(0).split('=')
                 bc_block_data[parameter.strip().lower()] = setting
 
-        print("bc test 3")
+        #print("bc test 3")
         ui.data[bc_id] = bc_block_data
         '''
         # create boundary condition set
@@ -281,15 +281,16 @@ class SifReader():
         while data:
             parameter, setting = data.pop(0).split('=')
             parameter = parameter.strip().lower()
-            print("parameter")
+            #print("parameter")
             setting = setting.strip()
             if 'Active Solvers'.lower() in parameter:
                 setting = setting.split(' ')
-                print("parameter-setting", setting)
+                #print("parameter-setting", setting)
                 if setting and int(parameter[-2]) == len(setting):
                     eq_block_data[parameter] = setting
                 else:
                     print("Error! Numbers of active solvers do not match")
+                    
 
         self._eq_data[eq_id] = eq_block_data  # self._eq_data not needed. Delete it!
 
@@ -482,29 +483,29 @@ class SifReader():
         """
         mat_nr = block[0] # not needed
         block = block[1]
-        print("mat test 1")
+        #print("mat test 1")
         ui = self._elmer_gui.materials
-        print("mat test 1.1.1")
+        #print("mat test 1.1.1")
         data = block.split('\n')
-        print("mat test 1.1.2", data)
+        #print("mat test 1.1.2", data)
         mat_id = int(data.pop(0).split(' ')[1])
         # set name
         mat_block_data = {}
-        print("mat test 1.2")
+        #print("mat test 1.2")
         name = data.pop(0).split('=')[1].strip()
-        mat_block_data["Name"] = name.replace('"', '')
-        print("mat test 1.3")
+        mat_block_data["Name".lower()] = name.replace('"', '')
+        #print("mat test 1.3")
         ui.list_of_elements.addItem(name.replace('"', ''))
-        print("mat test 2")
+        #print("mat test 2")
         while data:
             if '=' in data[0]:
                 parameter, setting = data.pop(0).split('=')
-                mat_block_data[parameter.strip()] = setting
+                mat_block_data[parameter.strip().lower()] = setting
 
-        print("mat test 3")
-        print(ui.data)
-        print(mat_id)
-        print(mat_block_data)
+        #print("mat test 3")
+        #print(ui.data)
+        #print(mat_id)
+        #print(mat_block_data)
         ui.data[mat_id] = mat_block_data
         '''
         data = block.split('\n')
@@ -556,16 +557,16 @@ class SifReader():
             String containing the settings of the given solver
         """
 
-        print('_solvers1')
+        #print('_solvers1')
         solv_nr = block[0]  # not needed, delete it!
-        print('_solvers1.01')
+        #print('_solvers1.01')
         block = block[1]
-        print('_solvers1.02')
+        #print('_solvers1.02')
         ui = self._elmer_gui.solvers
-        print('_solvers1.1')
+        #print('_solvers1.1')
         data = block.split('\n')
         # get equation set
-        print('_solvers1.2')
+        #print('_solvers1.2')
         solv_id = int(data.pop(0).split(' ')[1])
         # set name
         solv_block_data = {}
@@ -574,23 +575,23 @@ class SifReader():
         #ui.list_of_elements.addItem(name.replace('"', ''))
 
         ui.list_of_elements.addItem(str(solv_id).replace('"', ''))
-        print('_solvers1.3')
-        print('Solver test reader start -----------------------')
+        #print('_solvers1.3')
+        #print('Solver test reader start -----------------------')
         # set active solver
         while data:
             parameter, setting = data.pop(0).split('=')
             parameter = parameter.strip()
-            print("parameter")
+            #print("parameter")
             setting = setting.strip()
             solv_block_data[parameter.lower()] = setting
             #if 'Procedure' in parameter:
             #    pass
             #else:
             #    setting = setting.split(' ')
-            #    print("parameter-setting", setting)
+            #    #print("parameter-setting", setting)
             #    if setting and int(parameter[-2]) == len(setting):
             #    else:
-            #        print("Error! Numbers of active solvers do not match")
+            #        #print("Error! Numbers of active solvers do not match")
 
         if 'Name' not in solv_block_data:
             solv_block_data['name'] = str(solv_id)
@@ -606,8 +607,8 @@ class SifReader():
                                        # existing ones and pass them
                                        # to Equations object to update
                                        # its GUI elements
-        print()
-        print('Solver test reader end -----------------------')
+        #print()
+        #print('Solver test reader end -----------------------')
         '''
         data = block.split('\n')
 

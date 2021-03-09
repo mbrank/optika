@@ -36,8 +36,8 @@ class BoundaryConditions(BaseSIF):
         self.data = data
         if not self.data:
             data = {"test":"test1"}
-            print('test equation')
-        print('test equation')
+            #print('test equation')
+        #print('test equation')
         self.general_tab = QWidget()
         self.electrostatics_tab = QWidget()
         self.mesh_update_tab = QWidget()
@@ -54,54 +54,22 @@ class BoundaryConditions(BaseSIF):
                      'Navier-Stokes': self.navier_stokes_tab}
 
         for tab in self.tabs:
-            print('Tabs test equations')
-            print(type(self.tabs[tab]), tab)
+            #print('Tabs test equations')
+            #print(type(self.tabs[tab]), tab)
             self.solver_tabs.addTab(self.tabs[tab], tab)
 
         self.list_of_elements.itemClicked.connect(self.update_tabs)
         self.apply_element.clicked.connect(partial(self.on_apply, self.list_of_elements, self.data))
+        self.new_element.clicked.connect(partial(self.on_new, self.list_of_elements, self.data))
+        self.ok_element.clicked.connect(partial(self.on_ok, self.list_of_elements, self.data))
+        self.delete_element.clicked.connect(partial(self.on_delete, self.list_of_elements, self.data))
+
         #self.setLayout(self.layout)
         #self.setGeometry(300, 300, 250, 150)
         self.element_settings.setText('Edit solver settings')
+        self.update_name("Boundary_Condition")
         self.setWindowTitle('Boundary Conditions')
 
-    #def update_tabs(self, item):
-    #    print('---------------------------------------')
-    #    print("clicked item in list", item.text())
-    #    print("self.data", self.data)
-    #    for bcs in self.data:
-    #        print("Comparison", self.data[bcs]["Name"], item.text(), 'len self.data', self.data)
-    #        if self.data[bcs]["Name"] == item.text():
-    #            bc = self.data[bcs]
-    #            print('test equation show')
-    #            self.lineedit_name_eq.setText(bc["Name"])
-    #            for label in self.dynamic_widgets:
-    #                setting = bc.get(label.text())
-    #                widget = self.dynamic_widgets[label]
-    #                widget_type = widget.metaObject().className()
-    #                if setting == None: # parameter not stored in bc block
-    #                    if widget_type == "QLineEdit":
-    #                        widget.setText("")
-    #                    elif widget_type == "QCheckBox":
-    #                        widget.setChecked(0)
-    #                    elif widget_type == "QComboBox":
-    #                        idx = widget.findText("None")
-    #                        widget.setCurrentIndex(idx)
-    #                else:
-    #                    if widget_type == "QLineEdit":
-    #                        widget.setText(bc[label.text()])
-    #                    elif widget_type == "QCheckBox":
-    #                        if bc[label.text()] == 'Logical True'.lower():
-    #                            widget.setChecked(1)
-    #                        else:
-    #                            widget.setChecked(0)
-    #                    elif widget_type == "QComboBox":
-    #                        try:
-    #                            idx = widget.findText(bc[label.text()])
-    #                            widget.setCurrentIndex(idx)
-    #                        except:
-    #                            print("QCombobox does not contain this parameter!")
-    #            break
 
     def applyChanges(self):
         """Apply button hit"""

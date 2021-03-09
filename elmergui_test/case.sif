@@ -99,6 +99,18 @@ Material 1
   Yasuda Coefficient = 2
 End
 
+Material 2
+  Name = "steel test"
+  Density = 1
+  Heat Capacity = 1.0
+  Heat expansion Coefficient = 1.9e-6
+  Mesh Poisson ratio = 1.285
+  Heat Conductivity = 1.0
+  Sound speed = 1.0
+  Yasuda Coefficient = 1
+End
+
+
 Boundary Condition 1
   Name = "plasmaBC"
   Heat Flux = 75

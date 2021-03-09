@@ -7,6 +7,7 @@ from PyQt5.QtWidgets import (QInputDialog, QLineEdit, QDialog,
 from PyQt5.QtGui import QFont
 from base_sif import BaseSIF, RadioComboGroup
 from functools import partial
+from PyQt5 import QtCore
 
 class Solvers(BaseSIF):
     """Class that provides the General setup dialog and its functionality"""
@@ -27,8 +28,8 @@ class Solvers(BaseSIF):
         self.data = data
         if not self.data:
             self.data = {}
-            print('test equation')
-        print('test equation')
+            #print('test equation')
+        #print('test equation')
         self.ss_options_tab =  QWidget()
         self.ss_options_tabUI()
         self.general_tab = QWidget()
@@ -55,16 +56,23 @@ class Solvers(BaseSIF):
                      'Multigrid': self.multigrid_tab}
 
         for tab in self.tabs:
-            print('Tabs test equations')
-            print(type(self.tabs[tab]), tab)
+            #print('Tabs test equations')
+            #print(type(self.tabs[tab]), tab)
             self.solver_tabs.addTab(self.tabs[tab], tab)
 
         #self.list_of_elements#.hide()
         self.list_of_elements.itemClicked.connect(self.update_tabs)
         self.apply_element.clicked.connect(partial(self.on_apply, self.list_of_elements, self.data))
+        self.new_element.clicked.connect(partial(self.on_new, self.list_of_elements, self.data))
+        self.ok_element.clicked.connect(partial(self.on_ok, self.list_of_elements, self.data))
+        self.delete_element.clicked.connect(partial(self.on_delete, self.list_of_elements, self.data))
+
+        #self.apply_element.clicked.connect(partial(self.on_apply, self.list_of_elements, self.data))
         #self.setLayout(self.layout)
         #self.setGeometry(300, 300, 250, 150)
         self.setWindowTitle('Solvers')
+        #print(self.list_of_elements.findItems("Solver1"))
+        self.update_name("Solver")
         self.element_settings.hide()  # setText("Show Material Library")
 
     def applyChanges(self):
@@ -223,53 +231,13 @@ class Solvers(BaseSIF):
         solv_ls_method_layout = QGridLayout()
         solv_ls_method_box.setLayout(solv_ls_method_layout)
 
-        
-        #solv_ls_method_label = QLabel('Linear System Solver Method')
-        #solv_ls_method_layout.addWidget(solv_ls_method_label, 0, 0)
-        #rd_button_solv_ls_direct = QRadioButton("Direct")
-        #combobox_solv_ls_direct = QComboBox()
-        #combobox_solv_ls_direct.addItems(["Banded", "Umfpack", "MUMPS"])
-        #rd_button_solv_ls_iter = QRadioButton("Iterative")
-        ##rd_button_solv_ls_iter.setChecked(True)
-        #combobox_solv_ls_iter = QComboBox()
-        #combobox_solv_ls_iter.addItems(["BiCGStab", "BiCGStabl", "TFQMR",
-        #                                "GCR", "GCS", "CG", "GMRES"])
-        #rd_button_solv_ls_mltgrd = QRadioButton("Multigrid")
-        ##rd_button_solv_ls_iter.setChecked(True)
-        #combobox_solv_ls_mltgrd = QComboBox()
-        #combobox_solv_ls_mltgrd.addItems(["Jacobi", "CG", "BiCGStab"])
-
-        #layout.addWidget(rd_button_solv_ls_mltgrd, 2, 0)
-        #layout.addWidget(combobox_solv_ls_mltgrd, 2, 1)
         radio_combo = [["Direct", ["Banded", "Umfpack", "MUMPS"]],
                        ["Iterative", ["BiCGStab", "BiCGStabl", "TFQMR",
                                      "GCR", "GCS", "CG", "GMRES"]],
                        ["Multigrid", ["Jacobi", "CG", "BiCGStab"]]]
         rcg_solv_method = RadioComboGroup("Linear System Solver", radio_combo)
         self.dynamic_widgets[rcg_solv_method] = rcg_solv_method
-        solv_ls_method_layout.addWidget(rcg_solv_method, 1, 0)
-        
-        #rd_button_solv_ls_direct = QRadioButton("Direct")
-        #combobox_solv_ls_direct = QComboBox()
-        #combobox_solv_ls_direct.addItems(["Banded", "Umfpack", "MUMPS"])
-        #self.dynamic_widgets[solv_ls_method_label] = {rd_button_solv_ls_direct: combobox_solv_ls_direct}
-        #solv_ls_method_layout.addWidget(rd_button_solv_ls_direct, 1, 0)
-        #solv_ls_method_layout.addWidget(combobox_solv_ls_direct, 1, 1)
-        #rd_button_solv_ls_iter = QRadioButton("Iterative")
-        #rd_button_solv_ls_iter.setChecked(True)
-        #combobox_solv_ls_iter = QComboBox()
-        #combobox_solv_ls_iter.addItems(["BiCGStab", "BiCGStabl", "TFQMR",
-        #                                "GCR", "GCS", "CG", "GMRES"])
-        #self.dynamic_widgets[rd_button_solv_ls_iter] = combobox_solv_ls_iter
-        #solv_ls_method_layout.addWidget(rd_button_solv_ls_iter, 2, 0)
-        #solv_ls_method_layout.addWidget(combobox_solv_ls_iter, 2, 1)
-        #rd_button_solv_ls_mltgrd = QRadioButton("Multigrid")
-        #rd_button_solv_ls_iter.setChecked(True)
-        #combobox_solv_ls_mltgrd = QComboBox()
-        #combobox_solv_ls_mltgrd.addItems(["Jacobi", "CG", "BiCGStab"])
-        #self.dynamic_widgets[rd_button_solv_ls_mltgrd] = combobox_solv_ls_mltgrd
-        #solv_ls_method_layout.addWidget(rd_button_solv_ls_mltgrd, 3, 0)
-        #solv_ls_method_layout.addWidget(combobox_solv_ls_mltgrd, 3, 1)
+        solv_ls_method_layout.addWidget(rcg_solv_method, 1, 0)        
         layout_ls.addWidget(solv_ls_method_box)
 
         # Control
@@ -329,73 +297,6 @@ class Solvers(BaseSIF):
         layout_ls.addWidget(solv_ls_cntr_box)
         layout_ls.addWidget(checkbox_solv_ls_abrt)
         self.lin_system_tab.setLayout(layout_ls)
-        # old
-        #label_solv_cnv_max_iter = QLabel("Max. iterations")
-        #lineedit_solv_cnv_max_iter = QLineEdit('20')
-        #self.dynamic_widgets[label_solv_cnv_max_iter] = lineedit_solv_cnv_max_iter
-        #solv_ls_cntr_layout.addWidget(label_solv_cnv_max_iter, 1, 0)
-        #solv_ls_cntr_layout.addWidget(lineedit_solv_cnv_max_iter, 1, 1)
-        #label_solv_cnv_rel_fac = QLabel("Relaxation factor")
-        #lineedit_solv_cnv_rel_fac = QLineEdit('1')
-        #self.dynamic_widgets[label_solv_cnv_rel_fac] = lineedit_solv_cnv_rel_fac
-        #solv_ls_cntr_layout.addWidget(label_solv_cnv_rel_fac, 2, 0)
-        #solv_ls_cntr_layout.addWidget(lineedit_solv_cnv_rel_fac, 2, 1)
-        #label_solv_ls_meas = QLabel("Measure")
-        #combobox_solv_ls_meas = QComboBox()
-        #combobox_solv_ls_meas.addItem("Norm")
-        #combobox_solv_ls_meas.addItem("Solution")
-        #combobox_solv_ls_meas.addItem("Residual")
-        #combobox_solv_ls_meas.itemText(0)
-        #self.dynamic_widgets[label_solv_ls_meas] = combobox_solv_ls_meas
-        #solv_ls_cntr_layout.addWidget(label_solv_ls_meas, 3, 0)
-        #solv_ls_cntr_layout.addWidget(combobox_solv_ls_meas, 3, 1)
-
-
-        #rd_button_solv_before_sim = QRadioButton("Before simulation")
-        #exec_solver_layout.addWidget(rd_button_solv_before_sim)
-        #rd_button_solv_after_sim = QRadioButton("After simulation")
-        #exec_solver_layout.addWidget(rd_button_solv_after_sim)
-        #label_solv_cnv_tol = QLabel("Convergence tolerance")
-        #lineedit_solv_cnv_tol = QLineEdit('1.0e-7')
-        #self.dynamic_widgets[label_solv_cnv_tol] = lineedit_solv_cnv_tol
-        #solv_ls_gen_layout.addWidget(label_solv_cnv_tol, 0, 0)
-        #solv_ls_gen_layout.addWidget(lineedit_solv_cnv_tol, 0, 1)
-        #label_solv_cnv_max_iter = QLabel("Max. iterations")
-        #lineedit_solv_cnv_max_iter = QLineEdit('20')
-        #self.dynamic_widgets[label_solv_cnv_max_iter] = lineedit_solv_cnv_max_iter
-        #solv_ls_gen_layout.addWidget(label_solv_cnv_max_iter, 1, 0)
-        #solv_ls_gen_layout.addWidget(lineedit_solv_cnv_max_iter, 1, 1)
-        #label_solv_cnv_rel_fac = QLabel("Relaxation factor")
-        #lineedit_solv_cnv_rel_fac = QLineEdit('1')
-        #self.dynamic_widgets[label_solv_cnv_rel_fac] = lineedit_solv_cnv_rel_fac
-        #solv_ls_gen_layout.addWidget(label_solv_cnv_rel_fac, 2, 0)
-        #solv_ls_gen_layout.addWidget(lineedit_solv_cnv_rel_fac, 2, 1)
-        #label_solv_ls_meas = QLabel("Measure")
-        #combobox_solv_ls_meas = QComboBox()
-        #combobox_solv_ls_meas.addItem("Norm")
-        #combobox_solv_ls_meas.addItem("Solution")
-        #combobox_solv_ls_meas.addItem("Residual")
-        #combobox_solv_ls_meas.itemText(0)
-        #self.dynamic_widgets[label_solv_ls_meas] = combobox_solv_ls_meas
-        #solv_ls_gen_layout.addWidget(label_solv_ls_meas, 3, 0)
-        #solv_ls_gen_layout.addWidget(combobox_solv_ls_meas, 3, 1)
-        #layout_ls.addWidget(solv_ls_gen_box)
-        #self.lin_system_tab.setLayout(layout_ls)
-        # Execute solver
-        #solv_ls_gen_box = QGroupBox('Newton')
-        #solv_ls_gen_layout = QGridLayout()
-        #solv_ls_gen_box.setLayout(solv_ls_gen_layout)
-        #label_solv_ls_n_ai = QLabel("After iterations")
-        #lineedit_solv_ls_n_ai = QLineEdit('3')
-        #self.dynamic_widgets[label_solv_ls_n_ai] = lineedit_solv_ls_n_ai
-        #solv_ls_gen_layout.addWidget(label_solv_cnv_tol, 0, 0)
-        #solv_ls_gen_layout.addWidget(lineedit_solv_cnv_tol, 0, 1)
-        #label_solv_cnv_max_iter = QLabel("After tolerance")
-        #lineedit_solv_cnv_max_iter = QLineEdit('1.0e-3')
-        #self.dynamic_widgets[label_solv_cnv_max_iter] = lineedit_solv_cnv_max_iter
-        #solv_ls_gen_layout.addWidget(label_solv_cnv_max_iter, 1, 0)
-        #solv_ls_gen_layout.addWidget(lineedit_solv_cnv_max_iter, 1, 1)
-        
 
     def parallel_tabUI(self):
         pass
@@ -470,25 +371,6 @@ class Solvers(BaseSIF):
         # Execute solver
         exec_solver_box = QGroupBox('Execute solver')
         exec_solver_box_layout = QVBoxLayout()
-        #exec_solver_layout = QGridLayout()
-        #exec_solver_box.setLayout(exec_solver_layout)
-        #layout_general.addWidget(exec_solver_box)
-        ##rd_button_solv_exec = QRadioButton("Execute solver")
-        ##exec_solver_layout.addWidget(rd_button_solv_exec)
-        #rd_button_solv_always = QRadioButton("Always")
-        #rd_button_solv_always.setChecked(True)
-        #exec_solver_layout.addWidget(rd_button_solv_always)
-        #rd_button_solv_before_sim = QRadioButton("Before simulation")
-        #exec_solver_layout.addWidget(rd_button_solv_before_sim)
-        #rd_button_solv_after_sim = QRadioButton("After simulation")
-        #exec_solver_layout.addWidget(rd_button_solv_after_sim)
-        #rd_button_solv_bef_timestep = QRadioButton("Before timestep")
-        #exec_solver_layout.addWidget(rd_button_solv_bef_timestep)
-        #rd_button_solv_after_timestep = QRadioButton("After timesep")
-        #exec_solver_layout.addWidget(rd_button_solv_after_timestep)
-        #rd_button_solv_after_all = QRadioButton("After all")
-        #exec_solver_layout.addWidget(rd_button_solv_after_all)
-        #rd_button_solv_never = QRadioButton("Never")
         solv_exec_solver_options = [["Always", None],
                                     ["Before Simulation", None],
                                     ["After Simulation", None],
@@ -524,45 +406,4 @@ class Solvers(BaseSIF):
         self.dynamic_widgets[checkbox_solv_opt_bndw] = checkbox_solv_opt_bndw
         num_tech_solver_layout.addWidget(checkbox_solv_opt_bndw)
 
-        '''
-        layout_general.addWidget(rd_button_solv_exec, 0, 0)
-        label_properties_set = QLabel("Properties")
-        label_properties_set.setFont(title_font)
-        label_density = QLabel("Density")
-        lineedit_density = QLineEdit()
-        self.dynamic_widgets[label_density] = lineedit_density
-        layout_general.addWidget(label_properties_set, 0, 0)
-        layout_general.addWidget(label_density, 1, 0)
-        layout_general.addWidget(lineedit_density, 1, 1)
-
-        label_heat_capacity = QLabel("Heat Capacity")
-        lineedit_heat_capacity = QLineEdit()
-        self.dynamic_widgets[label_heat_capacity] = lineedit_heat_capacity
-        layout_general.addWidget(label_heat_capacity, 2, 0)
-        layout_general.addWidget(lineedit_heat_capacity, 2, 1)
-
-        label_shr = QLabel("Specific Heat Ratio")
-        lineedit_shr = QLineEdit()
-        self.dynamic_widgets[label_shr] = lineedit_shr
-        layout_general.addWidget(label_shr, 3, 0)
-        layout_general.addWidget(lineedit_shr, 3, 1)
-
-        label_ref_temp = QLabel("Reference Temperature")
-        lineedit_ref_temp = QLineEdit()
-        self.dynamic_widgets[label_ref_temp] = lineedit_ref_temp
-        layout_general.addWidget(label_ref_temp, 4, 0)
-        layout_general.addWidget(lineedit_ref_temp, 4, 1)
-
-        label_ref_pressure = QLabel("Reference Pressure")
-        lineedit_ref_pressure = QLineEdit()
-        self.dynamic_widgets[label_ref_pressure] = lineedit_ref_pressure
-        layout_general.addWidget(label_ref_pressure, 5, 0)
-        layout_general.addWidget(lineedit_ref_pressure, 5, 1)
-
-        label_hec = QLabel("Heat Expansion Coefficient")
-        lineedit_hec = QLineEdit()
-        self.dynamic_widgets[label_hec] = lineedit_hec497
-        layout_general.addWidget(label_hec, 6, 0)
-        layout_general.addWidget(lineedit_hec, 6, 1)
-        '''
         self.general_tab.setLayout(layout_general)     

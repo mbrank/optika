@@ -6,6 +6,7 @@ from PyQt5.QtWidgets import (QInputDialog, QLineEdit, QDialog,
                              QGridLayout, QComboBox)
 from PyQt5.QtGui import QFont
 from base_sif import BaseSIF
+from functools import partial
 
 class Materials(BaseSIF):
     """Class that provides the General setup dialog and its functionality"""
@@ -49,9 +50,14 @@ class Materials(BaseSIF):
             self.solver_tabs.addTab(self.tabs[tab], tab)
 
         self.list_of_elements.itemClicked.connect(self.update_tabs)
+        self.apply_element.clicked.connect(partial(self.on_apply, self.list_of_elements, self.data))
+        self.new_element.clicked.connect(partial(self.on_new, self.list_of_elements, self.data))
+        self.ok_element.clicked.connect(partial(self.on_ok, self.list_of_elements, self.data))
+        self.delete_element.clicked.connect(partial(self.on_delete, self.list_of_elements, self.data))
         #self.setLayout(self.layout)
         #self.setGeometry(300, 300, 250, 150)
         self.setWindowTitle('Materials')
+        self.update_name("Material")
         self.element_settings.setText("Show Material Library")
 
     def applyChanges(self):
