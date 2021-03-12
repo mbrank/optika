@@ -30,6 +30,7 @@ class Solvers(BaseSIF):
             self.data = {}
             #print('test equation')
         #print('test equation')
+        self.element_name = 'Solver'
         self.ss_options_tab =  QWidget()
         self.ss_options_tabUI()
         self.general_tab = QWidget()
@@ -61,7 +62,7 @@ class Solvers(BaseSIF):
             self.solver_tabs.addTab(self.tabs[tab], tab)
 
         #self.list_of_elements#.hide()
-        self.list_of_elements.itemClicked.connect(self.update_tabs)
+        self.list_of_elements.itemClicked.connect(self.dict_to_widgets)
         self.apply_element.clicked.connect(partial(self.on_apply, self.list_of_elements, self.data))
         self.new_element.clicked.connect(partial(self.on_new, self.list_of_elements, self.data))
         self.ok_element.clicked.connect(partial(self.on_ok, self.list_of_elements, self.data))
@@ -70,9 +71,12 @@ class Solvers(BaseSIF):
         #self.apply_element.clicked.connect(partial(self.on_apply, self.list_of_elements, self.data))
         #self.setLayout(self.layout)
         #self.setGeometry(300, 300, 250, 150)
+        items = []
+        for i in range(self.list_of_elements.count()):
+            items.append(self.list_of_elements.item(i))
+        self.update_element_name(items, self.element_name)
         self.setWindowTitle('Solvers')
         #print(self.list_of_elements.findItems("Solver1"))
-        self.update_name("Solver")
         self.element_settings.hide()  # setText("Show Material Library")
 
     def applyChanges(self):

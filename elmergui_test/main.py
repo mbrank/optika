@@ -191,7 +191,7 @@ class ElmerGui(QDialog):
             print('test')
             # load default data
             #app = QApplication(sys.argv)
-            self.solvers.update_tabs()
+            self.solvers.dict_to_widgets()
             self.solvers.exec()
             #sys.exit(app.exec_())
         else:

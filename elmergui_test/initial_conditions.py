@@ -46,7 +46,7 @@ class InitialConditions(BaseSIF):
             print(type(self.tabs[tab]), tab)
             self.solver_tabs.addTab(self.tabs[tab], tab)
 
-        self.list_of_elements.itemClicked.connect(self.update_tabs)
+        self.list_of_elements.itemClicked.connect(self.dict_to_widgets)
         #self.setLayout(self.layout)
         #self.setGeometry(300, 300, 250, 150)
         self.setWindowTitle('Initial Conditions')

@@ -38,6 +38,7 @@ class BodyForces(BaseSIF):
             self.data = {}
             #print('test equation')
         #print('test equation')
+        self.element_name = 'Body_Force'
         self.electrostatics_tab = QWidget()
         self.mesh_update_tab = QWidget()
         self.heat_equation_tab = QWidget()
@@ -54,7 +55,7 @@ class BodyForces(BaseSIF):
         for tab in self.tabs:
             self.solver_tabs.addTab(self.tabs[tab], tab)
 
-        self.list_of_elements.itemClicked.connect(self.update_tabs)
+        self.list_of_elements.itemClicked.connect(self.dict_to_widgets)
         self.apply_element.clicked.connect(partial(self.on_apply, self.list_of_elements, self.data))
         self.new_element.clicked.connect(partial(self.on_new, self.list_of_elements, self.data))
         self.ok_element.clicked.connect(partial(self.on_ok, self.list_of_elements, self.data))
@@ -62,8 +63,11 @@ class BodyForces(BaseSIF):
 
         #self.setLayout(self.layout)
         #self.setGeometry(300, 300, 250, 150)
+        items = []
+        for i in range(self.list_of_elements.count()):
+            items.append(self.list_of_elements.item(i))
+        self.update_element_name(items, self.element_name)
         self.element_settings.setText('Edit solver settings')
-        self.update_name("Body_Force")
         self.setWindowTitle('Body Forces')
 
     def applyChanges(self):

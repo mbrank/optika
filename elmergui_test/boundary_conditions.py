@@ -38,6 +38,7 @@ class BoundaryConditions(BaseSIF):
             data = {"test":"test1"}
             #print('test equation')
         #print('test equation')
+        self.element_name = 'Boundary_Condition'
         self.general_tab = QWidget()
         self.electrostatics_tab = QWidget()
         self.mesh_update_tab = QWidget()
@@ -58,7 +59,7 @@ class BoundaryConditions(BaseSIF):
             #print(type(self.tabs[tab]), tab)
             self.solver_tabs.addTab(self.tabs[tab], tab)
 
-        self.list_of_elements.itemClicked.connect(self.update_tabs)
+        self.list_of_elements.itemClicked.connect(self.dict_to_widgets)
         self.apply_element.clicked.connect(partial(self.on_apply, self.list_of_elements, self.data))
         self.new_element.clicked.connect(partial(self.on_new, self.list_of_elements, self.data))
         self.ok_element.clicked.connect(partial(self.on_ok, self.list_of_elements, self.data))
@@ -66,15 +67,18 @@ class BoundaryConditions(BaseSIF):
 
         #self.setLayout(self.layout)
         #self.setGeometry(300, 300, 250, 150)
+        items = []
+        for i in range(self.list_of_elements.count()):
+            items.append(self.list_of_elements.item(i))
+        self.update_element_name(items, self.element_name)
         self.element_settings.setText('Edit solver settings')
-        self.update_name("Boundary_Condition")
         self.setWindowTitle('Boundary Conditions')
 
 
-    def applyChanges(self):
-        """Apply button hit"""
-        # Hide window, but keep contents in memory
-        self.hide()
+    #def applyChanges(self):
+    #    """Apply button hit"""
+    #    # Hide window, but keep contents in memory
+    #    self.hide()
 
 
     def heat_equation_tabUI(self):

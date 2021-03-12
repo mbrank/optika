@@ -90,7 +90,7 @@ End
 
 Material 1
   Name = "Steel (stainless - generic)"
-  Density = en milijon
+  Density = 7435
   Heat Capacity = 460.0
   Heat expansion Coefficient = 14.9e-6
   Mesh Poisson ratio = 0.285
@@ -100,7 +100,7 @@ Material 1
 End
 
 Material 2
-  Name = "steel test"
+  Name = "steel test new"
   Density = 1
   Heat Capacity = 1.0
   Heat expansion Coefficient = 1.9e-6

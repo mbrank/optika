@@ -29,6 +29,7 @@ class Materials(BaseSIF):
             self.data = {}
             print('test equation')
         print('test equation')
+        self.element_name = 'Material'
         self.general_tab = QWidget()
         self.general_tabUI()
         self.electrostatics_tab = QWidget()
@@ -49,7 +50,7 @@ class Materials(BaseSIF):
             print(type(self.tabs[tab]), tab)
             self.solver_tabs.addTab(self.tabs[tab], tab)
 
-        self.list_of_elements.itemClicked.connect(self.update_tabs)
+        self.list_of_elements.itemClicked.connect(self.dict_to_widgets)
         self.apply_element.clicked.connect(partial(self.on_apply, self.list_of_elements, self.data))
         self.new_element.clicked.connect(partial(self.on_new, self.list_of_elements, self.data))
         self.ok_element.clicked.connect(partial(self.on_ok, self.list_of_elements, self.data))
@@ -57,7 +58,11 @@ class Materials(BaseSIF):
         #self.setLayout(self.layout)
         #self.setGeometry(300, 300, 250, 150)
         self.setWindowTitle('Materials')
-        self.update_name("Material")
+        
+        items = []
+        for i in range(self.list_of_elements.count()):
+            items.append(self.list_of_elements.item(i))
+        self.update_element_name(items, self.element_name)
         self.element_settings.setText("Show Material Library")
 
     def applyChanges(self):

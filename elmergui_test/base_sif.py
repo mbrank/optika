@@ -44,6 +44,7 @@ class BaseSIF(QDialog):
         self.tabs = {'tab1': self.tab1}
         if not self.data:
             self.data = {}
+        self.element_name = "BaseSIF" # overwritten by child class
         self.layout = QHBoxLayout()
         self.list_of_elements = QListWidget()
         self.layout.addWidget(self.list_of_elements)
@@ -69,6 +70,7 @@ class BaseSIF(QDialog):
         self.vertical_layout.addLayout(self.horizontal_layout_name)
         self.vertical_layout.addLayout(self.horizontal_layout_buttons)
         self.layout.addLayout(self.vertical_layout)
+        self.dict_to_widgets
         self.setLayout(self.layout)
         self.setGeometry(300, 300, 250, 150)
 
@@ -84,15 +86,57 @@ class BaseSIF(QDialog):
             list_of_elements.takeItem(list_of_elements.row(item))
 
     def on_ok(self, list_of_elements, data):
+        #self.on_apply(list_of_elements, data)
         pass
+
+    def on_new(self, list_of_elements, data):
+        # update name in QListWidget
+        new_name = self.lineedit_name_eq.text()
+        #sel_items = self.list_of_elements.currentItem()
+
+        items = [list_of_elements.item(i) for i in range(list_of_elements.count())]
+        print("items len", len(items))
+        new_name = self.update_element_name(items, new_name)
+        if not new_name:
+            return None
+        # Get selected block in dictionary based on selected item in QListWidget
+        len_data = len(data) # get current number of elements in data
+        data[len_data+1] = {}
+        data[len_data+1]['name'] = new_name
+        self.list_of_elements.addItem(new_name)
+        current_item = self.list_of_elements.findItems(new_name, QtCore.Qt.MatchExactly)[0]
+        print("current_item", current_item)
+        for i in data:
+            if data[i]['name'] == current_item.text():
+                data[i]['name'] = new_name # update new name in dictionary
+                #sel_items.setText(new_name) # update new name in QListWidget
+                self.widgets_to_dict(self.dynamic_widgets, data, i)
+                self.data = data
+                self.dict_to_widgets(current_item)
+                current_item.setSelected(True)
+                self.list_of_elements.setCurrentItem(current_item)
+                print("current_item.setSelected(True)", current_item.text())
+                print(self.list_of_elements.selectedItems())
+                sel_items = self.list_of_elements.currentItem()
+                print('sel_items.text()', sel_items.text())
+                return None
 
     def on_apply(self, list_of_elements, data):
         # update name in QListWidget
         new_name = self.lineedit_name_eq.text()
         sel_items = self.list_of_elements.currentItem()
 
-        if not self.update_name(new_name):
+        # Create list of QListWidget elements (except the selected
+        # one) to check if new name is allowed
+        items = []
+        for i in range(self.list_of_elements.count()):
+            if not self.list_of_elements.item(i).text() == sel_items.text():
+                items.append(self.list_of_elements.item(i))
+
+        # Check if new name is possible
+        if not self.update_element_name(items, new_name):
             return None
+
         # Get selected block in dictionary based on selected item in QListWidget
         for i in data:
             if data[i]['name'] == list_of_elements.currentItem().text():
@@ -104,10 +148,10 @@ class BaseSIF(QDialog):
 
                 # set the new data and update tabs based on new data
                 self.data = data
-                self.update_tabs(list_of_elements.currentItem())
+                self.dict_to_widgets(list_of_elements.currentItem())
                 break
 
-    def update_tabs(self, item=None):
+    def dict_to_widgets(self, item=None):
         """Virtual method of class BaseSIF. Only used in children of
         BaseSIF. It compares dictionaries self.data and self.dynamic_widgets
         and updates tabs according to parameters in self.data
@@ -165,20 +209,11 @@ class BaseSIF(QDialog):
                         widget.setSelected(setting, combo_text)
             break
 
-    def update_name(self, new_name=None):
-        sel_item = self.list_of_elements.currentItem()
-        items = []
-        for i in range(self.list_of_elements.count()):
-            if self.list_of_elements.item(i).text() == sel_item.text():
-                pass
-            else:
-                items.append(self.list_of_elements.item(i))
-        #exists = self.list_of_elements.findItems(update_name,
-        #                                         QtCore.Qt.MatchRegExp)
-        if self.list_of_elements.count() is 0:
-            self.lineedit_name_eq.setText(new_name+"_1")
+    def update_element_name(self, items, new_name):
+        """Check if new element name already exists in QListWidget.
 
-        if new_name:
+        """
+        if new_name != '':
             for i in items:
                 if i.text() == new_name:
                     #print("Name already exists")
@@ -189,53 +224,19 @@ class BaseSIF(QDialog):
                     msgBox.setStandardButtons(QMessageBox.Ok)
                     msgBox.exec()
                     return False
+            return new_name
         else:
-            for i in range(self.list_of_elements.count()):
-                update_name = new_name+"_"+str(i)
-                print("update_name", update_name)
+            if self.list_of_elements.count() == 0:
+                new_name = self.element_name+"_"+str(0)
+                return new_name
+
+            for i in range(0, self.list_of_elements.count()+1):
+                new_name = self.element_name+"_"+str(i)
                 exists = self.list_of_elements.findItems(new_name,
-                                                    QtCore.Qt.MatchExactly)
-                if len(exists) is 0:
-                    self.lineedit_name_eq.setText(update_name)
-                    return True
-
-    def check_name(self, list_of_elements, new_name):
-        element = list_of_elements.findItems(new_name,
-                                             QtCore.Qt.MatchExactly)
-        print("element", element)
-        if len(element) is not 0:
-            #print("Exists")
-            msgBox = QMessageBox()
-            msgBox.setIcon(QMessageBox.Information)
-            msgBox.setText("Element with this name already exists.")
-            msgBox.setWindowTitle("QMessageBox Example")
-            msgBox.setStandardButtons(QMessageBox.Ok)
-            msgBox.exec()
-            #msgBox.buttonClicked.connect(msgButtonClick)
+                                                         QtCore.Qt.MatchExactly)
+                if len(exists) == 0:
+                    return new_name
             return False
-        return True
-
-    def on_new(self, list_of_elements, data):
-        # update name in QListWidget
-        new_name = self.lineedit_name_eq.text()
-        #sel_items = self.list_of_elements.currentItem()
-        if not self.check_name(list_of_elements, new_name):
-            return None
-        # Get selected block in dictionary based on selected item in QListWidget
-        len_data = len(data) # get current number of elements in data
-        data[len_data+1] = {}
-        data[len_data+1]['name'] = new_name
-        self.list_of_elements.addItem(new_name)
-        current_item = self.list_of_elements.findItems(new_name, QtCore.Qt.MatchExactly)[0]
-        print("current_item", current_item)
-        for i in data:
-            if data[i]['name'] == current_item.text():
-                data[i]['name'] = new_name # update new name in dictionary
-                #sel_items.setText(new_name) # update new name in QListWidget
-                self.widgets_to_dict(self.dynamic_widgets, data, i)
-                self.data = data
-                self.update_tabs(current_item)
-                return None
 
     def widgets_to_dict(self, dynamic_widgets, data, i):
         self.dynamic_widgets = dynamic_widgets
@@ -277,7 +278,7 @@ class BaseSIF(QDialog):
 
                 # set the new data and update tabs based on new data
                 #self.data = data
-                #self.update_tabs(list_of_elements.currentItem())
+                #self.dict_to_widgets(list_of_elements.currentItem())
                 #break
         pass
 

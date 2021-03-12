@@ -38,6 +38,7 @@ class Equations(BaseSIF):
             data = {}
             #print('test equation')
         #print('test equation')
+        self.element_name = 'Equation'
         self.electrostatics_tab = QWidget()
         self.mesh_update_tab = QWidget()
         self.heat_equation_tab = QWidget()
@@ -60,18 +61,23 @@ class Equations(BaseSIF):
         #self.setLayout(self.layout)
         #self.setGeometry(300, 300, 250, 150)
 
-        self.list_of_elements.itemClicked.connect(self.update_tabs)
+        self.list_of_elements.itemClicked.connect(self.dict_to_widgets)
         self.apply_element.clicked.connect(partial(self.on_apply, self.list_of_elements, self.data))
         self.new_element.clicked.connect(partial(self.on_new, self.list_of_elements, self.data))
         self.ok_element.clicked.connect(partial(self.on_ok, self.list_of_elements, self.data))
         self.delete_element.clicked.connect(partial(self.on_delete, self.list_of_elements, self.data))
 
+        items = []
+        for i in range(self.list_of_elements.count()):
+            items.append(self.list_of_elements.item(i))
+        self.update_element_name(items, self.element_name)
+ 
         self.element_settings.setText('Edit solver settings')
-        self.update_name("Equation")
+        self.update_element_name(items, "Equation")
         self.setWindowTitle('Equations')
         #self.exec()
 
-    def update_tabs(self, item):
+    def dict_to_widgets(self, item):
         #print("clicked item in list", item.text())
         #print("self.data", self.data)
         for eqs in self.data:
