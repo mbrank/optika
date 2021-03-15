@@ -8,11 +8,12 @@ from PyQt5.QtGui import QFont
 from base_sif import BaseSIF, RadioComboGroup
 from functools import partial
 from PyQt5 import QtCore
+from constants import DEFAULT_SOLVER
 
 class Solvers(BaseSIF):
     """Class that provides the General setup dialog and its functionality"""
 
-    def __init__(self, data, parent=None):
+    def __init__(self, data=None, parent=None):
         """Constructor.
 
         Args:
@@ -27,7 +28,7 @@ class Solvers(BaseSIF):
         #self.acceptButton.clicked.connect(self.applyChanges)
         self.data = data
         if not self.data:
-            self.data = {}
+            self.data = {1: DEFAULT_SOLVER}
             #print('test equation')
         #print('test equation')
         self.element_name = 'Solver'

@@ -13,11 +13,12 @@ from PyQt5.QtWidgets import (QInputDialog, QLineEdit, QDialog,
                              QPushButton, QVBoxLayout, QMessageBox,
                              QFileDialog, QStackedWidget, QGroupBox,
                              QGridLayout, QComboBox)
+from constants import DEFAULT_GENERAL_SETTINGS
 
 class GeneralSetup(QDialog):
     """Class that provides the General setup dialog and its functionality"""
 
-    def __init__(self, data, parent=None):
+    def __init__(self, data=None, parent=None):
         """Constructor.
 
         Args:
@@ -32,8 +33,7 @@ class GeneralSetup(QDialog):
         #self.acceptButton.clicked.connect(self.applyChanges)
         self.data = data
         if not self.data:
-            data = {}
-            #print('test')
+            data = DEFAULT_GENERAL_SETTINGS
 
         self.dynamic_widgets = {} # dictionary that contains qwidgets
                                   # of different blocks,

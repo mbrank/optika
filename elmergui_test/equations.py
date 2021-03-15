@@ -34,6 +34,7 @@ class Equations(BaseSIF):
         #self.simulationFreeTextEdit.setText("Use Mesh Names = Logical True")
         #self.acceptButton.clicked.connect(self.applyChanges)
         self.data = data
+        print('eq data', self.data)
         if not self.data:
             data = {}
             #print('test equation')
@@ -72,21 +73,32 @@ class Equations(BaseSIF):
             items.append(self.list_of_elements.item(i))
         self.update_element_name(items, self.element_name)
  
-        self.element_settings.setText('Edit solver settings')
+        self.element_settings.setText('Create new solve')
+        self.element_settings.hide()
+
+        self.check_new_solver = QCheckBox("Create new solver")
+        self.check_existing_solver = QCheckBox("Add existing solver")
+        self.combobox_existing_solver = QComboBox()
+        self.combobox_existing_solver.addItems(["1", "2", "3"])
+        self.solver_hlayout = QHBoxLayout()
+        self.solver_hlayout.addWidget(self.check_existing_solver)
+        self.solver_hlayout.addWidget(self.combobox_existing_solver)
+        self.vertical_layout.addWidget(self.check_new_solver)
+        self.vertical_layout.addLayout(self.solver_hlayout)
         self.update_element_name(items, "Equation")
         self.setWindowTitle('Equations')
         #self.exec()
 
-    def dict_to_widgets(self, item):
-        #print("clicked item in list", item.text())
-        #print("self.data", self.data)
-        for eqs in self.data:
-            #print("Comparison", self.data[eqs]["Name"], item.text())
-            if self.data[eqs]["Name"] == item.text():
-                eq = self.data[eqs]
-                #print('test equation show')
-                self.lineedit_name_eq.setText(eq["Name"])
-                break
+    #def dict_to_widgets(self, item):
+    #    #print("clicked item in list", item.text())
+    #    #print("self.data", self.data)
+    #    for eqs in self.data:
+    #        #print("Comparison", self.data[eqs]["Name"], item.text())
+    #        if self.data[eqs]["Name".lower()] == item.text():
+    #            eq = self.data[eqs]
+    #            #print('test equation show')
+    #            self.lineedit_name_eq.setText(eq["Name"])
+    #            break
 
         #self.checkbox_active = QCheckBox()
         #self.lineedit_priority = QLineEdit()
@@ -109,17 +121,22 @@ class Equations(BaseSIF):
         label_active_set.setFont(title_font)
         label_active = QLabel("Active")
         self.checkbox_active = QCheckBox()
+        self.label_active_solvers = QLabel("Active solvers")
+        self.lineedit_active_solvers = QLineEdit()
+
         layout_heat_equation_tab.addWidget(label_active_set, 0, 0)
         layout_heat_equation_tab.addWidget(label_active, 1, 0)
         layout_heat_equation_tab.addWidget(self.checkbox_active, 1, 1)
+        layout_heat_equation_tab.addWidget(self.label_active_solvers, 2, 0)
+        layout_heat_equation_tab.addWidget(self.lineedit_active_solvers, 2, 1)
 
         label_priority_set = QLabel("Give Execution priority")
         label_priority_set.setFont(title_font)
         label_priority = QLabel("Priority")
         self.lineedit_priority = QLineEdit()
-        layout_heat_equation_tab.addWidget(label_priority_set, 2, 0)
-        layout_heat_equation_tab.addWidget(label_priority, 3, 0)
-        layout_heat_equation_tab.addWidget(self.lineedit_priority, 3, 1)
+        layout_heat_equation_tab.addWidget(label_priority_set, 3, 0)
+        layout_heat_equation_tab.addWidget(label_priority, 4, 0)
+        layout_heat_equation_tab.addWidget(self.lineedit_priority, 4, 1)
 
         label_options_set = QLabel("Options")
         label_options_set.setFont(title_font)
@@ -129,9 +146,9 @@ class Equations(BaseSIF):
         self.combobox_options.addItem("Spatial 1")
         self.combobox_options.addItem("Spatial 2")
         self.combobox_options.addItem("Temporal")
-        layout_heat_equation_tab.addWidget(label_options_set, 4, 0)
-        layout_heat_equation_tab.addWidget(label_options, 5, 0)
-        layout_heat_equation_tab.addWidget(self.combobox_options, 5, 1)
+        layout_heat_equation_tab.addWidget(label_options_set, 5, 0)
+        layout_heat_equation_tab.addWidget(label_options, 6, 0)
+        layout_heat_equation_tab.addWidget(self.combobox_options, 6, 1)
 
         label_convection_set = QLabel("Convection")
         label_convection_set.setFont(title_font)
@@ -140,8 +157,8 @@ class Equations(BaseSIF):
         self.combobox_convection.addItem("None")
         self.combobox_convection.addItem("Constant")
         self.combobox_convection.addItem("Computed")
-        layout_heat_equation_tab.addWidget(label_convection_set, 6, 0)
-        layout_heat_equation_tab.addWidget(label_convection, 7, 0)
-        layout_heat_equation_tab.addWidget(self.combobox_convection, 7, 1)
+        layout_heat_equation_tab.addWidget(label_convection_set, 7, 0)
+        layout_heat_equation_tab.addWidget(label_convection, 8, 0)
+        layout_heat_equation_tab.addWidget(self.combobox_convection, 8, 1)
 
         self.heat_equation_tab.setLayout(layout_heat_equation_tab)

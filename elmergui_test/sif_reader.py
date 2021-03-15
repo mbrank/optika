@@ -164,11 +164,11 @@ class SifReader():
             if 'Active Solvers'.lower() in parameter:
                 setting = setting.split(' ')
                 if setting and int(parameter[-2]) == len(setting):
-                    eq_block_data[parameter] = setting
+                    eq_block_data[parameter[:-3]] = setting
                 else:
                     print("Error! Numbers of active solvers do not match")
 
-        self._eq_data[eq_id] = eq_block_data  # self._eq_data not needed. Delete it!
+        #self._eq_data[eq_id] = eq_block_data  # self._eq_data not needed. Delete it!
 
         # ui.data = self._eq_data # Delete all previous equations
         ui.data[eq_id] = eq_block_data # Instead of creating

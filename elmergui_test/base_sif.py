@@ -107,6 +107,7 @@ class BaseSIF(QDialog):
         current_item = self.list_of_elements.findItems(new_name, QtCore.Qt.MatchExactly)[0]
         print("current_item", current_item)
         for i in data:
+            print('data', data)
             if data[i]['name'] == current_item.text():
                 data[i]['name'] = new_name # update new name in dictionary
                 #sel_items.setText(new_name) # update new name in QListWidget
@@ -160,14 +161,21 @@ class BaseSIF(QDialog):
         """
 
         for bcs in self.data:
+            bc = self.data[bcs]
+            bc =  {k.lower(): v for k, v in bc.items()}
             if item:
-                if self.data[bcs]["Name".lower()] == item.text():
-                    bc = self.data[bcs]
+                # set all keys to lower
+                print("self.data[bcs]:", self.data[bcs])
+                if bc["Name".lower()] == item.text():
+                    #bc = self.data[bcs]
                     self.lineedit_name_eq.setText(bc["Name".lower()])
                 else:
                     continue
             else:
-                bc = self.data[bcs]
+                #bc = self.data[bcs]
+                ## set all keys to lower
+                #bc =  {k.lower(): v for k, v in bc.items()}
+                pass
             for label in self.dynamic_widgets:
                 setting = bc.get(label.text().lower())
                 widget = self.dynamic_widgets[label]

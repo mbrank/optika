@@ -114,7 +114,7 @@ class ElmerGui(QDialog):
         self.body_forces = BodyForces({})
         self.solvers = Solvers({})
         self.equations = Equations({})
-        #self.equations.data['solver id'] = self.solvers.data
+        self.equations.data['solver id'] = self.solvers.data
         
     @pyqtSlot()
     def onAbout(self):
