@@ -94,8 +94,8 @@ class SifReader():
                 solvers_blocks.append(block)
 
         # apply general settings
-        for block in general_blocks:
-            self._general(block)
+        #for block in general_blocks:
+        #    self._general(block)
 
         for block in enumerate(equations_blocks):
             self._equation(block)
@@ -125,16 +125,17 @@ class SifReader():
         bc_id = int(data.pop(0).split(' ')[2])
         # set name
         bc_block_data = {}
-        name = data.pop(0).split('=')[1].strip()
-        bc_block_data["Name".lower()] = name.replace('"', '')
+        name = data.pop(0).split('=')[1].strip().replace('"', '')
+        self.check_name_in_qlist(ui, name)
+        bc_block_data["Name".lower()] = name
 
-        ui.list_of_elements.addItem(name.replace('"', ''))
+        #ui.list_of_elements.addItem(name.replace('"', ''))
         while data:
             if '=' in data[0]:
                 parameter, setting = data.pop(0).split('=')
                 bc_block_data[parameter.strip().lower()] = setting
 
-        ui.data[bc_id] = bc_block_data
+        ui.data[name] = bc_block_data
         print("ui.data", ui.data)
 
     def _equation(self, block):
@@ -153,25 +154,29 @@ class SifReader():
         eq_id = int(data.pop(0).split(' ')[1])
         # set name
         eq_block_data = {}
-        name = data.pop(0).split('=')[1].strip()
-        eq_block_data["Name"] = name.replace('"', '')
-        ui.list_of_elements.addItem(name.replace('"', ''))
+        name = data.pop(0).split('=')[1].strip().replace('"', '')
+        self.check_name_in_qlist(ui, name)
+        eq_block_data["name"] = name
+        #ui.list_of_elements.addItem(name.replace('"', ''))
+        print('eq test 1')
+        self.check_name_in_qlist(ui, name)
         # set active solver
+        print('eq test 2')
         while data:
             parameter, setting = data.pop(0).split('=')
             parameter = parameter.strip().lower()
             setting = setting.strip()
-            if 'Active Solvers'.lower() in parameter:
-                setting = setting.split(' ')
-                if setting and int(parameter[-2]) == len(setting):
-                    eq_block_data[parameter[:-3]] = setting
-                else:
-                    print("Error! Numbers of active solvers do not match")
-
+            #if 'Active Solvers'.lower() in parameter:
+            #    setting = setting.split(' ')
+            #    if setting and int(parameter[-2]) == len(setting):
+            eq_block_data[parameter[:-3]] = setting
+            #    else:
+            #        print("Error! Numbers of active solvers do not match")
+        print('eq test 3')
         #self._eq_data[eq_id] = eq_block_data  # self._eq_data not needed. Delete it!
 
         # ui.data = self._eq_data # Delete all previous equations
-        ui.data[eq_id] = eq_block_data # Instead of creating
+        ui.data[name] = eq_block_data # Instead of creating
                                        # completely new set of
                                        # equations, consisting only of
                                        # ones from imported sif file,
@@ -179,6 +184,7 @@ class SifReader():
                                        # existing ones and pass them
                                        # to Equations object to update
                                        # its GUI elements
+
 
     def _materials(self, block):
         """Change settings for a new material
@@ -196,6 +202,9 @@ class SifReader():
         # set name
         mat_block_data = {}
         name = data.pop(0).split('=')[1].strip().replace('"', '')
+        # Delete name from QListWidget if it exists and replace with new
+        self.check_name_in_qlist(ui, name)
+
         mat_block_data["Name".lower()] = name
 
         #self._set_element_name(ui, name)
@@ -204,19 +213,11 @@ class SifReader():
                 parameter, setting = data.pop(0).split('=')
                 mat_block_data[parameter.strip().lower()] = setting
 
-        ui.data[mat_id] = mat_block_data
+        ui.data[name] = mat_block_data
 
+        print("testing materials", ui.data)
         # check if element in qlistwidget already exists. If it does,
         # remove it and replace it with new
-        print("material name", name)
-        current_item = ui.list_of_elements.findItems(name,
-                                                     QtCore.Qt.MatchExactly)
-        print("len(current_item)", len(current_item))
-        if current_item:
-            print("current item")
-            current_item = current_item[0].setSelected(True)
-            ui.on_delete(ui.list_of_elements, ui.data)
-        ui.list_of_elements.addItem(name)
 
     def _solvers(self, block):
         """Change settings of the solver.
@@ -239,7 +240,7 @@ class SifReader():
         #solv_block_data["Equation".lower()] = name.replace('"', '')
         #ui.list_of_elements.addItem(name.replace('"', ''))
 
-        ui.list_of_elements.addItem(str(solv_id).replace('"', ''))
+        #ui.list_of_elements.addItem(str(solv_id).replace('"', ''))
         while data:
             parameter, setting = data.pop(0).split('=')
             parameter = parameter.strip()
@@ -252,20 +253,32 @@ class SifReader():
             #    if setting and int(parameter[-2]) == len(setting):
             #    else:
 
-        if 'Name' not in solv_block_data:
-            solv_block_data['name'] = str(solv_id)
-        self._eq_data[solv_id] = solv_block_data  # self._solv_data not needed. Delete it!
+        #if 'Name' not in solv_block_data:
+        name = str(solv_id)
+        self.check_name_in_qlist(ui, name)
+        solv_block_data['name'] = str(solv_id)
+        #self._eq_data[solv_id] = solv_block_data  # self._solv_data not needed. Delete it!
 
             
         # ui.data = self._solv_data # Delete all previous solvers
-        ui.data[solv_id] = solv_block_data # Instead of creating
-                                       # completely new set of
-                                       # solvers, consisting only of
-                                       # ones from imported sif file,
-                                       # we append new equations to
-                                       # existing ones and pass them
-                                       # to Equations object to update
-                                       # its GUI elements
+        ui.data[str(solv_id)] = solv_block_data # Instead of creating
+                                                # completely new set of
+                                                # solvers, consisting only of
+                                                # ones from imported sif file,
+                                                # we append new equations to
+                                                # existing ones and pass them
+                                                # to Equations object to update
+                                                # its GUI elements
+        ##self.check_name_in_qlist(ui, name)
+        #print("material name", name)
+        #current_item = ui.list_of_elements.findItems(name,
+        #                                             QtCore.Qt.MatchExactly)
+        #print("len(current_item)", len(current_item))
+        #if current_item:
+        #    print("current item")
+        #    current_item = current_item[0].setSelected(True)
+        #    ui.on_delete(ui.list_of_elements, ui.data)
+        #ui.list_of_elements.addItem(name)
 
     def _general(self, block):
         """Change settings in the general setup of the Elmer module
@@ -349,14 +362,17 @@ class SifReader():
             text = '\n'.join(data)
             #ui.constantsFreeTextEdit.setText(text)
 
-    #def _set_element_name(self, ui, name):
-    #    """If element in QListWidget with the same name already exists,
-    #    update it, otherwise create new element. """
-    #    for i in range(ui.list_of_elements.count()):
-    #       print(ui.list_of_elements.item(i).text())
-    #        if ui.list_of_elements.item(i).text().lower() == name.lower():
-    #            ui.list_of_elements.item(i).text(name)
-    #            return None
-    #    ui.list_of_elements.addItem(name.replace('"', ''))
-    #    return None
+    def check_name_in_qlist(self, ui, name):
+        '''check if element in qlistwidget already exists. If it does, remove
+         it and replace it with new
 
+        '''
+        
+        current_item = ui.list_of_elements.findItems(name,
+                                                     QtCore.Qt.MatchExactly)
+        if current_item:
+            print("check_name_in_qlist", name)
+            current_item = current_item[0].setSelected(True)
+            print("current data of current item", ui.data)
+            ui.on_delete(ui.list_of_elements, ui.data)
+        ui.list_of_elements.addItem(name)

@@ -16,6 +16,7 @@ from PyQt5.QtWidgets import (QInputDialog, QLineEdit, QDialog,
                              QFormLayout, QTabWidget, QRadioButton)
 from functools import partial
 from PyQt5 import QtCore
+import copy
 
 class BaseSIF(QDialog):
     """Class that provides the General setup dialog and its functionality"""
@@ -70,15 +71,17 @@ class BaseSIF(QDialog):
         self.vertical_layout.addLayout(self.horizontal_layout_name)
         self.vertical_layout.addLayout(self.horizontal_layout_buttons)
         self.layout.addLayout(self.vertical_layout)
-        self.dict_to_widgets
+        self.dict_to_widgets()
         self.setLayout(self.layout)
         self.setGeometry(300, 300, 250, 150)
 
     def on_delete(self, list_of_elements, data):
         list_items = list_of_elements.selectedItems()
+        print('len(list_items)', len(list_items))
         for item in list_items:
             for i in data:
-                if data[i]['name'] == item.text().lower():
+                print("item.text().lower() to delete", item.text().lower())
+                if data[i]['name'].lower() == item.text().lower():
                     data.pop(i)
                     break
             break
@@ -108,6 +111,7 @@ class BaseSIF(QDialog):
         print("current_item", current_item)
         for i in data:
             print('data', data)
+            print(i)
             if data[i]['name'] == current_item.text():
                 data[i]['name'] = new_name # update new name in dictionary
                 #sel_items.setText(new_name) # update new name in QListWidget
@@ -163,6 +167,7 @@ class BaseSIF(QDialog):
         for bcs in self.data:
             bc = self.data[bcs]
             bc =  {k.lower(): v for k, v in bc.items()}
+            print("BCXCCCC", bc)
             if item:
                 # set all keys to lower
                 print("self.data[bcs]:", self.data[bcs])
@@ -177,6 +182,8 @@ class BaseSIF(QDialog):
                 #bc =  {k.lower(): v for k, v in bc.items()}
                 pass
             for label in self.dynamic_widgets:
+                if label.text() == "Create new solver":
+                    print("CREATE NRE SOLCER")
                 setting = bc.get(label.text().lower())
                 widget = self.dynamic_widgets[label]
                 widget_type = widget.metaObject().className()
@@ -197,12 +204,36 @@ class BaseSIF(QDialog):
                 else:
                     if widget_type == "QLineEdit":
                         widget.setText(bc[label.text().lower()])
+                        #if label.text() == 'Active solvers':
+                        #    _solvers = bc['active solvers'].split()
+                        #    print('_SOLVERS', _solvers, bc["name"].replace(' ','_') + '_solver')
+                        #    if bc["name"].replace(' ','_') + '_solver' in _solvers:
+                        #        print("IS INSIDE")
+                        #        self.check_new_solver.setChecked(1)
+                        #        if self.check_new_solver.isChecked():
+                        #            print("IS CHECKED CHECKED")
+                        #            #     widget.setText(widget.text()+' '+bc['solvers of eq']['name'].replace(' ', '_'))
                     elif widget_type == "QCheckBox":
                         true = ['Logical True'.lower(), 'True'.lower()]
+                        print("widget.TEXT()", label.text())
                         if bc[label.text().lower()].lower() in true:
                             widget.setChecked(1)
+                            #if widget.text() == "Create new solver":
+                            #    print("CREATE NEW SOLVER INSIDE")
+                            #    if bc["solvers of eq"].get("name"):
+                            #        #and widget.isChecked():
+                            #        print("CREATE NEW SOLVER CHECKED")
+                            #        # pass new solver to active solvers
+                            #        for active_solvers_label in self.dynamic_widgets:
+                            #            if active_solvers_label.text() == "Active solvers":
+                            #                active_solvers = self.dynamic_widgets[active_solvers_label]
+                            #                current_solvers = active_solvers.text()
+                            #                updated_solvers = current_solvers +" "+bc['solvers of eq']['name']
+                            #                active_solvers.setText(updated_solvers)
                         else:
-                            widget.setChecked(0)
+                            print("LABEL TEXT SET()", label.text())
+                            if label.text() != 'Create new solver':
+                                widget.setChecked(0)
                     elif widget_type == "QComboBox":
                         try:
                             idx = widget.findText(bc[label.text().lower()])
@@ -216,6 +247,15 @@ class BaseSIF(QDialog):
                             combo_text = None
                         widget.setSelected(setting, combo_text)
             break
+
+        # check QLineEdit for Active solvers and update CheckBox for new solver
+        for active_solvers_label in self.dynamic_widgets:
+            if active_solvers_label.text() == "Active solvers":
+                print("ACTIVE SOLVERS")
+                active_solvers = self.dynamic_widgets[active_solvers_label]
+                current_solvers = active_solvers.text().split()
+                if bc["name"].replace(' ','_') + '_solver' in current_solvers:
+                    self.check_new_solver.setChecked(1)
 
     def update_element_name(self, items, new_name):
         """Check if new element name already exists in QListWidget.
@@ -248,8 +288,9 @@ class BaseSIF(QDialog):
 
     def widgets_to_dict(self, dynamic_widgets, data, i):
         self.dynamic_widgets = dynamic_widgets
-        
+        #print("widgets_to_dict test", data)
         # Iterate over widgets, get their new info and update dictionary
+        print(i)
         for widget in self.dynamic_widgets:
             parameter = widget
             setting = self.dynamic_widgets[widget]
@@ -260,10 +301,24 @@ class BaseSIF(QDialog):
                 data[i][parameter] = setting
             elif setting_type == "QCheckBox":
                 parameter = parameter.text().lower()
-                if setting.isChecked():
-                    data[i][parameter] = "Logical True"
+                print("setting.text()", setting.text())
+                if setting.text() == "Create new solver":
+                    #print('testing active solvers')
+                    if setting.isChecked():
+                        from constants import DEFAULT_SOLVER
+                        df_solver = copy.deepcopy(DEFAULT_SOLVER)
+                        df_solver['name'] = data[i]['name'].replace(' ','_') + '_solver'
+                        #print('DFSOLVER', data[i]['name'].replace(' ','_') + '_solver', df_solver)
+                        data[i]["solvers of eq"] = df_solver
+                        if not df_solver['name'] in data[i]['active solvers']:
+                            data[i]['active solvers'] = data[i]['active solvers']+' '+df_solver['name']
+                        setting.setChecked(1)
+                        print("setting.ISCHECKED()", setting.text())
                 else:
-                    data[i][parameter] = "Logical False"
+                    if setting.isChecked():
+                        data[i][parameter] = "Logical True"
+                    else:
+                        data[i][parameter] = "Logical False"
             elif setting_type == "QComboBox":
                 setting = setting.currentText()
                 parameter = parameter.text()
@@ -332,7 +387,7 @@ class RadioComboGroup(QWidget):
                     idx = item[1].findText(combo)
                     item[1].setCurrentIndex(idx)
                 return None
-        print("Error setting radio and combo!!!")
+        #print("Error setting radio and combo!!!")
 
     def getSelected(self):
         for item in self.radio_combo_widgets:
@@ -341,4 +396,5 @@ class RadioComboGroup(QWidget):
                     setting = item[1].currentText()
                     return [item[0].text(), setting]
                 return [item[0].text(), None]
+        return [None, None]
 

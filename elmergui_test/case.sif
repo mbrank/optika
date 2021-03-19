@@ -36,7 +36,7 @@ Body 1
 End
 
 Solver 1
-  Equation = Heat Equation Test
+  Equation = Heat Equation Test33223311
   Procedure = "HeatSolveTest" "HeatSolverTest"
   Variable = TemperatureTest
   Exec Solver = After Timestep
@@ -63,8 +63,20 @@ Solver 1
 End
 
 Solver 2
-  Equation = Heat Equation Solver 2
-  Procedure = "HeatSolveTest 2" "HeatSolverTest 2"
+  Equation = Heat Equation Solver 233
+  Procedure = "HeatSolveTest 2" "HeatSolverTest 233"
+  Variable = TemperatureTest
+  Exec Solver = Before Timestep
+  Stabilize = True
+  Bubbles = False
+  Lumped Mass Matrix = False
+  Linear System Preconditioning = ILU0
+End
+
+Solver 3
+  Name = "test of oslver3"
+  Equation = Heat Equation Solver 233
+  Procedure = "HeatSolveTest 2" "HeatSolverTest 233"
   Variable = TemperatureTest
   Exec Solver = Before Timestep
   Stabilize = True
@@ -74,18 +86,18 @@ Solver 2
 End
 
 Equation 4
-  Name = "heattransfer"
+  Name = "heattransfer12"
   Active Solvers(1) = 1
 End
 
 Equation 5
   Name = "heattransfer test eq2"
-  Active Solvers(2) = 1
+  Active Solvers(2) = 1 2
 End
 
 Equation 9
   Name = "heattransfer eq3"
-  Active Solvers(3) = 1 2 3
+  Active Solvers(3) = 1 2 32
 End
 
 Material 1

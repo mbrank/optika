@@ -28,9 +28,11 @@ class Solvers(BaseSIF):
         #self.acceptButton.clicked.connect(self.applyChanges)
         self.data = data
         if not self.data:
-            self.data = {1: DEFAULT_SOLVER}
+            #self.data = {1: DEFAULT_SOLVER}
+            self.data = {}
             #print('test equation')
         #print('test equation')
+        self.default_eq_solvers = {}
         self.element_name = 'Solver'
         self.ss_options_tab =  QWidget()
         self.ss_options_tabUI()
@@ -80,6 +82,19 @@ class Solvers(BaseSIF):
         #print(self.list_of_elements.findItems("Solver1"))
         self.element_settings.hide()  # setText("Show Material Library")
 
+    def load_solvers_from_equations(self, default_eq_solvers):
+        print("DEFAULT EQ SOLVERS", default_eq_solvers)
+        for eq in default_eq_solvers:
+            print("EQEQEQEQ", eq)
+            if default_eq_solvers[eq].get('solvers of eq'):
+                print("SOLV", default_eq_solvers[eq]['solvers of eq'])
+                solv_name = default_eq_solvers[eq]['solvers of eq']['name']
+                #for solv in default_eq_solvers[eq]['solvers of eq']:
+                self.data[solv_name] = default_eq_solvers[eq]['solvers of eq']
+
+        print(self.data)
+        
+        
     def applyChanges(self):
         """Apply button hit"""
         # Hide window, but keep contents in memory

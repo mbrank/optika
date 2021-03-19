@@ -101,8 +101,8 @@ End
 
 Material 2
   Name = "steel test new"
-  Density = 1
-  Heat Capacity = 1.0
+  Density = 400
+  Heat Capacity = 4.000
   Heat expansion Coefficient = 1.9e-6
   Mesh Poisson ratio = 1.285
   Heat Conductivity = 1.0
@@ -113,19 +113,19 @@ End
 
 Boundary Condition 1
   Name = "plasmaBC"
-  Heat Flux = 75
+  Heat Flux = 34
 ! ToDo: Periodic BCs
 End
 
 Boundary Condition 2
   Name = "htcBC"
-  Heat Transfer Coefficient = 12000
-  External Temperature = 90
+  Heat Transfer Coefficient = 34000
+  External Temperature = 34
 ! ToDo: Periodic BCs
 End
 
 Boundary Condition 3
   Name = "adiabaticBC"
-  Heat Flux = 0.001
+  Heat Flux = 34
 ! ToDo: Periodic BCs
 End

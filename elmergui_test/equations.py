@@ -73,13 +73,14 @@ class Equations(BaseSIF):
             items.append(self.list_of_elements.item(i))
         self.update_element_name(items, self.element_name)
  
-        self.element_settings.setText('Create new solve')
+        self.element_settings.setText('Create new solver')
         self.element_settings.hide()
 
         self.check_new_solver = QCheckBox("Create new solver")
         self.check_existing_solver = QCheckBox("Add existing solver")
         self.combobox_existing_solver = QComboBox()
         self.combobox_existing_solver.addItems(["1", "2", "3"])
+        self.dynamic_widgets[self.check_new_solver] = self.check_new_solver
         self.solver_hlayout = QHBoxLayout()
         self.solver_hlayout.addWidget(self.check_existing_solver)
         self.solver_hlayout.addWidget(self.combobox_existing_solver)
@@ -123,7 +124,9 @@ class Equations(BaseSIF):
         self.checkbox_active = QCheckBox()
         self.label_active_solvers = QLabel("Active solvers")
         self.lineedit_active_solvers = QLineEdit()
-
+        self.dynamic_widgets[label_active] = self.checkbox_active
+        self.dynamic_widgets[self.label_active_solvers] = self.lineedit_active_solvers
+        
         layout_heat_equation_tab.addWidget(label_active_set, 0, 0)
         layout_heat_equation_tab.addWidget(label_active, 1, 0)
         layout_heat_equation_tab.addWidget(self.checkbox_active, 1, 1)
@@ -149,6 +152,7 @@ class Equations(BaseSIF):
         layout_heat_equation_tab.addWidget(label_options_set, 5, 0)
         layout_heat_equation_tab.addWidget(label_options, 6, 0)
         layout_heat_equation_tab.addWidget(self.combobox_options, 6, 1)
+        self.dynamic_widgets[label_options] = self.combobox_options
 
         label_convection_set = QLabel("Convection")
         label_convection_set.setFont(title_font)
@@ -160,5 +164,6 @@ class Equations(BaseSIF):
         layout_heat_equation_tab.addWidget(label_convection_set, 7, 0)
         layout_heat_equation_tab.addWidget(label_convection, 8, 0)
         layout_heat_equation_tab.addWidget(self.combobox_convection, 8, 1)
+        self.dynamic_widgets[label_options] = self.combobox_options
 
         self.heat_equation_tab.setLayout(layout_heat_equation_tab)

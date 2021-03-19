@@ -15,6 +15,7 @@ from materials import Materials
 from body_forces import BodyForces
 from boundary_conditions import BoundaryConditions
 from solvers import Solvers
+from sif_writer import SifWriter
 #from PyQt5 import (QDialog, QPushButton, pyqtSlot, QVBoxLayout,
 #                   QMessageBox, QProcess, QLineEdit,
 #                   QLabel, QCheckBox, QComboBox)
@@ -84,7 +85,7 @@ class ElmerGui(QDialog):
         #self.ic_button.clicked.connect(self.onShowInitialConditions)
         #self.ep.clicked.connect(self.onDefineElementProperties)
         #self.parallel.clicked.connect(self.onParallelSettings)
-        #self.savecase.clicked.connect(self.onSaveCaseToELMERStudy)
+        self.savecase.clicked.connect(self.onSaveCaseToELMERStudy)
 
         self.layout = QVBoxLayout()
         self.layout.addWidget(self.casename)
@@ -193,7 +194,8 @@ class ElmerGui(QDialog):
             print('test')
             # load default data
             #app = QApplication(sys.argv)
-            self.solvers.dict_to_widgets()
+            #self.solvers.dict_to_widgets()
+            self.solvers.load_solvers_from_equations(self.equations.data)
             self.solvers.exec()
             #sys.exit(app.exec_())
         else:
@@ -224,6 +226,12 @@ class ElmerGui(QDialog):
         else:
             # load dictionary into gui
             pass
+
+    @pyqtSlot()
+    def onSaveCaseToELMERStudy(self):
+        file_to_save = "/home/brankm/optika/elmergui_test/written_file.sif"
+        writer = SifWriter(self, file_to_save)
+        writer.writeSif()
 
 
 def main():
