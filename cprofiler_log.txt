@@ -1,0 +1,53 @@
+         98016460 function calls (96748834 primitive calls) in 117.867 seconds
+
+   Ordered by: call count
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+9924902/9659852    8.000    0.000   45.114    0.000 {built-in method numpy.core._multiarray_umath.implement_array_function}
+  6649800    0.516    0.000    0.516    0.000 {method 'random' of '_random.Random' objects}
+  6649800    2.452    0.000    2.968    0.000 /usr/lib/python3.7/random.py:372(uniform)
+  6233684    0.588    0.000    0.588    0.000 {method 'items' of 'dict' objects}
+  6233684    1.185    0.000    1.185    0.000 {built-in method builtins.isinstance}
+  6233684    2.406    0.000    2.406    0.000 /home/brankm/.local/lib/python3.7/site-packages/numpy/core/fromnumeric.py:71(<dictcomp>)
+  6233684    6.848    0.000   27.244    0.000 /home/brankm/.local/lib/python3.7/site-packages/numpy/core/fromnumeric.py:70(_wrapreduction)
+  6233684    0.851    0.000    0.851    0.000 /home/brankm/.local/lib/python3.7/site-packages/numpy/core/fromnumeric.py:2100(_sum_dispatcher)
+  6233684    6.573    0.000   35.002    0.000 /home/brankm/.local/lib/python3.7/site-packages/numpy/core/fromnumeric.py:2105(sum)
+  6233684    3.339    0.000   41.882    0.000 <__array_function__ internals>:2(sum)
+  6233684   17.401    0.000   17.401    0.000 {method 'reduce' of 'numpy.ufunc' objects}
+  3426168    1.801    0.000    7.410    0.000 <__array_function__ internals>:2(dot)
+  3426168    0.479    0.000    0.479    0.000 /home/brankm/.local/lib/python3.7/site-packages/numpy/core/multiarray.py:706(dot)
+  2711756    5.538    0.000    5.538    0.000 {built-in method numpy.array}
+  2158542   24.272    0.000   65.818    0.000 /home/brankm/optika/sphere.py:21(hit)
+  1452576    0.512    0.000    0.512    0.000 /home/brankm/optika/hittable.py:11(__init__)
+1452576/450000    9.514    0.000  111.233    0.000 main.py:24(ray_color)
+  1452576    1.760    0.000    1.760    0.000 /home/brankm/optika/ray.py:10(__init__)
+  1271179    0.294    0.000    0.294    0.000 {built-in method math.sqrt}
+  1267626    2.190    0.000   68.008    0.000 /home/brankm/optika/hittable_list.py:19(hittable_object)
+  1002576    2.107    0.000    4.274    0.000 /home/brankm/optika/hittable.py:17(set_face_normal)
+  1002576    3.939    0.000    3.939    0.000 /home/brankm/optika/ray.py:23(at)
+  1002576    7.340    0.000   27.810    0.000 main.py:13(random_in_unit_sphere)
+   530100    0.082    0.000    0.082    0.000 {built-in method builtins.issubclass}
+   450000    2.379    0.000    2.920    0.000 /home/brankm/optika/camera.py:21(get_ray)
+   274950    0.461    0.000    0.461    0.000 {built-in method numpy.zeros}
+   270000    0.140    0.000    0.140    0.000 /home/brankm/optika/color.py:1(clamp)
+   265050    0.075    0.000    0.107    0.000 /home/brankm/.local/lib/python3.7/site-packages/numpy/linalg/linalg.py:112(isComplexType)
+   265050    0.042    0.000    0.042    0.000 /home/brankm/.local/lib/python3.7/site-packages/numpy/linalg/linalg.py:2359(_norm_dispatcher)
+   265050    1.307    0.000    2.446    0.000 /home/brankm/.local/lib/python3.7/site-packages/numpy/linalg/linalg.py:2363(norm)
+   265050    0.167    0.000    2.835    0.000 <__array_function__ internals>:2(norm)
+   265050    0.082    0.000    0.192    0.000 /home/brankm/.local/lib/python3.7/site-packages/numpy/core/_asarray.py:14(asarray)
+   265050    0.292    0.000    0.292    0.000 {method 'ravel' of 'numpy.ndarray' objects}
+    90001    0.058    0.000    0.058    0.000 {method 'write' of '_io.TextIOWrapper' objects}
+    90000    0.550    0.000    0.748    0.000 /home/brankm/optika/color.py:10(write_color)
+      226    0.004    0.000    0.004    0.000 {built-in method builtins.print}
+        2    0.000    0.000    0.000    0.000 {method 'append' of 'list' objects}
+        2    0.000    0.000    0.000    0.000 /home/brankm/optika/hittable_list.py:14(add_to_hittable_list)
+        2    0.000    0.000    0.000    0.000 /home/brankm/optika/sphere.py:13(__init__)
+        1    0.000    0.000    0.000    0.000 {built-in method io.open}
+        1    0.000    0.000    0.000    0.000 {built-in method _locale.nl_langinfo}
+        1    0.000    0.000    0.000    0.000 /home/brankm/optika/camera.py:9(__init__)
+        1    0.000    0.000    0.000    0.000 /home/brankm/optika/hittable_list.py:7(__init__)
+        1    0.000    0.000    0.000    0.000 {method 'disable' of '_lsprof.Profiler' objects}
+        1    2.321    2.321  117.867  117.867 main.py:53(main)
+        1    0.000    0.000    0.000    0.000 /usr/lib/python3.7/_bootlocale.py:33(getpreferredencoding)
+        1    0.000    0.000    0.000    0.000 /usr/lib/python3.7/codecs.py:186(__init__)
+

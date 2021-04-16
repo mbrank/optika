@@ -19,6 +19,8 @@ class Sphere(Hittable):
 
     #def sphere_hit(self, r, t_min, t_max, rec):
     def hit(self, r, t_min, t_max, rec):
+        print("self, r, t_min, t_max, rec", r.origin, r.direction,
+              t_min, t_max, rec)
         oc = r.origin - self.center
         #a = r.direction.length_squared()
         a = np.sum(r.direction**2)
