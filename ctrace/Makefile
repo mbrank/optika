@@ -1,0 +1,2 @@
+ctrace: main.c vector.c ray.c sphere.c constants.c hittable.c hittable_list.c
+	gcc -g -o ctrace main.c vector.c ray.c sphere.c constants.c hittable.c hittable_list.c -lm
