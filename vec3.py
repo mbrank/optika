@@ -95,3 +95,9 @@ def random_in_unit_sphere():
 #print(a.arr)
 #g=a/2
 #print(a.e1, a.e2, a.e3)
+
+def test_add_python(rn):
+    a = Vec3(1,2,3)
+    b = Vec3(1,2,3)
+    for i in range(rn):
+        c = a+b

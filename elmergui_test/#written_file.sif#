@@ -1,0 +1,69 @@
+Header
+  Mesh DB . .
+  Include Path 
+  Results Directory 
+End
+
+Simulation
+Max Output Level = 5
+Coordinate System = Cartesian
+Coordinate Mapping(3) = 1 2 3
+Simulation Type = Steady state
+Steady State Max Iterations = 1
+Output Intervals = 1
+Timestep intervals
+Timestep sizes = 
+Timestepping Method = BDF
+BDF Order = 1
+Solver Input File = case.sif
+Post File = case.vtu
+Use Mesh Names = Logical True
+End
+
+Constants
+  Gravity(4) = 0 -1 0 9.82
+  Stefan Boltzmann = 5.67e-08
+  Permittivity of Vacuum = 1.602e-19
+  Boltzmann Constant = 1.3807e-23
+  Unit Charge = 1.602e-19
+End
+
+Body 1
+Name = body
+Equation = heattransfer
+Material = Steel (stainless - generic)
+Initial Condition = 
+End
+
+
+Equation 1
+  name = heattransfer
+  active solvers(1) = 1 
+End
+
+Material 1
+  name = "Steel (stainless - generic)"
+  density =  7925.0
+  heat capacity =  460.0
+  heat expansion coefficient =  14.9e-6
+  mesh poisson ratio =  0.285
+  heat conductivity =  24.0
+  sound speed =  5100.0
+  yasuda coefficient =  2
+End
+
+Boundary Condition 1
+  name = plasmaBC
+  heat flux =  75
+End
+
+Boundary Condition 2
+  name = htcBC
+  heat transfer coefficient =  12000
+  external temperature =  90
+End
+
+Boundary Condition 3
+  name = adiabaticBC
+  heat flux =  0.001
+End
