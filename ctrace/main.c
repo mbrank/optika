@@ -98,7 +98,7 @@ int main(int argc, char *argv[]) {
   const auto double aspect_ratio = 16.0/9.0;
   const int image_width = 400;
   const int image_height = (int)(image_width/aspect_ratio); //static_cast<int>(image_width/aspect_ratio);
-  const int samples_per_pixel = 100;
+  const int samples_per_pixel = 1000;
   const int max_depth = 50;
   
   hittable_list world;
@@ -143,10 +143,10 @@ int main(int argc, char *argv[]) {
   PV_t vert_divide = vec_divide(&(cam.vertical), -2);
   PV_t scale_orig_hor = vec_sum(&(cam.camera_origin), &hor_divide);
   PV_t scale_orig_hor_vert = vec_sum(&scale_orig_hor, &vert_divide);
-  PV_t neg_focal_length;
-  neg_focal_length.x = 0;
-  neg_focal_length.y = 0;
-  neg_focal_length.z = -1;
+  PV_t neg_focal_length = {0, 0, -1};
+  //neg_focal_length.x = 0;
+  //neg_focal_length.y = 0;
+  //neg_focal_length.z = -1;
   cam.lower_left_corner = vec_sum(&scale_orig_hor_vert, &neg_focal_length);
 
   

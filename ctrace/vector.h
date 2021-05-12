@@ -15,7 +15,7 @@ typedef struct vector_type{
 
 //  prototypes for the vector functions  
 
-PV_t vec_sum(PV_t *, PV_t *);
+PV_t vec_sum(const PV_t *, const PV_t *);
 PV_t vec_diff(PV_t *, PV_t *);
 double vec_dot(PV_t *, PV_t *);
 PV_t vec_scale(PV_t *, double fact);

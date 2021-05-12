@@ -1,6 +1,6 @@
 #include "color.h"
 
-void write_color(PV_t *pixel_color, int samples_per_pixel){
+inline void write_color(PV_t *pixel_color, int samples_per_pixel){
     auto double r = pixel_color->x;
     auto double g = pixel_color->y;
     auto double b = pixel_color->z;

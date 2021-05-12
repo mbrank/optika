@@ -7,7 +7,7 @@
 #include <stdbool.h>
 
 //vector sum function 
-PV_t vec_sum(PV_t *v1, PV_t *v2)   
+PV_t vec_sum(const PV_t *v1, const PV_t *v2)   
 {
 PV_t v3 = {v1->x + v2->x, v1->y + v2->y, v1->z + v2->z};
   return v3;
