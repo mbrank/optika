@@ -5,7 +5,6 @@
 #include <stdio.h>
 #include <math.h>
 #include "ray.h"
-//#include "vector.h"
 #include <stdbool.h>  
 
 typedef struct hit_record_type{

@@ -16,10 +16,10 @@ typedef struct sphere_type{
 
 // prototypes for sphere functions
 
-hit_record hit_sphere(sphere_t *sphere,
-		      ray_t *r,
-		      double *t_min,
-		      double *t_max,
-		      hit_record *rec);
+bool hit_sphere(sphere_t *sphere,
+		ray_t *r,
+		double *t_min,
+		double *t_max,
+		hit_record *rec);
 
 #endif
