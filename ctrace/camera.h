@@ -22,6 +22,6 @@ typedef struct camera_type{
 
 ray_t camera_get_ray(camera *cam, double u, double v);
 
-void camera_init();
+camera *camera_init();
 
 #endif

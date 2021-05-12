@@ -4,6 +4,7 @@
 #include "vector.h"
 #include "math.h"
 #include "time.h"
+#include <stdbool.h>
 
 //vector sum function 
 PV_t vec_sum(PV_t *v1, PV_t *v2)   
@@ -51,7 +52,7 @@ double length_squared(PV_t *v1)
 
 PV_t random_vector() /* returns random vector */
 {
-  srand(time(NULL)); /* mora bit za random??? */
+  //srand(time(NULL)); /* mora bit za random??? */
   PV_t rvec;
   rvec.x = (float)rand()/(float)RAND_MAX;
   rvec.y = (float)rand()/(float)RAND_MAX;
@@ -62,11 +63,13 @@ PV_t random_vector() /* returns random vector */
 PV_t random_vector_min_max(double min, double max) /* returns random vector in range between
 				min and max */
 {
-  srand(time(NULL)); /* mora bit za random??? */
+  //srand(time(NULL)); /* mora bit za random??? */
   PV_t rvec;
-  rvec.x = (float)rand()/(float)RAND_MAX;
-  rvec.y = (float)rand()/(float)RAND_MAX;
-  rvec.z = (float)rand()/(float)RAND_MAX;
+  
+  rvec.x = min + (float)(rand() / (float) RAND_MAX) * ( max - min ); 
+  rvec.y = min + (float)(rand() / (float) RAND_MAX) * ( max - min );
+  rvec.z = min + (float)(rand() / (float) RAND_MAX) * ( max - min ); 
+
   return rvec;
 }
 
@@ -75,3 +78,13 @@ PV_t unit_vector(PV_t *vec)
   return vec_divide(vec, vec_len(vec));
 }
 
+PV_t random_in_unit_sphere()
+{
+  while (true) {
+    PV_t r_vec = random_vector_min_max(-1, 1);
+    if (length_squared(&r_vec) >= 1) {
+      continue;
+    }
+    return r_vec;
+  }
+}
