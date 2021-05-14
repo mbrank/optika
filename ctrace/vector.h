@@ -26,5 +26,5 @@ PV_t random_vector();
 PV_t random_vector_min_max(double min, double max);
 PV_t unit_vector(PV_t *vec);
 PV_t random_in_unit_sphere();
-
+PV_t random_unit_vector();
 #endif

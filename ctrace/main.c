@@ -42,14 +42,18 @@ PV_t ray_color(ray_t *r, hittable_list *world, int depth)
       //color.z = 0.5*(rec.normal.z + 1);
 
       PV_t target;
-      PV_t random_in_unit_sphere_vec = random_in_unit_sphere();
 
+	  //PV_t random_in_unit_sphere_vec = random_in_unit_sphere();
+	  // Instead of random in unit_sphere, use random_unit_vector to
+	  // get true lambertian reflection
+	  PV_t random_unit_vec = random_unit_vector();
+	  
       //printf("random_in_unit_sphere_vec.x: %f\n", random_in_unit_sphere_vec.x);
       //printf("random_in_unit_sphere_vec.y: %f\n", random_in_unit_sphere_vec.y);
       //printf("random_in_unit_sphere_vec.z: %f\n", random_in_unit_sphere_vec.z);
-      target.x = rec.p.x+rec.normal.x+random_in_unit_sphere_vec.x;
-      target.y = rec.p.y+rec.normal.y+random_in_unit_sphere_vec.y;
-      target.z = rec.p.z+rec.normal.z+random_in_unit_sphere_vec.z;
+      target.x = rec.p.x+rec.normal.x+random_unit_vec.x;
+      target.y = rec.p.y+rec.normal.y+random_unit_vec.y;
+      target.z = rec.p.z+rec.normal.z+random_unit_vec.z;
 
       //printf("target.x: %f\n", target.x);
       //printf("target.y: %f\n", target.y);
@@ -98,8 +102,8 @@ int main(int argc, char *argv[]) {
   const auto double aspect_ratio = 16.0/9.0;
   const int image_width = 400;
   const int image_height = (int)(image_width/aspect_ratio); //static_cast<int>(image_width/aspect_ratio);
-  const int samples_per_pixel = 1000;
-  const int max_depth = 50;
+  const int samples_per_pixel = 2000;
+  const int max_depth = 5;
   
   hittable_list world;
   sphere_t sphere0;

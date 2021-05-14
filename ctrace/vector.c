@@ -88,3 +88,9 @@ PV_t random_in_unit_sphere()
     return r_vec;
   }
 }
+
+PV_t random_unit_vector()
+{
+  PV_t rnd = random_in_unit_sphere();
+  return unit_vector(&rnd);
+}
