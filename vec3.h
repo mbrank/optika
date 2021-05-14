@@ -46,8 +46,11 @@ class vec3 {
             return e[0]*e[0] + e[1]*e[1] + e[2]*e[2];
         }
 
-    public:
-        double e[3];
+        bool near_zero() const {
+	    // Return true if the vector is close to zero in all dimensions.
+	    const auto s = 1e-8;
+	    return (fabs(e[0]) < s) && (fabs(e[1]) < s) && (fabs(e[2]) < s);
+        }
 
   inline static vec3 random() {
   return vec3(random_double(), random_double(), random_double());
@@ -56,7 +59,12 @@ class vec3 {
   return vec3(random_double(min,max), random_double(min,max), random_double(min,max));
 }
 
+    public:
+        double e[3];
+
+  
 };
+
 
 // vec3 Utility Functions
 
@@ -116,6 +124,10 @@ vec3 random_in_unit_sphere() {
 
 vec3 random_unit_vector() {
     return unit_vector(random_in_unit_sphere());
+}
+
+vec3 reflect(const vec3& v, const vec3& n) {
+    return v - 2*dot(v,n)*n;
 }
 
 // Type aliases for vec3

@@ -7,11 +7,12 @@
 #include <stdbool.h>
 #include "ray.h"
 #include "hittable.h"
-
+#include "material.h"
 
 typedef struct sphere_type{
   PV_t center;
   double radius;
+  material mat;
 } sphere_t;
 
 // prototypes for sphere functions

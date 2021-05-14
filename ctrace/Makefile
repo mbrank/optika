@@ -7,7 +7,7 @@ ctrace.exe: main.c vector.c ray.c sphere.c constants.c hittable.c hittable_list.
 
 
 btotrace.exe: main.c vector.c ray.c sphere.c constants.c hittable.c hittable_list.c camera.c rtweekend.c color.c
-	gcc -O3 -ffast-math -o $@ $^ -lm
+	clang -O3 -ffast-math -o $@ $^ -lm
 
 clean:
 	rm *.exe *.ppm
