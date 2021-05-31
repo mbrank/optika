@@ -9,8 +9,12 @@
 #include "camera.h"
 #include "color.h"
 #include "rtweekend.h"
+#include "material.h"
 #include <time.h>
 
+
+//PV_t attenuation_ray_color(){
+//}
 
 PV_t ray_color(ray_t *r, hittable_list *world, int depth)
 {
@@ -21,7 +25,7 @@ PV_t ray_color(ray_t *r, hittable_list *world, int depth)
     bool sphere_hit_checked = check_sphere_hit(&(world->sphere[i]),
 					       r,
 					       &zero,
-					       &infinity,
+						   &infinity,
 					       &rec);
     if (depth <= 0) {
       PV_t depth_exceeded;
@@ -32,25 +36,38 @@ PV_t ray_color(ray_t *r, hittable_list *world, int depth)
     }
 
     if (sphere_hit_checked) {
-      
-      PV_t target;
 
-	  PV_t random_unit_vec = random_unit_vector();
+	  //ray_t scattered;
+	  //PV_t attenuation;
+
+	  bool mat_ref = calculate_material_reflections(&(world->sphere[i].mat),
+													r,
+													&(world->sphere[i].mat.albedo),
+													&rec);
+	  if (mat_ref) {
+
+		  return ray_color(&(world->sphere[i].mat.scattered), world, depth-1);
+	  }
 	  
+	  /*
+      PV_t target;
+	  PV_t random_unit_vec = random_unit_vector();
       target.x = rec.p.x+rec.normal.x+random_unit_vec.x;
       target.y = rec.p.y+rec.normal.y+random_unit_vec.y;
       target.z = rec.p.z+rec.normal.z+random_unit_vec.z;
-
       PV_t target_min_rec_p;
       target_min_rec_p.x = target.x - rec.p.x;
       target_min_rec_p.y = target.y - rec.p.y;
       target_min_rec_p.z = target.z - rec.p.z;
-
       ray_t reflected_ray;
       reflected_ray.origin = rec.p;
       reflected_ray.direction = target_min_rec_p;
+	  */
+	  
+      //return ray_color(&reflected_ray, world, depth-1);
 
-      return ray_color(&reflected_ray, world, depth-1);
+	  PV_t color = {0, 0, 0};
+	  return color; 
     }
     PV_t unit_direction = unit_vector(&r->direction);
     double t = 0.5*(unit_direction.y + 1.0);
@@ -88,26 +105,42 @@ int main(int argc, char *argv[]) {
   sphere0.center.y = 0;
   sphere0.center.z = -1;
   sphere0.radius = 0.5;
+  sphere0.mat.type = 1;
+  sphere0.mat.albedo.x = 0.8;
+  sphere0.mat.albedo.y = 0.8;
+  sphere0.mat.albedo.z = 0.0;
   sphere_t sphere1;
   sphere1.center.x = 0; 
   sphere1.center.y = -100.5;
   sphere1.center.z = -1;
   sphere1.radius = 100;
-  world.sphere[0] = sphere0;
-  world.sphere[1] = sphere1;
+  sphere1.mat.type = 1;
+  sphere1.mat.albedo.x = 0.7;
+  sphere1.mat.albedo.y = 0.3;
+  sphere1.mat.albedo.z = 0.3;
   sphere_t sphere2;
   sphere2.center.x = -1; 
   sphere2.center.y = 0;
   sphere2.center.z = -1;
   sphere2.radius = 0.5;
+  sphere2.mat.type = 2;
+  sphere2.mat.albedo.x = 0.8;
+  sphere2.mat.albedo.y = 0.8;
+  sphere2.mat.albedo.z = 0.8;
   sphere_t sphere3;
   sphere3.center.x = 1; 
   sphere3.center.y = 0;
   sphere3.center.z = -1;
   sphere3.radius = 0.5;
+  sphere3.mat.type = 2;
+  sphere3.mat.albedo.x = 0.8;
+  sphere3.mat.albedo.y = 0.6;
+  sphere3.mat.albedo.z = 0.2;
+
+  world.sphere[0] = sphere0;
+  world.sphere[1] = sphere1;
   world.sphere[2] = sphere2;
   world.sphere[3] = sphere3;
-
 
   // Camera
 
@@ -148,13 +181,13 @@ int main(int argc, char *argv[]) {
       pixel_color.y = 0;
       pixel_color.z = 0;
       for (int s = 0; s < samples_per_pixel; ++s) {
-	auto double u = ((double)i+random_double()) / (image_width-1);
-	auto double v = ((double)j+random_double()) / (image_height-1);
-	ray_t r = camera_get_ray(&cam, u, v);
-	PV_t color = ray_color(&r, &world, max_depth);
-	pixel_color.x += color.x;
-	pixel_color.y += color.y;
-	pixel_color.z += color.z;
+		auto double u = ((double)i+random_double()) / (image_width-1);
+		auto double v = ((double)j+random_double()) / (image_height-1);
+		ray_t r = camera_get_ray(&cam, u, v);
+		PV_t color = ray_color(&r, &world, max_depth);
+		pixel_color.x += color.x;
+		pixel_color.y += color.y;
+		pixel_color.z += color.z;
       }
       write_color(&pixel_color, samples_per_pixel);
     }

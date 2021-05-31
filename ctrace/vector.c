@@ -94,3 +94,23 @@ PV_t random_unit_vector()
   PV_t rnd = random_in_unit_sphere();
   return unit_vector(&rnd);
 }
+
+PV_t reflect(const PV_t *v, const PV_t *n)
+{
+  
+  PV_t reflected;
+
+  double dot_product = vec_dot(v, n);
+
+  // calculate and return reflected vector
+  reflected.x = v->x - 2*dot_product*n->x;
+  reflected.y = v->y - 2*dot_product*n->y;
+  reflected.z = v->z - 2*dot_product*n->z;
+  return reflected;
+}
+
+bool near_zero(PV_t *v)
+{
+  const auto double s = 1e-8;
+  return (fabs(v->x) < s) && (fabs(v->y) < s) && (fabs(v->z) < s);
+}
