@@ -32,7 +32,8 @@ color ray_color(const ray& r, const hittable& world, int depth) {
         ray scattered;
         color attenuation;
 		if (rec.mat_ptr->scatter(r, rec, attenuation, scattered)){
-            return attenuation * ray_color(scattered, world, depth-1);
+		  //return attenuation * ray_color(scattered, world, depth-1);
+		  return ray_color(scattered, world, depth-1);
 		}
         return color(0,0,0);	  
     }
@@ -49,8 +50,8 @@ int main() {
     const auto aspect_ratio = 16.0 / 9.0;
     const int image_width = 400;
     const int image_height = static_cast<int>(image_width / aspect_ratio);
-    const int samples_per_pixel = 200;
-    const int max_depth = 50;
+    const int samples_per_pixel = 300;
+    const int max_depth = 20;
     
     // World
     hittable_list world;
@@ -91,6 +92,7 @@ int main() {
 		std::cerr << "\rScanlines remaining: " << j << ' ' << std::flush;
         for (int i = 0; i < image_width; ++i) {
 	    color pixel_color(0, 0, 0);
+		//std::cout << "j: " << j << " i: " << i << "\n";
 		for (int s = 0; s < samples_per_pixel; ++s) {
                 auto u = (i + random_double()) / (image_width-1);
                 auto v = (j + random_double()) / (image_height-1);

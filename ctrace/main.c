@@ -20,7 +20,9 @@ PV_t ray_color(ray_t *r, hittable_list *world, int depth)
 {
   hit_record rec;
   PV_t color;
-  for (int i = 0; i < (int)(sizeof(&world)/4); i++) {
+  //printf("sizeof world: %d\n", sizeof(&world));
+  //for (int i = 0; i < (int)(sizeof(&world)/4); i++) {
+  for (int i = 0; i < 4; i++) {
     double zero = 0;
     bool sphere_hit_checked = check_sphere_hit(&(world->sphere[i]),
 					       r,
@@ -96,28 +98,32 @@ int main(int argc, char *argv[]) {
   const auto double aspect_ratio = 16.0/9.0;
   const int image_width = 400;
   const int image_height = (int)(image_width/aspect_ratio); //static_cast<int>(image_width/aspect_ratio);
-  const int samples_per_pixel = 2000;
-  const int max_depth = 5;
+  const int samples_per_pixel = 300;
+  const int max_depth = 20;
   
   hittable_list world;
+
+  // sphere center
   sphere_t sphere0;
   sphere0.center.x = 0; 
   sphere0.center.y = 0;
   sphere0.center.z = -1;
   sphere0.radius = 0.5;
   sphere0.mat.type = 1;
-  sphere0.mat.albedo.x = 0.8;
-  sphere0.mat.albedo.y = 0.8;
-  sphere0.mat.albedo.z = 0.0;
+  sphere0.mat.albedo.x = 0.7;
+  sphere0.mat.albedo.y = 0.3;
+  sphere0.mat.albedo.z = 0.3;
+  // sphere ground
   sphere_t sphere1;
   sphere1.center.x = 0; 
   sphere1.center.y = -100.5;
   sphere1.center.z = -1;
   sphere1.radius = 100;
   sphere1.mat.type = 1;
-  sphere1.mat.albedo.x = 0.7;
-  sphere1.mat.albedo.y = 0.3;
-  sphere1.mat.albedo.z = 0.3;
+  sphere1.mat.albedo.x = 0.8;
+  sphere1.mat.albedo.y = 0.8;
+  sphere1.mat.albedo.z = 0.0;
+  // sphere right
   sphere_t sphere2;
   sphere2.center.x = -1; 
   sphere2.center.y = 0;
@@ -127,6 +133,7 @@ int main(int argc, char *argv[]) {
   sphere2.mat.albedo.x = 0.8;
   sphere2.mat.albedo.y = 0.8;
   sphere2.mat.albedo.z = 0.8;
+  // sphere left
   sphere_t sphere3;
   sphere3.center.x = 1; 
   sphere3.center.y = 0;
@@ -137,8 +144,8 @@ int main(int argc, char *argv[]) {
   sphere3.mat.albedo.y = 0.6;
   sphere3.mat.albedo.z = 0.2;
 
-  world.sphere[0] = sphere0;
-  world.sphere[1] = sphere1;
+  world.sphere[0] = sphere1;
+  world.sphere[1] = sphere0;
   world.sphere[2] = sphere2;
   world.sphere[3] = sphere3;
 
@@ -180,6 +187,7 @@ int main(int argc, char *argv[]) {
       pixel_color.x = 0;
       pixel_color.y = 0;
       pixel_color.z = 0;
+	  //printf("j: %d, i: %d\n", j, i);
       for (int s = 0; s < samples_per_pixel; ++s) {
 		auto double u = ((double)i+random_double()) / (image_width-1);
 		auto double v = ((double)j+random_double()) / (image_height-1);

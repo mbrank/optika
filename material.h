@@ -30,6 +30,7 @@ class lambertian : public material {
 			
             scattered = ray(rec.p, scatter_direction);
             attenuation = albedo;
+			//std::cout << "lambertian attenuation: " << attenuation << "\n";
             return true;
         }
 
