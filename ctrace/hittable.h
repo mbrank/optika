@@ -19,6 +19,6 @@ typedef struct hit_record_type{
 //inline hit_record set_face_normal(hit_record *h_r,
 //ray_t *r, PV_t *outward_normal);
 
-hit_record set_face_normal(hit_record *h_r, ray_t *r, PV_t *outward_normal);
+void set_face_normal(hit_record *rec, ray_t *r, PV_t *outward_normal);
 
 #endif

@@ -21,7 +21,8 @@ bool calculate_material_reflections(material *mat, ray_t *r_in, PV_t *albedo, hi
 	//printf("lambertian attenuation x, %f\n", mat->attenuation.x);
 	//printf("lambertian attenuation y, %f\n", mat->attenuation.y);
 	//printf("lambertian attenuation z, %f\n", mat->attenuation.z);
-    break;
+	return true;
+	break;
   }
   case 2: { // metal
     PV_t reflected = reflect(unit_vector(&r_in->direction), rec->normal);
@@ -30,12 +31,22 @@ bool calculate_material_reflections(material *mat, ray_t *r_in, PV_t *albedo, hi
 	scattered.direction = reflected;
 	mat->scattered = scattered;
 	mat->attenuation = mat->albedo;
+
+	// check dot product
+	double dot_product = vec_dot(&scattered.direction, &rec->normal);
+	if (dot_product > 0) {
+	  return true;
+	}
+	return false;
+	//return (dot(scattered.direction(), rec.normal) > 0);
+
 	//printf("metal attenuation x, %f\n", mat->attenuation.x);
 	//printf("metal attenuation y, %f\n", mat->attenuation.y);
 	//printf("metal attenuation z, %f\n", mat->attenuation.z);
     break;
   }
   default:
+	printf("DEFAULT\n");
     break;
   }
   //PV_t rc_norm = mat->rec.normal;

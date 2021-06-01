@@ -22,18 +22,22 @@
 //    }
 //}
 
-color ray_color(const ray& r, const hittable& world, int depth) {
+color ray_color(const ray& r, const hittable& world, int depth, int i, int j) {
     hit_record rec;
 
     // If we're exceeded the ray bounce limit, no more light is gathered
     if (depth <= 0)
         return color(0,0,0);
     if (world.hit(r, 0, infinity, rec)) {
-        ray scattered;
+	  //std::cout <<"depth:" << depth << ", hit -> i: "<< i << " j: " << j << "\n";
+	  //std::cout <<"rec center: "<<  "\n";
+	  ray scattered;
         color attenuation;
 		if (rec.mat_ptr->scatter(r, rec, attenuation, scattered)){
 		  //return attenuation * ray_color(scattered, world, depth-1);
-		  return ray_color(scattered, world, depth-1);
+		  //std::cout <<"rec attenuation: " << attenuation <<  "\n";		  
+		  //return attenuation;
+		  return attenuation*ray_color(scattered, world, depth-1, i, j);
 		}
         return color(0,0,0);	  
     }
@@ -50,8 +54,8 @@ int main() {
     const auto aspect_ratio = 16.0 / 9.0;
     const int image_width = 400;
     const int image_height = static_cast<int>(image_width / aspect_ratio);
-    const int samples_per_pixel = 300;
-    const int max_depth = 20;
+    const int samples_per_pixel = 100;
+    const int max_depth = 5;
     
     // World
     hittable_list world;
@@ -93,11 +97,12 @@ int main() {
         for (int i = 0; i < image_width; ++i) {
 	    color pixel_color(0, 0, 0);
 		//std::cout << "j: " << j << " i: " << i << "\n";
+		//std::cout <<"i: "<< i << " j: " << j << "\n";
 		for (int s = 0; s < samples_per_pixel; ++s) {
                 auto u = (i + random_double()) / (image_width-1);
                 auto v = (j + random_double()) / (image_height-1);
                 ray r = cam.get_ray(u, v);
-                pixel_color += ray_color(r, world, max_depth);
+                pixel_color += ray_color(r, world, max_depth, i, j);
             }
 		write_color(std::cout, pixel_color, samples_per_pixel);
         }

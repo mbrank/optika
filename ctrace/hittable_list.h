@@ -10,10 +10,10 @@ typedef struct hittable_list{
   sphere_t sphere[4];
 } hittable_list;
 
-bool check_sphere_hit(sphere_t *sphere,
+int check_sphere_hit(sphere_t *sphere,
 		      ray_t *r,
 		      double *t_min,
 		      double *t_max,
-		      hit_record *rec);
+			  hit_record *rec, int sphere_id);
 
 #endif

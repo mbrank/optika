@@ -95,7 +95,7 @@ PV_t random_unit_vector()
   return unit_vector(&rnd);
 }
 
-PV_t reflect(const PV_t *v, const PV_t *n)
+PV_t reflect( PV_t *v,  PV_t *n)
 {
   
   PV_t reflected;
