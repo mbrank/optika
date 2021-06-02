@@ -45,6 +45,10 @@ bool hit_sphere(sphere_t *sphere,
   rec->normal.z = (rec->p.z - sphere->center.z)/sphere->radius;
   rec->object_was_hit = true;
 
+  printf("sphere->rec.p x, %f\n", rec->p.x);
+  printf("sphere->rec.p y, %f\n", rec->p.y);
+  printf("sphere->rec.p z, %f\n", rec->p.z);
+
   // calculate face normal
   PV_t outward_normal;
   outward_normal.x = (rec->p.x - sphere->center.x) / sphere->radius;

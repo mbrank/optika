@@ -2,11 +2,11 @@
 #include "hittable_list.h"
 
 int check_sphere_hit(sphere_t *sphere,
-					 ray_t *r,
-					 double *t_min,
-					 double *t_max,
-					 hit_record *rec,
-					 int sphere_id)
+		     ray_t *r,
+		     double *t_min,
+		     double *t_max,
+		     hit_record *rec,
+		     int sphere_id)
 {
   //hit_record temp_rec;
   //bool hit_anything = false;
@@ -38,9 +38,19 @@ int check_sphere_hit(sphere_t *sphere,
       return -1;
     }
   }
-  
+  // update record state
   rec->t = root;
   rec->p = at(r, rec->t);
+  rec->normal.x = (rec->p.x - sphere->center.x)/sphere->radius;
+  rec->normal.y = (rec->p.y - sphere->center.y)/sphere->radius;
+  rec->normal.z = (rec->p.z - sphere->center.z)/sphere->radius;
+  rec->object_was_hit = true;
+
+  //printf("sphere->rec.p x, %f\n", rec->p.x);
+  //printf("sphere->rec.p y, %f\n", rec->p.y);
+  //printf("sphere->rec.p z, %f\n", rec->p.z);
+
+  
   PV_t outward_normal;
   outward_normal.x = (rec->p.x - sphere->center.x) / sphere->radius;
   outward_normal.y = (rec->p.y - sphere->center.y) / sphere->radius;

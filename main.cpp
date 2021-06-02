@@ -27,19 +27,19 @@ color ray_color(const ray& r, const hittable& world, int depth, int i, int j) {
 
     // If we're exceeded the ray bounce limit, no more light is gathered
     if (depth <= 0)
-        return color(0,0,0);
+      return color(0,0,0);
     if (world.hit(r, 0, infinity, rec)) {
-	  //std::cout <<"depth:" << depth << ", hit -> i: "<< i << " j: " << j << "\n";
-	  //std::cout <<"rec center: "<<  "\n";
-	  ray scattered;
-        color attenuation;
-		if (rec.mat_ptr->scatter(r, rec, attenuation, scattered)){
-		  //return attenuation * ray_color(scattered, world, depth-1);
-		  //std::cout <<"rec attenuation: " << attenuation <<  "\n";		  
-		  //return attenuation;
-		  return attenuation*ray_color(scattered, world, depth-1, i, j);
-		}
-        return color(0,0,0);	  
+      //std::cout <<"depth:" << depth << ", hit -> i: "<< i << " j: " << j << "\n";
+      //std::cout <<"rec center: "<<  "\n";
+      ray scattered;
+      color attenuation;
+      if (rec.mat_ptr->scatter(r, rec, attenuation, scattered)){
+	//return attenuation * ray_color(scattered, world, depth-1);
+	//std::cout <<"rec attenuation: " << attenuation <<  "\n";		  
+	//return attenuation;
+	return attenuation*ray_color(scattered, world, depth-1, i, j);
+      }
+      return color(0,0,0);	  
     }
 
     vec3 unit_direction = unit_vector(r.direction());

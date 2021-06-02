@@ -41,16 +41,17 @@ PV_t ray_color(ray_t *r, hittable_list *world, int depth, int i, int j)
   //double shortest_so_far = 1e7;
   int sphere_hit_checked = -1;
   int current_hit = -1;
+  double zero = 0;
   //printf("depth exceeded1\n");
-  // iterate over objects to find shortest hit
-  for (int k = 0; k < 4; k++) {
-    double zero = 0;
+  // iterate over objects to find first intersection
+  for (int k = 0; k < 4; k++)
+    {
   	//printf("k: %d r_origin: x=%f, y=%f, z=%f\n", k, r->origin.x, r->origin.y, r->origin.z);
     sphere_hit_checked = check_sphere_hit(&(world->sphere[k]),
-										  r,
-										  &zero,
-										  &rec.t,
-										  &rec, k);
+					  r,
+					  &zero,
+					  &rec.t,
+					  &rec, k);
 	if (sphere_hit_checked > -1) {
 	  current_hit = sphere_hit_checked;
 	}
@@ -62,10 +63,10 @@ PV_t ray_color(ray_t *r, hittable_list *world, int depth, int i, int j)
 	  //		 shortest_dist, i, j, k, depth);
 	  //}
 	  //printf("hitted_obj_id: %d\n", hitted_obj_id);
-  }
+    }
   //printf("depth exceeded2\n");
-
-    if (current_hit > -1) {
+    if (current_hit > -1)
+      {
 	  //printf("hitted_obj_id: %d, i: %d, j: %d, depth: %d, attenuation - x: %f, y: %f, z: %f, radius: %f\n",
 	  //	 hitted_obj_id, i, j, depth,
 	  //	 world->sphere[hitted_obj_id].mat.albedo.x,
@@ -73,25 +74,30 @@ PV_t ray_color(ray_t *r, hittable_list *world, int depth, int i, int j)
 	  //	 world->sphere[hitted_obj_id].mat.albedo.z,
 	  //	 world->sphere[hitted_obj_id].radius);
 	  //printf("hitted_obj_id: %d\n", hitted_obj_id);
+	printf("depth: %d\n", depth);
 	  bool mat_ref = calculate_material_reflections(&(world->sphere[current_hit].mat),
-													r,
-													&(world->sphere[current_hit].mat.albedo),
-													&rec);
+							r,
+							&(world->sphere[current_hit].mat.albedo),
+							&rec);
 	  if (mat_ref) {
-		//printf("depth exceeded3\n");
 
 		//return world->sphere[current_hit].mat.albedo;
-		PV_t current_ray_color = ray_color(&(world->sphere[current_hit].mat.scattered), world, depth-1, i, j);
-		PV_t color_to_return = {current_ray_color.x*world->sphere[current_hit].mat.attenuation.x,
-								current_ray_color.y*world->sphere[current_hit].mat.attenuation.y,
-								current_ray_color.z*world->sphere[current_hit].mat.attenuation.z};
+		PV_t current_ray_color = ray_color(&(world->sphere[current_hit].mat.scattered),
+						   world,
+						   depth-1, i, j);
+		PV_t color_to_return = {current_ray_color.x*
+					world->sphere[current_hit].mat.attenuation.x,
+					current_ray_color.y*
+					world->sphere[current_hit].mat.attenuation.y,
+					current_ray_color.z*
+					world->sphere[current_hit].mat.attenuation.z};
 		//return ray_color(&(world->sphere[current_hit].mat.scattered), world, depth-1, i, j);
 		return color_to_return;
 	  }
 	  PV_t color = {0, 0, 0};
 	  return color; 
-    }
-	//printf("depth exceeded4\n");
+      }
+    //printf("depth exceeded4\n");
     PV_t unit_direction = unit_vector(&r->direction);
     double t = 0.5*(unit_direction.y + 1.0);
     PV_t color1;
@@ -118,8 +124,8 @@ int main(int argc, char *argv[]) {
   const auto double aspect_ratio = 16.0/9.0;
   const int image_width = 400;
   const int image_height = (int)(image_width/aspect_ratio); //static_cast<int>(image_width/aspect_ratio);
-  const int samples_per_pixel = 100;
-  const int max_depth = 5;
+  const int samples_per_pixel = 1;
+  const int max_depth = 2;
   
   hittable_list world;
 

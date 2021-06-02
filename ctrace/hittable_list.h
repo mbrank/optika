@@ -11,9 +11,9 @@ typedef struct hittable_list{
 } hittable_list;
 
 int check_sphere_hit(sphere_t *sphere,
-		      ray_t *r,
-		      double *t_min,
-		      double *t_max,
-			  hit_record *rec, int sphere_id);
+		     ray_t *r,
+		     double *t_min,
+		     double *t_max,
+		     hit_record *rec, int sphere_id);
 
 #endif
