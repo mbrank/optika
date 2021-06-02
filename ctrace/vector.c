@@ -99,9 +99,10 @@ PV_t reflect( PV_t *v,  PV_t *n)
 {
   
   PV_t reflected;
-
+  //printf("vec_dot v: %f, %f, %f\n", v->x, v->y, v->z);
+  //printf("vec_dot n: %f, %f, %f\n", n->x, n->y, n->z);  
   double dot_product = vec_dot(v, n);
-
+  //printf("dot product: %f\n", dot_product);
   // calculate and return reflected vector
   reflected.x = v->x - 2*dot_product*n->x;
   reflected.y = v->y - 2*dot_product*n->y;

@@ -48,6 +48,14 @@ class metal : public material {
             vec3 reflected = reflect(unit_vector(r_in.direction()), rec.normal);
             scattered = ray(rec.p, reflected);
             attenuation = albedo;
+			std::cout << "unit_vec: " << unit_vector(r_in.direction())  << "\n";
+			std::cout << "reflected: " << reflected  << "\n";
+			std::cout << "metal r_in origin: " << r_in.origin()  << "\n";
+			std::cout << " metal r_in direction: " << r_in.direction()  << "\n";
+			std::cout << "  metal rec normal: " << rec.normal  << "\n";
+			std::cout << "   metal rec p: " << rec.p  << "\n";			
+			std::cout << "    scattered metal origin: " << scattered.origin()  << "\n";
+			std::cout << "     scattered metal direction: " << scattered.direction()  << "\n";
             return (dot(scattered.direction(), rec.normal) > 0);
         }
 

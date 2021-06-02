@@ -31,6 +31,13 @@ PV_t ray_color(ray_t *r, hittable_list *world, int depth, int i, int j)
   //printf("depth exceeded1ss\n");
   // if depth not exceeded check intersection
   hit_record rec;
+  //printf("--------------------------------\n");
+  //printf("depth: %d\n", depth);
+
+  //printf("set face normal before->normal: %f, %f, %f\n",
+  //	 rec.normal.x,
+  //	 rec.normal.y,
+  //	 rec.normal.z);
   rec.t = infinity;
   PV_t color;
   //printf("sizeof world: %d\n", sizeof(&world));
@@ -74,7 +81,7 @@ PV_t ray_color(ray_t *r, hittable_list *world, int depth, int i, int j)
 	  //	 world->sphere[hitted_obj_id].mat.albedo.z,
 	  //	 world->sphere[hitted_obj_id].radius);
 	  //printf("hitted_obj_id: %d\n", hitted_obj_id);
-	printf("depth: %d\n", depth);
+		//printf("depth: %d\n", depth);
 	  bool mat_ref = calculate_material_reflections(&(world->sphere[current_hit].mat),
 							r,
 							&(world->sphere[current_hit].mat.albedo),
@@ -124,8 +131,8 @@ int main(int argc, char *argv[]) {
   const auto double aspect_ratio = 16.0/9.0;
   const int image_width = 400;
   const int image_height = (int)(image_width/aspect_ratio); //static_cast<int>(image_width/aspect_ratio);
-  const int samples_per_pixel = 1;
-  const int max_depth = 2;
+  const int samples_per_pixel = 100;
+  const int max_depth = 10;
   
   hittable_list world;
 
@@ -171,8 +178,8 @@ int main(int argc, char *argv[]) {
   sphere3.mat.albedo.z = 0.2;
 
   world.sphere[0] = sphere0;
-  world.sphere[1] = sphere2;
-  world.sphere[2] = sphere1;
+  world.sphere[1] = sphere1;
+  world.sphere[2] = sphere2;
   world.sphere[3] = sphere3;
   // Camera
 

@@ -127,7 +127,10 @@ vec3 random_unit_vector() {
 }
 
 vec3 reflect(const vec3& v, const vec3& n) {
-    return v - 2*dot(v,n)*n;
+  std::cout << "vec_dot v:" << v << "\n";
+  std::cout << "vec_dot n:" << n << "\n";
+  std::cout << "dot product:" << dot(v,n) << "\n";
+  return v - 2*dot(v,n)*n;
 }
 
 // Type aliases for vec3

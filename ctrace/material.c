@@ -5,17 +5,21 @@ bool calculate_material_reflections(material *mat, ray_t *r_in, PV_t *albedo, hi
 {
   switch (mat->type) {
   case 1: { // lambertian
-    printf("lambertian -> r_in.direction x, %f\n", r_in->direction.x);
+    //printf("lambertian -> r_in.direction x, %f\n", r_in->direction.x);
     //printf("lambertian -> r_in.direction y, %f\n", r_in->direction.y);
     //printf("lambertian -> r_in.direction z, %f\n", r_in->direction.z);
-    printf("lambertian -> r_in.origin x, %f\n", r_in->origin.x);
+    //printf("lambertian -> r_in.origin x, %f\n", r_in->origin.x);
     //printf("lambertian -> r_in.origin y, %f\n", r_in->origin.y);
     //printf("lambertian -> r_in.origin z, %f\n", r_in->origin.z);
+    //printf("  lambertian rec normal: %f, %f, %f\n",
+	//	   rec->normal.x,
+	//	   rec->normal.y,
+	//	   rec->normal.z);
 
     PV_t scatter_direction;
     PV_t random_unit_vec = random_unit_vector();
     scatter_direction.x = rec->normal.x + random_unit_vec.x;
-    scatter_direction.y = rec->normal.y + random_unit_vec.y;
+	scatter_direction.y = rec->normal.y + random_unit_vec.y;
     scatter_direction.z = rec->normal.z + random_unit_vec.z;
     
     if (near_zero(&scatter_direction)) {
@@ -32,23 +36,69 @@ bool calculate_material_reflections(material *mat, ray_t *r_in, PV_t *albedo, hi
     break;
   }
   case 2: { // metal
-    printf("metal -> r_in.direction x, %f\n", r_in->direction.x);
+    //printf("metal -> r_in.direction x, %f\n", r_in->direction.x);
     //printf("metal -> r_in.direction y, %f\n", r_in->direction.y);
     //printf("metal -> r_in.direction z, %f\n", r_in->direction.z);
-    printf("metal -> r_in.origin x, %f\n", r_in->origin.x);
-    //printf("metal -> r_in.origin y, %f\n", r_in->origin.y);
-    //printf("metal -> r_in.origin z, %f\n", r_in->origin.z);
+    //printf("metal -> rec_normal: %f, %f, %f\n",
+	//	   rec->normal.x,
+	//	   rec->normal.y,
+	//	   rec->normal.z);
+    //printf("metal -> rec_normal y, %f\n", r_in->origin.y);
+    //printf("metal -> rec_normal z, %f\n", r_in->origin.z);
     //printf("material->rec.p x, %f\n", rec->p.x);
     //printf("material->rec.p y, %f\n", rec->p.y);
     //printf("material->rec.p z, %f\n", rec->p.z);
 
     // calculate reflection
-    PV_t reflected = reflect(unit_vector(&r_in->direction), rec->normal);
+	//PV_t normal =  rec->normal;
+    //printf("metal -> _normal: %f, %f, %f\n",
+	//	   normal.x,
+	//	   normal.y,
+	//	   normal.z);
 
+	PV_t unit_vec = unit_vector(&r_in->direction);
+    PV_t reflected = reflect(&unit_vec, &rec->normal);
+
+	//PV_t unit_vec = unit_vector(&r_in->direction);
     // update material
+	//printf("unit_vec: %f, %f, %f\n",
+	//	   unit_vec.x,
+	//	   unit_vec.y,
+	//	   unit_vec.z);
+	//printf("reflected: %f, %f, %f\n",
+	//	   reflected.x,
+	//	   reflected.y,
+	//	   reflected.z);
+
     ray_t scattered;
     scattered.origin = rec->p;
     scattered.direction = reflected;
+	
+	//printf("metal r_in origin: %f, %f, %f\n",
+	//	   r_in->origin.x,
+	//	   r_in->origin.y,
+	//	   r_in->origin.z);
+	//printf(" metal r_in direction: %f, %f, %f\n",
+	//	   r_in->direction.x,
+	//	   r_in->direction.y,
+	//	   r_in->direction.z);
+    //printf("  metal rec normal: %f, %f, %f\n",
+	//	   rec->normal.x,
+	//	   rec->normal.y,
+	//	   rec->normal.z);
+    //printf("   metal rec p: %f, %f, %f\n",
+	//	   rec->p.x,
+	//	   rec->p.y,
+	//	   rec->p.z);
+	//printf("    scattered metal origin: %f, %f, %f\n",
+	//	   scattered.origin.x,
+	//	   scattered.origin.y,
+	//	   scattered.origin.z);
+    //printf("      scattered metal direction: %f, %f, %f\n",
+	//	   scattered.direction.x,
+	//	   scattered.direction.y,
+	//	   scattered.direction.z);
+
     mat->scattered = scattered;
     mat->attenuation = *albedo;
 

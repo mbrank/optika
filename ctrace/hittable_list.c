@@ -41,9 +41,9 @@ int check_sphere_hit(sphere_t *sphere,
   // update record state
   rec->t = root;
   rec->p = at(r, rec->t);
-  rec->normal.x = (rec->p.x - sphere->center.x)/sphere->radius;
-  rec->normal.y = (rec->p.y - sphere->center.y)/sphere->radius;
-  rec->normal.z = (rec->p.z - sphere->center.z)/sphere->radius;
+  //rec->normal.x = (rec->p.x - sphere->center.x)/sphere->radius;
+  //rec->normal.y = (rec->p.y - sphere->center.y)/sphere->radius;
+  //rec->normal.z = (rec->p.z - sphere->center.z)/sphere->radius;
   rec->object_was_hit = true;
 
   //printf("sphere->rec.p x, %f\n", rec->p.x);
