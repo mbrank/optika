@@ -166,6 +166,7 @@ int main(int argc, char *argv[]) {
   sphere2.mat.albedo.x = 0.8;
   sphere2.mat.albedo.y = 0.8;
   sphere2.mat.albedo.z = 0.8;
+  sphere2.mat.fuzz = 0.1;
   // sphere right
   sphere_t sphere3;
   sphere3.center.x = 1; 
@@ -176,7 +177,8 @@ int main(int argc, char *argv[]) {
   sphere3.mat.albedo.x = 0.8;
   sphere3.mat.albedo.y = 0.6;
   sphere3.mat.albedo.z = 0.2;
-
+  sphere3.mat.fuzz = 1.0;
+  
   world.sphere[0] = sphere0;
   world.sphere[1] = sphere1;
   world.sphere[2] = sphere2;

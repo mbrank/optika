@@ -13,12 +13,16 @@ typedef struct material_t{
   ray_t scattered;
   //char type[10];
   int type; // type of material
+  double fuzz; // factor to fuzz reflections, 0 is no perturbation
   // lambertian -> 1
   // metal -> 2
 } material;
 
 
-bool calculate_material_reflections(material *mat, ray_t *r_in, PV_t *albedo, hit_record *rec);
+bool calculate_material_reflections(material *mat,
+									ray_t *r_in,
+									PV_t *albedo,
+									hit_record *rec);
 
 #endif
 

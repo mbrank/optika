@@ -72,8 +72,11 @@ bool calculate_material_reflections(material *mat, ray_t *r_in, PV_t *albedo, hi
 
     ray_t scattered;
     scattered.origin = rec->p;
-    scattered.direction = reflected;
-	
+
+	PV_t unit_fuzz = random_in_unit_sphere();
+    scattered.direction.x = reflected.x+mat->fuzz*unit_fuzz.x;
+    scattered.direction.y = reflected.y+mat->fuzz*unit_fuzz.y;
+	scattered.direction.z = reflected.z+mat->fuzz*unit_fuzz.z;
 	//printf("metal r_in origin: %f, %f, %f\n",
 	//	   r_in->origin.x,
 	//	   r_in->origin.y,
