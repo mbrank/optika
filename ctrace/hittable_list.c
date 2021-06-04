@@ -10,12 +10,55 @@ int check_sphere_hit(sphere_t *sphere,
 {
   //hit_record temp_rec;
   //bool hit_anything = false;
-  int hit_anything = -1;
+  //int hit_anything = -1;
 
   //double closest_so_far = temp_rec.t;
-  double closest_so_far = *t_max;
+  //double closest_so_far = *t_max;
 
   // check intersection
+
+  PV_t oc = vec_diff(&(r->origin), &(sphere->center));
+  //oc.x = r->origin.x - sphere->center.x;
+  //oc.y = r->origin.y - sphere->center.y;
+  //oc.z = r->origin.z - sphere->center.z;
+  double a = vec_dot(&r->direction, &r->direction);
+  double b = vec_dot(&oc, &r->direction);
+  double c = vec_dot(&oc, &oc) - sphere->radius*sphere->radius;
+  double discriminant = b*b - a*c;
+  //setbuf(stdout, NULL);
+  if (discriminant > 0) {
+    double temp = (-b - sqrt(discriminant)) / a;
+	if (temp < *t_max && temp > *t_min) {
+	  // update record state
+	  rec->t = temp;
+	  rec->p = at(r, rec->t);
+	  rec->normal.x = (rec->p.x - sphere->center.x)/sphere->radius;
+	  rec->normal.y = (rec->p.y - sphere->center.y)/sphere->radius;
+	  rec->normal.z = (rec->p.z - sphere->center.z)/sphere->radius;
+	  rec->object_was_hit = true;
+	  return sphere_id;
+	}
+	temp = (-b + sqrt(discriminant)) / a;
+	if (temp < *t_min && temp > *t_max) {
+	  // update record state
+	  rec->t = temp;
+	  rec->p = at(r, rec->t);
+	  rec->normal.x = (rec->p.x - sphere->center.x)/sphere->radius;
+	  rec->normal.y = (rec->p.y - sphere->center.y)/sphere->radius;
+	  rec->normal.z = (rec->p.z - sphere->center.z)/sphere->radius;
+	  rec->object_was_hit = true;
+	  return sphere_id;
+	}
+
+  }
+  return -1;
+
+
+
+
+
+
+  /*
   PV_t oc = vec_diff(&(r->origin), &(sphere->center));
   oc.x = r->origin.x - sphere->center.x;
   oc.y = r->origin.y - sphere->center.y;
@@ -38,6 +81,8 @@ int check_sphere_hit(sphere_t *sphere,
       return -1;
     }
   }
+
+  
   // update record state
   rec->t = root;
   rec->p = at(r, rec->t);
@@ -58,6 +103,7 @@ int check_sphere_hit(sphere_t *sphere,
   set_face_normal(rec, r, &outward_normal);
   rec->object_was_hit = true;
   return sphere_id;
+  */
 }
 //  bool hitted_sphere = hit_sphere(sphere,
 //				  r,

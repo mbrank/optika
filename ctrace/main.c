@@ -51,7 +51,7 @@ PV_t ray_color(ray_t *r, hittable_list *world, int depth, int i, int j)
   double zero = 0;
   //printf("depth exceeded1\n");
   // iterate over objects to find first intersection
-  for (int k = 0; k < 4; k++)
+  for (int k = 0; k < 5; k++)
     {
   	//printf("k: %d r_origin: x=%f, y=%f, z=%f\n", k, r->origin.x, r->origin.y, r->origin.z);
     sphere_hit_checked = check_sphere_hit(&(world->sphere[k]),
@@ -131,88 +131,107 @@ int main(int argc, char *argv[]) {
   const auto double aspect_ratio = 16.0/9.0;
   const int image_width = 400;
   const int image_height = (int)(image_width/aspect_ratio); //static_cast<int>(image_width/aspect_ratio);
-  const int samples_per_pixel = 100;
+  const int samples_per_pixel = 200;
   const int max_depth = 10;
-  
+  const double R = cos(pi/4);
   hittable_list world;
 
   // sphere ground
-  sphere_t sphere0;
-  sphere0.center.x = 0; 
-  sphere0.center.y = -100.5;
-  sphere0.center.z = -1;
-  sphere0.radius = 100;
-  sphere0.mat.type = 1;
-  sphere0.mat.albedo.x = 0.8;
-  sphere0.mat.albedo.y = 0.8;
-  sphere0.mat.albedo.z = 0.0;
+  sphere_t sphere_ground;
+  sphere_ground.center.x = 0; 
+  sphere_ground.center.y = -100.5;
+  sphere_ground.center.z = -1;
+  sphere_ground.radius = 100;
+  sphere_ground.mat.type = 1;
+  sphere_ground.mat.albedo.x = 0.8;
+  sphere_ground.mat.albedo.y = 0.8;
+  sphere_ground.mat.albedo.z = 0.0;
   // sphere center
-  sphere_t sphere1;
-  sphere1.center.x = 0; 
-  sphere1.center.y = 0;
-  sphere1.center.z = -1;
-  sphere1.radius = 0.5;
-  sphere1.mat.type = 1;
-  sphere1.mat.albedo.x = 0.7;
-  sphere1.mat.albedo.y = 0.3;
-  sphere1.mat.albedo.z = 0.3;
-  // sphere left
-  sphere_t sphere2;
-  sphere2.center.x = -1; 
-  sphere2.center.y = 0;
-  sphere2.center.z = -1;
-  sphere2.radius = 0.5;
-  sphere2.mat.type = 2;
-  sphere2.mat.albedo.x = 0.8;
-  sphere2.mat.albedo.y = 0.8;
-  sphere2.mat.albedo.z = 0.8;
-  sphere2.mat.fuzz = 0.1;
-  // sphere right
-  sphere_t sphere3;
-  sphere3.center.x = 1; 
-  sphere3.center.y = 0;
-  sphere3.center.z = -1;
-  sphere3.radius = 0.5;
-  sphere3.mat.type = 2;
-  sphere3.mat.albedo.x = 0.8;
-  sphere3.mat.albedo.y = 0.6;
-  sphere3.mat.albedo.z = 0.2;
-  sphere3.mat.fuzz = 1.0;
+  sphere_t sphere_center;
+  sphere_center.center.x = 0; 
+  sphere_center.center.y = 0;
+  sphere_center.center.z = -1;
+  sphere_center.radius = 0.5;
+  sphere_center.mat.albedo.x = 0.1;
+  sphere_center.mat.albedo.y = 0.2;
+  sphere_center.mat.albedo.z = 0.5;
+  sphere_center.mat.type = 1;
+  //sphere_center.mat.ir = 1.5;
   
-  world.sphere[0] = sphere0;
-  world.sphere[1] = sphere1;
-  world.sphere[2] = sphere2;
-  world.sphere[3] = sphere3;
+  // sphere left
+  sphere_t sphere_left_out;
+  sphere_left_out.center.x = -1; 
+  sphere_left_out.center.y = 0;
+  sphere_left_out.center.z = -1;
+  sphere_left_out.radius = 0.5;
+  sphere_left_out.mat.type = 3;
+  sphere_left_out.mat.ir = 1.5;
+  // sphere left
+  sphere_t sphere_left_in;
+  sphere_left_in.center.x = -1; 
+  sphere_left_in.center.y = 0;
+  sphere_left_in.center.z = -1;
+  sphere_left_in.radius = -0.45; // negative radius means inward surface normal
+  sphere_left_in.mat.type = 3;
+  sphere_left_in.mat.ir = 1.5;
+
+  // sphere right
+  sphere_t sphere_right;
+  sphere_right.center.x = 1; 
+  sphere_right.center.y = 0;
+  sphere_right.center.z = -1;
+  sphere_right.radius = 0.5;
+  sphere_right.mat.type = 2;
+  sphere_right.mat.albedo.x = 0.8;
+  sphere_right.mat.albedo.y = 0.6;
+  sphere_right.mat.albedo.z = 0.2;
+  sphere_right.mat.fuzz = 0.0;
+
+  world.sphere[0] = sphere_ground;
+  world.sphere[1] = sphere_center;
+  world.sphere[2] = sphere_left_out;
+  world.sphere[3] = sphere_right;
+  world.sphere[4] = sphere_left_in;
   // Camera
 
   camera cam;
+  PV_t lookfrom = {3, 3, 2};
+  PV_t lookat = {0, 0, -1};
+  PV_t vup = {0, 1, 0};
+
+  PV_t dist_to_focus_diff = vec_diff(&lookfrom, &lookat);
+  double dist_to_focus = vec_len(&dist_to_focus_diff);
+  double aperture = 1;
+  double vfov = 20;
+  initialize_camera(&cam, lookfrom, lookat, vup, vfov, aspect_ratio,
+					aperture, dist_to_focus);
 
   // how to initialize camera through function
   // initialize camera
-  cam.aspect_ratio = 16.0/9.0;
-  cam.viewport_height = 2.0;
-  cam.viewport_width = (cam.aspect_ratio * cam.viewport_height);
-  cam.focal_length = 1.0;
-
-  cam.camera_origin.x = 0;
-  cam.camera_origin.y = 0;
-  cam.camera_origin.z = 0;
-
-  cam.horizontal.x = cam.viewport_width;
-  cam.horizontal.y = 0;
-  cam.horizontal.z = 0;
-
-  cam.vertical.x = 0;
-  cam.vertical.y = cam.viewport_height;
-  cam.vertical.z = 0;
+  //cam.vfov = 90;
+  //cam.theta = degrees_to_radians(cam.vfov);
+  //cam.aspect_ratio = 16.0/9.0;
+  //cam.h = tan(cam.theta/2);
+  //cam.viewport_height = 2.0*cam.h;
+  //cam.viewport_width = (cam.aspect_ratio * cam.viewport_height);
+  //cam.focal_length = 1.0;
+  //cam.camera_origin.x = 0;
+  //cam.camera_origin.y = 0;
+  //cam.camera_origin.z = 0;
+  //cam.horizontal.x = cam.viewport_width;
+  //cam.horizontal.y = 0;
+  //cam.horizontal.z = 0;
+  //cam.vertical.x = 0;
+  //cam.vertical.y = cam.viewport_height;
+  //cam.vertical.z = 0;
 
   // Calculate lower left corner of camera
-  PV_t hor_divide = vec_divide(&(cam.horizontal), -2);
-  PV_t vert_divide = vec_divide(&(cam.vertical), -2);
-  PV_t scale_orig_hor = vec_sum(&(cam.camera_origin), &hor_divide);
-  PV_t scale_orig_hor_vert = vec_sum(&scale_orig_hor, &vert_divide);
-  PV_t neg_focal_length = {0, 0, -1};
-  cam.lower_left_corner = vec_sum(&scale_orig_hor_vert, &neg_focal_length);
+  //PV_t hor_divide = vec_divide(&(cam.horizontal), -2);
+  //PV_t vert_divide = vec_divide(&(cam.vertical), -2);
+  //PV_t scale_orig_hor = vec_sum(&(cam.camera_origin), &hor_divide);
+  //PV_t scale_orig_hor_vert = vec_sum(&scale_orig_hor, &vert_divide);
+  //PV_t neg_focal_length = {0, 0, -1};
+  //cam.lower_left_corner = vec_sum(&scale_orig_hor_vert, &neg_focal_length);
 
   printf("P3\n%i %i\n255\n", image_width, image_height);
   for (int j=image_height-1; j>=0; j--) {

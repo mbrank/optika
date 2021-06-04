@@ -14,9 +14,9 @@ struct hit_record {
   
   inline void set_face_normal(const ray& r, const vec3& outward_normal) {
     front_face = dot(r.direction(), outward_normal) < 0; 
-	std::cout << "set face normal after ->normal" << normal << "\n";
+	//std::cout << "set face normal after ->normal" << normal << "\n";
     normal = front_face ? outward_normal :-outward_normal;
-	std::cout << "set face normal after ->normal" << normal << "\n";
+	//std::cout << "set face normal after ->normal" << normal << "\n";
   }
 };
 

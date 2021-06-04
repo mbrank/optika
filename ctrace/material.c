@@ -1,4 +1,13 @@
 #include "material.h"
+#include "rtweekend.h"
+
+double reflectance(double cosine, double ref_idx)
+{
+  // Use Schlick's approximation for reflectance.
+  double r0 = (1-ref_idx) / (1+ref_idx);
+  r0 = r0*r0;
+  return r0 + (1-r0)*pow((1 - cosine), 5);
+}
 
 bool calculate_material_reflections(material *mat, ray_t *r_in, PV_t *albedo, hit_record *rec)
 //takes material struct and color
@@ -57,6 +66,7 @@ bool calculate_material_reflections(material *mat, ray_t *r_in, PV_t *albedo, hi
 	//	   normal.z);
 
 	PV_t unit_vec = unit_vector(&r_in->direction);
+	//printf("material metal\n");
     PV_t reflected = reflect(&unit_vec, &rec->normal);
 
 	//PV_t unit_vec = unit_vector(&r_in->direction);
@@ -121,6 +131,72 @@ bool calculate_material_reflections(material *mat, ray_t *r_in, PV_t *albedo, hi
     //printf("metal attenuation z, %f\n", mat->attenuation.z);
     break;
   }
+  case 3: { // dielectric
+
+	PV_t outward_normal;
+	PV_t reflected = reflect(&r_in->direction, &rec->normal);
+	double ni_over_nt;
+	mat->attenuation.x = 1.0;
+	mat->attenuation.y = 1.0;
+	mat->attenuation.z = 1.0;
+	PV_t refracted;
+	double reflect_prob;
+	double cosine;
+	if (vec_dot(&r_in->direction, &rec->normal) > 0) {
+	  outward_normal = vec_scale(&rec->normal, -1);
+	  ni_over_nt = mat->ir;
+	  cosine = vec_dot(&r_in->direction, &rec->normal) / vec_len(&r_in->direction);
+	  cosine = sqrt(1 - mat->ir*mat->ir*(1-cosine*cosine));	  
+	}
+	else {
+	  outward_normal = rec->normal;
+	  ni_over_nt = 1.0 / mat->ir;
+	  cosine = -1*vec_dot(&r_in->direction, &rec->normal) / vec_len(&r_in->direction);
+	}
+
+	if (refract(&r_in->direction, &outward_normal, ni_over_nt, &refracted)) {
+	  reflect_prob = reflectance(cosine, mat->ir);
+	}
+	else{
+	  reflect_prob = 1.0;
+	}
+	if (random_double() < reflect_prob)
+	  {
+		mat->scattered.origin = rec->p;
+		mat->scattered.direction = reflected;
+	  }
+	else
+	  {
+		mat->scattered.origin = rec->p;
+		mat->scattered.direction = refracted;
+	  }
+	return true;
+  }
+	/*
+	double refraction_ratio = rec->front_face ? (1.0/mat->ir) : mat->ir;
+	PV_t unit_direction = unit_vector(&r_in->direction);
+
+	PV_t neg_unit_dir = vec_scale(&unit_direction, -1);
+	double cos_theta = fmin(vec_dot(&neg_unit_dir, &rec->normal), 1.0);
+	double sin_theta = sqrt(1.0 - cos_theta*cos_theta);
+
+	bool cannot_refract = refraction_ratio * sin_theta > 1.0;
+	PV_t direction;
+	if (cannot_refract && reflectance(cos_theta, refraction_ratio) > random_double())
+	  {
+		direction = reflect(&unit_direction, &rec->normal);
+	  }
+	else
+	  {
+		direction = refract(&unit_direction, &rec->normal, refraction_ratio);			  
+	  }
+
+	mat->scattered.origin = rec->p;
+	mat->scattered.direction = direction;
+	//PV_t refracted = refract(&unit_direction, &rec->normal, refraction_ratio);
+	return true;
+	break;
+  }
   default:
     printf("DEFAULT\n");
     break;
@@ -135,5 +211,14 @@ bool calculate_material_reflections(material *mat, ray_t *r_in, PV_t *albedo, hi
   //mat->scattered.origin = mat->rec.p;
   //mat->scattered.direction = scatter_direction;
   //mat->attenuation = *albedo; //albedo
+  return true;
+	*/
+
+  default:
+	{
+    printf("DEFAULT\n");
+    break;
+	}
+  }
   return true;
 }

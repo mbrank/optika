@@ -51,13 +51,13 @@ class vec3 {
 	    const auto s = 1e-8;
 	    return (fabs(e[0]) < s) && (fabs(e[1]) < s) && (fabs(e[2]) < s);
         }
-
-  inline static vec3 random() {
-  return vec3(random_double(), random_double(), random_double());
-}
-  inline static vec3 random(double min, double max) {
-  return vec3(random_double(min,max), random_double(min,max), random_double(min,max));
-}
+  inline float squared_length() const { return e[0]*e[0] + e[1]*e[1] + e[2]*e[2]; }
+  //inline static vec3 random() {
+  //return vec3(random_double(), random_double(), random_double());
+  //}
+//inline static vec3 random(double min, double max) {
+//return vec3(random_double(min,max), random_double(min,max), random_double(min,max));
+//}
 
     public:
         double e[3];
@@ -115,11 +115,11 @@ inline vec3 unit_vector(vec3 v) {
 
 
 vec3 random_in_unit_sphere() {
-    while (true) {
-        auto p = vec3::random(-1,1);
-        if (p.length_squared() >= 1) continue;
-        return p;
-    }
+    vec3 p;
+    do {
+        p = 2.0*vec3(random_double(),random_double(),random_double()) - vec3(1,1,1);
+    } while (p.squared_length() >= 1.0);
+    return p;
 }
 
 vec3 random_unit_vector() {
@@ -127,10 +127,17 @@ vec3 random_unit_vector() {
 }
 
 vec3 reflect(const vec3& v, const vec3& n) {
-  std::cout << "vec_dot v:" << v << "\n";
-  std::cout << "vec_dot n:" << n << "\n";
-  std::cout << "dot product:" << dot(v,n) << "\n";
+  //std::cout << "vec_dot v:" << v << "\n";
+  //std::cout << "vec_dot n:" << n << "\n";
+  //std::cout << "dot product:" << dot(v,n) << "\n";
   return v - 2*dot(v,n)*n;
+}
+
+vec3 refract(const vec3& uv, const vec3& n, double etai_over_etat) {
+    auto cos_theta = fmin(dot(-uv, n), 1.0);
+    vec3 r_out_perp =  etai_over_etat * (uv + cos_theta*n);
+    vec3 r_out_parallel = -sqrt(fabs(1.0 - r_out_perp.length_squared())) * n;
+    return r_out_perp + r_out_parallel;
 }
 
 // Type aliases for vec3

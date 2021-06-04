@@ -11,14 +11,42 @@ bool hit_sphere(sphere_t *sphere,
 
   // check if sphere is hit
   PV_t oc = vec_diff(&(r->origin), &(sphere->center));
-  oc.x = r->origin.x - sphere->center.x;
-  oc.y = r->origin.y - sphere->center.y;
-  oc.z = r->origin.z - sphere->center.z;
-  double a = length_squared(&(r->direction));
-  double half_b = vec_dot(&oc, &(r->direction));
-  double c = length_squared(&oc) - sphere->radius*sphere->radius;
-  double discriminant = half_b*half_b - a*c;
+  //oc.x = r->origin.x - sphere->center.x;
+  //oc.y = r->origin.y - sphere->center.y;
+  //oc.z = r->origin.z - sphere->center.z;
+  double a = vec_dot(&r->direction, &r->direction);
+  double b = vec_dot(&oc, &r->direction);
+  double c = vec_dot(&oc, &oc) - sphere->radius*sphere->radius;
+  double discriminant = b*b - a*c;
   //setbuf(stdout, NULL);
+  if (discriminant > 0) {
+    double temp = (-b - sqrt(discriminant)) / a;
+	if (temp < *t_max && temp > *t_min) {
+	  // update record state
+	  rec->t = temp;
+	  rec->p = at(r, rec->t);
+	  rec->normal.x = (rec->p.x - sphere->center.x)/sphere->radius;
+	  rec->normal.y = (rec->p.y - sphere->center.y)/sphere->radius;
+	  rec->normal.z = (rec->p.z - sphere->center.z)/sphere->radius;
+	  rec->object_was_hit = true;
+	  return true;
+	}
+	temp = (-b + sqrt(discriminant)) / a;
+	if (temp < *t_min && temp > *t_max) {
+	  // update record state
+	  rec->t = temp;
+	  rec->p = at(r, rec->t);
+	  rec->normal.x = (rec->p.x - sphere->center.x)/sphere->radius;
+	  rec->normal.y = (rec->p.y - sphere->center.y)/sphere->radius;
+	  rec->normal.z = (rec->p.z - sphere->center.z)/sphere->radius;
+	  rec->object_was_hit = true;
+	  return true;
+	}
+
+  }
+  return false;
+
+  /*
   if (discriminant < 0)
     {
       rec->object_was_hit = false;
@@ -28,9 +56,9 @@ bool hit_sphere(sphere_t *sphere,
   double sqrtd = sqrt(discriminant);
 
   // Find the nearest root that lies in the acceptable range.
-  auto double root = (-half_b - sqrtd) / a;
+  auto double root = (-b - sqrtd) / a;
   if (root < *t_min || *t_max < root) {
-    root = (-half_b + sqrtd) / a;
+    root = (-b + sqrtd) / a;
     if (root < *t_min || *t_max < root){
       rec->object_was_hit = false;
       return false;
@@ -57,4 +85,5 @@ bool hit_sphere(sphere_t *sphere,
   set_face_normal(rec, r, &outward_normal);
   
   return true;
+  */
 }

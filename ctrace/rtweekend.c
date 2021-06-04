@@ -1,6 +1,8 @@
 #include <stdlib.h>
 #include "hittable.h"
 #include "rtweekend.h"
+#include "constants.h"
+
 
 double random_double(){
   // returns a random double in [0, 1)
@@ -20,4 +22,8 @@ double clamp(double x, double min, double max){
     return max;
   }
   return x;
+}
+
+double degrees_to_radians(double degrees) {
+    return degrees * pi / 180.0;
 }
