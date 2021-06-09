@@ -131,8 +131,8 @@ int main(int argc, char *argv[]) {
   const auto double aspect_ratio = 3.0/2.0;
   const int image_width = 1200;
   const int image_height = (int)(image_width/aspect_ratio); //static_cast<int>(image_width/aspect_ratio);
-  const int samples_per_pixel = 500;
-  const int max_depth = 50;
+  const int samples_per_pixel = 100;
+  const int max_depth = 10;
   const double R = cos(pi/4);
   
   hittable_list world;
@@ -148,58 +148,69 @@ int main(int argc, char *argv[]) {
   sphere_ground.mat.albedo.z = 0.5;
   world.sphere[0] = sphere_ground;
   int i_s = 0;
-  //for (int a = -11; a < 11; a++) {
-  //  for (int b = -11; b < 11; b++) {
-  //    double choose_mat = random_double();
-  //    PV_t center = {a*0.9*random_double(), 0.2, b+0.9*random_double()};
-  //    PV_t center_min_pt;
-  //    center_min_pt.x = center.x-4;
-  //    center_min_pt.y = center.y-0.2;
-  //    center_min_pt.z = center.z-0;
-  //    if (vec_len(&center_min_pt)>0.9) {
-  //sphere_t sphere;
-  //i_s += 1;
-  ////printf("i_s = %d\n", i_s);
-  //if (choose_mat < 0.8)
-  //  {
-  //  // diffuse
-  //  sphere.center.x = center_min_pt.x;
-  //  sphere.center.y = center_min_pt.y;
-  //  sphere.center.z = center_min_pt.z;
-  //  sphere.radius = 0.2;
-  //  sphere.mat.type =1;
-  //  sphere.mat.albedo.x = random_double();
-  //  sphere.mat.albedo.y = random_double();
-  //  sphere.mat.albedo.z = random_double();
-  //  world.sphere[i_s] = sphere;
-  //  }
-  //else if (choose_mat < 0.95)
-  //  {
-  //  sphere.center.x = center_min_pt.x;
-  //  sphere.center.y = center_min_pt.y;
-  //  sphere.center.z = center_min_pt.z;
-  //  sphere.radius = 0.2;
-  //  sphere.mat.type = 2;
-  //  sphere.mat.albedo.x = random_double_min_max(0.5, 1);
-  //  sphere.mat.albedo.y = random_double_min_max(0.5, 1);
-  //  sphere.mat.albedo.z = random_double_min_max(0.5, 1);
-  //  sphere.mat.fuzz = random_double_min_max(0, 0.5);
-  //  world.sphere[i_s] = sphere;
-  //  }
-  //else {
-  //  sphere.center.x = center_min_pt.x;
-  //  sphere.center.y = center_min_pt.y;
-  //  sphere.center.z = center_min_pt.z;
-  //  sphere.radius = 0.2;
-  //  sphere.mat.type = 3;
-  //  sphere.mat.ir = 0.5;
-  //  world.sphere[i_s] = sphere;
-  //}
-  //
-  //      }
-  //    }
-  //  }
+  for (int a = -11; a < 11; a++) {
+    for (int b = -11; b < 11; b++) {
+      double choose_mat = random_double();
+      PV_t center = {a*0.9*random_double(), 0.2, b+0.9*random_double()};
+      PV_t center_min_pt;
+      center_min_pt.x = center.x-4;
+      center_min_pt.y = center.y-0.2;
+      center_min_pt.z = center.z-0;
+      if (vec_len(&center_min_pt)>0.9) {
+  sphere_t sphere;
+  i_s += 1;
+  //printf("i_s = %d\n", i_s);
+  if (choose_mat < 0.8)
+    {
+    // diffuse
+    sphere.center.x = center_min_pt.x;
+    sphere.center.y = 0.2;
+    sphere.center.z = center_min_pt.z;
+    sphere.radius = 0.2;
+    sphere.mat.type =1;
+    sphere.mat.albedo.x = random_double();
+    sphere.mat.albedo.y = random_double();
+    sphere.mat.albedo.z = random_double();
+    world.sphere[i_s] = sphere;
+    }
+  else if (choose_mat < 0.95)
+    {
+    sphere.center.x = center_min_pt.x;
+    sphere.center.y = 0.2;
+    sphere.center.z = center_min_pt.z;
+    sphere.radius = 0.2;
+    sphere.mat.type = 2;
+    sphere.mat.albedo.x = random_double_min_max(0.5, 1);
+    sphere.mat.albedo.y = random_double_min_max(0.5, 1);
+    sphere.mat.albedo.z = random_double_min_max(0.5, 1);
+    sphere.mat.fuzz = random_double_min_max(0, 0.5);
+    world.sphere[i_s] = sphere;
+    }
+  else {
+    sphere.center.x = center_min_pt.x;
+    sphere.center.y = 0.2;
+    sphere.center.z = center_min_pt.z;
+    sphere.radius = 0.2;
+    sphere.mat.type = 3;
+    sphere.mat.ir = 0.5;
+    world.sphere[i_s] = sphere;
+  }
+  
+        }
+      }
+    }
 
+  sphere_t sphere3;
+  sphere3.center.x = 4;
+  sphere3.center.y = 1;
+  sphere3.center.z = 0;
+  sphere3.radius = 1;
+  sphere3.mat.type = 2;
+  sphere3.mat.fuzz = 0.0;
+  sphere3.mat.albedo.x = 0.7;
+  sphere3.mat.albedo.y = 0.6;
+  sphere3.mat.albedo.z = 0.5;
+  world.sphere[i_s+1] = sphere3;
   
   sphere_t sphere1;
   sphere1.center.x = 0;
@@ -208,7 +219,7 @@ int main(int argc, char *argv[]) {
   sphere1.radius = 1;
   sphere1.mat.type = 3;
   sphere1.mat.ir = 1.5;
-  world.sphere[i_s+1] = sphere1;
+  world.sphere[i_s+2] = sphere1;
 
   sphere_t sphere2;
   sphere2.center.x = -4;
@@ -219,16 +230,7 @@ int main(int argc, char *argv[]) {
   sphere2.mat.albedo.x = 0.4;
   sphere2.mat.albedo.x = 0.2;
   sphere2.mat.albedo.x = 0.1;
-  world.sphere[i_s+2] = sphere2;
-
-  sphere_t sphere3;
-  sphere3.center.x = 4;
-  sphere3.center.y = 1;
-  sphere3.center.z = 0;
-  sphere3.radius = 1;
-  sphere3.mat.type = 2;
-  sphere3.mat.fuzz = 0.5;
-  world.sphere[i_s+3] = sphere3;
+  world.sphere[i_s+3] = sphere2;
 
   //printf("i_s = %d\n", i_s);
   // Camera

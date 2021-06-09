@@ -31,7 +31,7 @@ void initialize_camera(camera *cam, PV_t lookfrom, PV_t lookat, PV_t vup,
 					   double vfov, double aspect_ratio,
 					   double aperture, double focus_dist)
 {
-  cam->vfov = 90;
+  cam->vfov = vfov;
   cam->theta = degrees_to_radians(vfov);
   cam->aspect_ratio = aspect_ratio;
   cam->h = tan(cam->theta/2);
