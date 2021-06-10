@@ -132,7 +132,7 @@ int main(int argc, char *argv[]) {
   const int image_width = 1200;
   const int image_height = (int)(image_width/aspect_ratio); //static_cast<int>(image_width/aspect_ratio);
   const int samples_per_pixel = 100;
-  const int max_depth = 10;
+  const int max_depth = 50;
   const double R = cos(pi/4);
   
   hittable_list world;
@@ -151,7 +151,7 @@ int main(int argc, char *argv[]) {
   for (int a = -11; a < 11; a++) {
     for (int b = -11; b < 11; b++) {
       double choose_mat = random_double();
-      PV_t center = {a*0.9*random_double(), 0.2, b+0.9*random_double()};
+      PV_t center = {a+0.9*random_double(), 0.2, b+0.9*random_double()};
       PV_t center_min_pt;
       center_min_pt.x = center.x-4;
       center_min_pt.y = center.y-0.2;

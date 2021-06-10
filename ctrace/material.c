@@ -4,9 +4,9 @@
 double reflectance(double cosine, double ref_idx)
 {
   // Use Schlick's approximation for reflectance.
-  double r0 = (1-ref_idx) / (1+ref_idx);
+  double r0 = (1.0-ref_idx) / (1.0+ref_idx);
   r0 = r0*r0;
-  return r0 + (1-r0)*pow((1 - cosine), 5);
+  return r0 + (1.0-r0)*pow((1.0 - cosine), 5);
 }
 
 bool calculate_material_reflections(material *mat, ray_t *r_in, PV_t *albedo, hit_record *rec)
@@ -143,7 +143,7 @@ bool calculate_material_reflections(material *mat, ray_t *r_in, PV_t *albedo, hi
 	double reflect_prob;
 	double cosine;
 	if (vec_dot(&r_in->direction, &rec->normal) > 0) {
-	  outward_normal = vec_scale(&rec->normal, -1);
+	  outward_normal = vec_scale(&rec->normal, -1.0);
 	  ni_over_nt = mat->ir;
 	  cosine = vec_dot(&r_in->direction, &rec->normal) / vec_len(&r_in->direction);
 	  cosine = sqrt(1 - mat->ir*mat->ir*(1-cosine*cosine));	  
@@ -151,7 +151,7 @@ bool calculate_material_reflections(material *mat, ray_t *r_in, PV_t *albedo, hi
 	else {
 	  outward_normal = rec->normal;
 	  ni_over_nt = 1.0 / mat->ir;
-	  cosine = -1*vec_dot(&r_in->direction, &rec->normal) / vec_len(&r_in->direction);
+	  cosine = -1.0*vec_dot(&r_in->direction, &rec->normal) / vec_len(&r_in->direction);
 	}
 
 	if (refract(&r_in->direction, &outward_normal, ni_over_nt, &refracted)) {
