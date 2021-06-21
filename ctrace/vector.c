@@ -1,11 +1,10 @@
 //vector.c
-
-
 #include "vector.h"
 #include "math.h"
 #include "time.h"
 #include <stdbool.h>
 #include "rtweekend.h"
+
 //vector sum function 
 PV_t vec_sum(const PV_t *v1, const PV_t *v2)   
 {

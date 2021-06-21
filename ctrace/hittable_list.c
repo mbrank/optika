@@ -55,77 +55,49 @@ int check_sphere_hit(sphere_t *sphere,
 
 
 
-
-
-
-  /*
-  PV_t oc = vec_diff(&(r->origin), &(sphere->center));
-  oc.x = r->origin.x - sphere->center.x;
-  oc.y = r->origin.y - sphere->center.y;
-  oc.z = r->origin.z - sphere->center.z;
-  double a = length_squared(&(r->direction));
-  double half_b = vec_dot(&oc, &(r->direction));
-  double c = length_squared(&oc) - sphere->radius*sphere->radius;
-  double discriminant = half_b*half_b - a*c;
-    if (discriminant < 0)
-    {
-      rec->object_was_hit = false;
-      return -1; // nothing was hit
-    }
-  double sqrtd = sqrt(discriminant);
-  auto double root = (-half_b - sqrtd) / a;
-  if (root < *t_min || *t_max < root) {
-    root = (-half_b + sqrtd) / a;
-    if (root < *t_min || *t_max < root){
-      rec->object_was_hit = false;
-      return -1;
-    }
-  }
-
-  
-  // update record state
-  rec->t = root;
-  rec->p = at(r, rec->t);
-  //rec->normal.x = (rec->p.x - sphere->center.x)/sphere->radius;
-  //rec->normal.y = (rec->p.y - sphere->center.y)/sphere->radius;
-  //rec->normal.z = (rec->p.z - sphere->center.z)/sphere->radius;
-  rec->object_was_hit = true;
-
-  //printf("sphere->rec.p x, %f\n", rec->p.x);
-  //printf("sphere->rec.p y, %f\n", rec->p.y);
-  //printf("sphere->rec.p z, %f\n", rec->p.z);
-
-  
-  PV_t outward_normal;
-  outward_normal.x = (rec->p.x - sphere->center.x) / sphere->radius;
-  outward_normal.y = (rec->p.y - sphere->center.y) / sphere->radius;
-  outward_normal.z = (rec->p.z - sphere->center.z) / sphere->radius;
-  set_face_normal(rec, r, &outward_normal);
-  rec->object_was_hit = true;
-  return sphere_id;
-  */
 }
-//  bool hitted_sphere = hit_sphere(sphere,
-//				  r,
-//				  t_min,
-//				  t_max,
-//				  &temp_rec);
-//  if (hitted_sphere)
-//    {
-//      //hit_anything = true;
-//	  hit_anything = sphere_id;
-//      closest_so_far = temp_rec.t;
-//
-//      rec->normal.x = temp_rec.normal.x;
-//      rec->normal.y = temp_rec.normal.y;
-//      rec->normal.z = temp_rec.normal.z;
-//      rec->p.x = temp_rec.p.x;
-//      rec->p.y = temp_rec.p.y;
-//      rec->p.z = temp_rec.p.z;
-//      rec->t = temp_rec.t;
-//      rec->front_face = temp_rec.front_face;
-//      rec->object_was_hit = temp_rec.object_was_hit;
-//
-//    }
-//  return hit_anything;
-//}
+
+  int check_aarectangle_hit(aarectangle_t *aarectangle,
+							ray_t *r,
+							double *t_min,
+							double *t_max,
+							hit_record *rec,
+							int aarectangle_id)
+  {
+	//printf("checking rectangle\n");
+	double t = (aarectangle->k-r->origin.z) / r->direction.z;
+	//printf("aarectangle->k: %f, r origin z:%f\n" ,aarectangle->k, r->origin.z);
+	//printf("rect->t: %f\n" , t);
+	//printf("NO PASS: *t_min, *t_max, %f, %f\n", *t_min, *t_max);
+    if (t < *t_min || t > *t_max)
+	  {
+	  //return false;
+	  //printf("*t_min, *t_max, %f, %f\n", *t_min, *t_max);
+	  return -1;
+	  }
+
+	//printf("Pass\n");
+	double x = r->origin.x + t*r->direction.x;
+    double y = r->origin.y + t*r->direction.y;
+
+	//printf("C: x->%f\n", x);
+	//printf("C: y->%f\n", y);
+	//printf("Pass\n");
+	//printf("C: aarectangle->x0->%f\n", aarectangle->x0);
+	//printf("C: aarectangle->x1->%f\n", aarectangle->x1);
+	
+    if (x < aarectangle->x0 || x > aarectangle->x1 || y < aarectangle->y0 || y > aarectangle->y1)
+	  {
+	  // return false;
+	  return -1;
+	  }
+
+	//printf("Hit\n");
+	rec->u = (x-aarectangle->x0)/(aarectangle->x1-aarectangle->x0);
+    rec->v = (y-aarectangle->y0)/(aarectangle->y1-aarectangle->y0);
+    rec->t = t;
+	PV_t outward_normal = {0,0,1};
+    set_face_normal(rec, r, &outward_normal);
+    rec->p = at(r, t);
+	return aarectangle_id;
+  }

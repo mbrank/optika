@@ -11,6 +11,8 @@ typedef struct hit_record_type{
   PV_t p; //point
   PV_t normal;
   double t;
+  double u; // texture coordinate to get correct color
+  double v; // texture coordinate to get correct color
   bool front_face;
   bool object_was_hit;
 } hit_record;

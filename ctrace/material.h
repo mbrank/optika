@@ -18,6 +18,10 @@ typedef struct material_t{
   // lambertian -> 1
   // metal -> 2
   // dielectric -> 3
+  // diffuse_light -> 4
+  double u; // texture coordinate (in case of texture and perlin materials)
+  double v; // texture coordinate (in case of texture and perlin materials)
+  PV_t emitter; // color of emission
 } material;
 
 double reflectance(double cosine,

@@ -12,13 +12,8 @@
 #include "material.h"
 #include <time.h>
 
-
-//PV_t attenuation_ray_color(){
-//}
-
-PV_t ray_color(ray_t *r, hittable_list *world, int depth, int i, int j)
+PV_t ray_color(ray_t *r, PV_t* background, hittable_list *world, int depth, int i, int j)
 {
-  //printf("i: %d, j: %d\n", i, j);
   // check if depth exceeded
   if (depth <= 0) {
 	//printf("depth exceeded\n");
@@ -28,32 +23,16 @@ PV_t ray_color(ray_t *r, hittable_list *world, int depth, int i, int j)
       depth_exceeded.z = 0;
       return depth_exceeded;
     }
-  //printf("depth exceeded1ss\n");
   // if depth not exceeded check intersection
   hit_record rec;
-  //printf("--------------------------------\n");
-  //printf("depth: %d\n", depth);
-
-  //printf("set face normal before->normal: %f, %f, %f\n",
-  //	 rec.normal.x,
-  //	 rec.normal.y,
-  //	 rec.normal.z);
   rec.t = infinity;
   PV_t color;
-  //printf("sizeof world: %d\n", sizeof(&world));
-  //for (int i = 0; i < (int)(sizeof(&world)/4); i++) {
-  //bool sphere_hit_checked;
-  //double shortest_dist = 1e8;
-  //double shortest_previous = 1e8;
-  //double shortest_so_far = 1e7;
   int sphere_hit_checked = -1;
   int current_hit = -1;
   double zero = 0;
-  //printf("depth exceeded1\n");
   // iterate over objects to find first intersection
   for (int k = 0; k < 5; k++)
     {
-  	//printf("k: %d r_origin: x=%f, y=%f, z=%f\n", k, r->origin.x, r->origin.y, r->origin.z);
     sphere_hit_checked = check_sphere_hit(&(world->sphere[k]),
 					  r,
 					  &zero,
@@ -62,26 +41,9 @@ PV_t ray_color(ray_t *r, hittable_list *world, int depth, int i, int j)
 	if (sphere_hit_checked > -1) {
 	  current_hit = sphere_hit_checked;
 	}
-	//printf("k=%d, rec->p: x=%f, y=%f, z=%f\n", k, rec.p.x, rec.p.y, rec.p.z);
-	//printf("shortest_dist: %f\n", shortest_dist);
-	  //if (shortest_dist > 0)
-	  //{
-	  //  printf("shortest_dist: %f, i=%d\n, j=%d, k=%d, depth=%d\n",
-	  //		 shortest_dist, i, j, k, depth);
-	  //}
-	  //printf("hitted_obj_id: %d\n", hitted_obj_id);
     }
-  //printf("depth exceeded2\n");
     if (current_hit > -1)
       {
-	  //printf("hitted_obj_id: %d, i: %d, j: %d, depth: %d, attenuation - x: %f, y: %f, z: %f, radius: %f\n",
-	  //	 hitted_obj_id, i, j, depth,
-	  //	 world->sphere[hitted_obj_id].mat.albedo.x,
-	  //	 world->sphere[hitted_obj_id].mat.albedo.y,
-	  //	 world->sphere[hitted_obj_id].mat.albedo.z,
-	  //	 world->sphere[hitted_obj_id].radius);
-	  //printf("hitted_obj_id: %d\n", hitted_obj_id);
-		//printf("depth: %d\n", depth);
 	  bool mat_ref = calculate_material_reflections(&(world->sphere[current_hit].mat),
 							r,
 							&(world->sphere[current_hit].mat.albedo),
@@ -90,8 +52,9 @@ PV_t ray_color(ray_t *r, hittable_list *world, int depth, int i, int j)
 
 		//return world->sphere[current_hit].mat.albedo;
 		PV_t current_ray_color = ray_color(&(world->sphere[current_hit].mat.scattered),
-						   world,
-						   depth-1, i, j);
+										   background, 
+										   world,
+										   depth-1, i, j);
 		PV_t color_to_return = {current_ray_color.x*
 					world->sphere[current_hit].mat.attenuation.x,
 					current_ray_color.y*
@@ -136,6 +99,9 @@ int main(int argc, char *argv[]) {
   const double R = cos(pi/4);
   hittable_list world;
 
+  // background color
+  PV_t background = {0, 0, 0};
+  
   // sphere ground
   sphere_t sphere_ground;
   sphere_ground.center.x = 0; 
@@ -206,32 +172,6 @@ int main(int argc, char *argv[]) {
   initialize_camera(&cam, lookfrom, lookat, vup, vfov, aspect_ratio,
 					aperture, dist_to_focus);
 
-  // how to initialize camera through function
-  // initialize camera
-  //cam.vfov = 90;
-  //cam.theta = degrees_to_radians(cam.vfov);
-  //cam.aspect_ratio = 16.0/9.0;
-  //cam.h = tan(cam.theta/2);
-  //cam.viewport_height = 2.0*cam.h;
-  //cam.viewport_width = (cam.aspect_ratio * cam.viewport_height);
-  //cam.focal_length = 1.0;
-  //cam.camera_origin.x = 0;
-  //cam.camera_origin.y = 0;
-  //cam.camera_origin.z = 0;
-  //cam.horizontal.x = cam.viewport_width;
-  //cam.horizontal.y = 0;
-  //cam.horizontal.z = 0;
-  //cam.vertical.x = 0;
-  //cam.vertical.y = cam.viewport_height;
-  //cam.vertical.z = 0;
-
-  // Calculate lower left corner of camera
-  //PV_t hor_divide = vec_divide(&(cam.horizontal), -2);
-  //PV_t vert_divide = vec_divide(&(cam.vertical), -2);
-  //PV_t scale_orig_hor = vec_sum(&(cam.camera_origin), &hor_divide);
-  //PV_t scale_orig_hor_vert = vec_sum(&scale_orig_hor, &vert_divide);
-  //PV_t neg_focal_length = {0, 0, -1};
-  //cam.lower_left_corner = vec_sum(&scale_orig_hor_vert, &neg_focal_length);
 
   printf("P3\n%i %i\n255\n", image_width, image_height);
   for (int j=image_height-1; j>=0; j--) {
@@ -245,7 +185,7 @@ int main(int argc, char *argv[]) {
 		auto double u = ((double)i+random_double()) / (image_width-1);
 		auto double v = ((double)j+random_double()) / (image_height-1);
 		ray_t r = camera_get_ray(&cam, u, v);
-		PV_t color = ray_color(&r, &world, max_depth, i, j);
+		PV_t color = ray_color(&r, &background, &world, max_depth, i, j);
 		pixel_color.x += color.x;
 		pixel_color.y += color.y;
 		pixel_color.z += color.z;
