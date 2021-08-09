@@ -16,11 +16,11 @@ typedef struct sphere_type{
 } sphere_t;
 
 // prototypes for sphere functions
-
-bool hit_sphere(sphere_t *sphere,
-		ray_t *r,
-		double *t_min,
-		double *t_max,
-		hit_record *rec);
+void get_sphere_uv(PV_t *p, double *u, double *v);
+//bool hit_sphere(sphere_t *sphere,
+//		ray_t *r,
+//		double *t_min,
+//		double *t_max,
+//		hit_record *rec);
 
 #endif

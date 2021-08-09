@@ -23,12 +23,13 @@ PV_t ray_color(ray_t *r, hittable_list *world, int depth, int i, int j)
       return depth_exceeded;
     }
   hit_record rec;
+  PV_t color = {0, 0, 0}; // background color
   rec.t = infinity;
-  PV_t color;
+  //PV_t color;
   int sphere_hit_checked = -1;
   int current_hit = -1;
   double zero = 0;
-  for (int k = 0; k < 5; k++)
+  for (int k = 0; k < 2; k++)
     {
       sphere_hit_checked = check_sphere_hit(&(world->sphere[k]),
 					    r,
@@ -73,6 +74,7 @@ PV_t ray_color(ray_t *r, hittable_list *world, int depth, int i, int j)
   PV_t scaled1 = vec_scale(&color1, 1-t);
   PV_t scaled2 = vec_scale(&color2, t);
   color = vec_sum(&scaled1, &scaled2);
+  //PV_t color = {0, 0, 0};
   return color;
 }
   
@@ -94,9 +96,9 @@ int main(int argc, char *argv[]) {
   // sphere ground
   sphere_t sphere_ground;
   sphere_ground.center.x = 0; 
-  sphere_ground.center.y = -100.5;
-  sphere_ground.center.z = -1;
-  sphere_ground.radius = 100;
+  sphere_ground.center.y = -1000;
+  sphere_ground.center.z = 0;
+  sphere_ground.radius = 1000;
   sphere_ground.mat.type = 1;
   sphere_ground.mat.albedo.x = 0.8;
   sphere_ground.mat.albedo.y = 0.8;
@@ -104,54 +106,22 @@ int main(int argc, char *argv[]) {
   // sphere center
   sphere_t sphere_center;
   sphere_center.center.x = 0; 
-  sphere_center.center.y = 0;
-  sphere_center.center.z = -1;
-  sphere_center.radius = 0.5;
+  sphere_center.center.y = 2;
+  sphere_center.center.z = 0;
+  sphere_center.radius = 2;
   sphere_center.mat.albedo.x = 0.1;
   sphere_center.mat.albedo.y = 0.2;
   sphere_center.mat.albedo.z = 0.5;
   sphere_center.mat.type = 1;
   //sphere_center.mat.ir = 1.5;
   
-  // sphere left
-  sphere_t sphere_left_out;
-  sphere_left_out.center.x = -1; 
-  sphere_left_out.center.y = 0;
-  sphere_left_out.center.z = -1;
-  sphere_left_out.radius = 0.5;
-  sphere_left_out.mat.type = 3;
-  sphere_left_out.mat.ir = 1.5;
-  // sphere left
-  sphere_t sphere_left_in;
-  sphere_left_in.center.x = -1; 
-  sphere_left_in.center.y = 0;
-  sphere_left_in.center.z = -1;
-  sphere_left_in.radius = -0.45; // negative radius means inward surface normal
-  sphere_left_in.mat.type = 3;
-  sphere_left_in.mat.ir = 1.5;
-
-  // sphere right
-  sphere_t sphere_right;
-  sphere_right.center.x = 1; 
-  sphere_right.center.y = 0;
-  sphere_right.center.z = -1;
-  sphere_right.radius = 0.5;
-  sphere_right.mat.type = 2;
-  sphere_right.mat.albedo.x = 0.8;
-  sphere_right.mat.albedo.y = 0.6;
-  sphere_right.mat.albedo.z = 0.2;
-  sphere_right.mat.fuzz = 0.0;
-
   world.sphere[0] = sphere_ground;
   world.sphere[1] = sphere_center;
-  world.sphere[2] = sphere_left_out;
-  world.sphere[3] = sphere_right;
-  world.sphere[4] = sphere_left_in;
   // Camera
 
   camera cam;
-  PV_t lookfrom = {3, 3, 2};
-  PV_t lookat = {0, 0, -1};
+  PV_t lookfrom = {26, 3, 6};
+  PV_t lookat = {0, 2, 0};
   PV_t vup = {0, 1, 0};
   PV_t dist_to_focus_diff = vec_diff(&lookfrom, &lookat);
   double dist_to_focus = vec_len(&dist_to_focus_diff);
