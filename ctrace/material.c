@@ -97,6 +97,15 @@ bool calculate_material_reflections(material *mat, ray_t *r_in, texture_t *albed
 	  }
 	return true;
   }
+  case 4: {
+    mat->attenuation = albedo->color1;
+	mat->scattered.origin = rec->p;
+	mat->scattered.direction.x = 0;
+	mat->scattered.direction.y = 0;
+	mat->scattered.direction.z = 0;
+	return true;
+    break;
+  }
   default:
 	{
     printf("DEFAULT\n");

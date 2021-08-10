@@ -27,4 +27,7 @@ bool hit_aarectangle(aarectangle_t *rectangle,
   if (x < rectangle->x0 || x > rectangle->x1 || y < rectangle->y0 || y > rectangle->y1) {
     return false;
   }
+  rec->u = (x-rectangle->x0)/(rectangle->x1-rectangle->x0);
+  rec->v = (y-rectangle->y0)/(rectangle->y1-rectangle->y0);
+  rec->t = t;
 }

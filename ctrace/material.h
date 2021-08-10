@@ -19,6 +19,8 @@ typedef struct material_t{
   // lambertian -> 1
   // metal -> 2
   // dielectric -> 3
+  // diffuse light -> 4
+  PV_t emitted;
 } material;
 
 double reflectance(double cosine,
@@ -27,6 +29,6 @@ bool calculate_material_reflections(material *mat,
 									ray_t *r_in,
 									texture_t *albedo,
 									hit_record *rec);
-
+//PV_t emitted(material *mat, double *u, double *v, PV_t *p);
 #endif
 

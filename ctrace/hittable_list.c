@@ -9,24 +9,13 @@ int check_sphere_hit(sphere_t *sphere,
 		     hit_record *rec,
 		     int sphere_id)
 {
-  //hit_record temp_rec;
-  //bool hit_anything = false;
-  //int hit_anything = -1;
-
-  //double closest_so_far = temp_rec.t;
-  //double closest_so_far = *t_max;
-
   // check intersection
 
   PV_t oc = vec_diff(&(r->origin), &(sphere->center));
-  //oc.x = r->origin.x - sphere->center.x;
-  //oc.y = r->origin.y - sphere->center.y;
-  //oc.z = r->origin.z - sphere->center.z;
   double a = vec_dot(&r->direction, &r->direction);
   double b = vec_dot(&oc, &r->direction);
   double c = vec_dot(&oc, &oc) - sphere->radius*sphere->radius;
   double discriminant = b*b - a*c;
-  //setbuf(stdout, NULL);
   if (discriminant > 0) {
     double temp = (-b - sqrt(discriminant)) / a;
 	if (temp < *t_max && temp > *t_min) {
@@ -57,33 +46,40 @@ int check_sphere_hit(sphere_t *sphere,
 
   }
   return -1;
-
-  //  bool check_aarectangle_hit(aarectangle_t *rectangle,
-  //			     ray_t *r,
-  //			     double *t_min,
-  //			     double *t_max,
-  //			     hit_record *rec)
-  //  {
-  //  // check if rectangle is hit
-  //  double rectangle_k = rectangle->k;
-  //  double r_origin_z = r->origin.z;
-  //  double r_direction_z = r->direction.z;
-  //  double t = (rectangle_k-r_origin_z)/r_direction_z;
-  //  if (t < *t_min || t > *t_max) {
-  //    return -1;
-  //  }
-  //  double r_origin_x = r->origin.x;
-  //  double r_direction_x = r->direction.x;
-  //  double x = r_origin_x + t*r_direction_x;
-  //  double r_origin_y = r->origin.y;
-  //  double r_direction_y = r->direction.y;
-  //  double y = r_origin_y + t*r_direction_y;
-  //
-  //  
-  //  if (x < rectangle->x0 || x > rectangle->x1 || y < rectangle->y0 || y > rectangle->y1) {
-  //    return -1;
-  //  }
-  
+}
+int check_aarectangle_hit(aarectangle_t *rectangle,
+						  ray_t *r,
+						  double *t_min,
+						  double *t_max,
+						  hit_record *rec,
+						  int aarectangle_id)
+{
+  // check if rectangle is hit
+  double rectangle_k = rectangle->k;
+  double r_origin_z = r->origin.z;
+  double r_direction_z = r->direction.z;
+  double t = (rectangle_k-r_origin_z)/r_direction_z;
+  if (t < *t_min || t > *t_max) {
+	return -1;
+  }
+  double r_origin_x = r->origin.x;
+  double r_direction_x = r->direction.x;
+  double x = r_origin_x + t*r_direction_x;
+  double r_origin_y = r->origin.y;
+  double r_direction_y = r->direction.y;
+  double y = r_origin_y + t*r_direction_y;
+    
+  if (x < rectangle->x0 || x > rectangle->x1 || y < rectangle->y0 || y > rectangle->y1) {
+	return -1;
+  }
+  rec->u = (x-rectangle->x0)/(rectangle->x1-rectangle->x0);
+  rec->v = (y-rectangle->y0)/(rectangle->y1-rectangle->y0);
+  rec->t = t;
+  PV_t outward_normal = {0, 0, 1};
+  set_face_normal(rec, r, &outward_normal);
+  rec->p = at(r, rec->t);
+  rec->object_was_hit = true;
+  return aarectangle_id;
 }
 
 
@@ -101,7 +97,7 @@ int check_sphere_hit(sphere_t *sphere,
     if (discriminant < 0)
     {
       rec->object_was_hit = false;
-      return -1; // nothing was hit
+      return -1;  nothing was hit
     }
   double sqrtd = sqrt(discriminant);
   auto double root = (-half_b - sqrtd) / a;
