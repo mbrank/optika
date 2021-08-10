@@ -28,6 +28,7 @@ PV_t ray_color(ray_t *r, PV_t *background, hittable_list *world, int depth, int 
   //PV_t color;
   int sphere_hit_checked = -1;
   int current_hit = -1;
+  int current_hit_rectangle = -1;
   double zero = 0;
   // check which sphere is hit first
   for (int k = 0; k < 3; k++)
@@ -41,7 +42,8 @@ PV_t ray_color(ray_t *r, PV_t *background, hittable_list *world, int depth, int 
 		current_hit = sphere_hit_checked;
       }
     }
-  for (int l; l < 1; l++)
+  // check if rectangle is hit before sphere
+  for (int l = 0; l < 1; l++)
 	{
 	  int aarectangle_hit_checked = check_aarectangle_hit(&(world->aarectangle[l]),
 														  r,
@@ -49,7 +51,8 @@ PV_t ray_color(ray_t *r, PV_t *background, hittable_list *world, int depth, int 
 														  &rec.t,
 														  &rec, l);
       if (aarectangle_hit_checked > -1) {
-		current_hit = aarectangle_hit_checked;
+		current_hit_rectangle = aarectangle_hit_checked;
+		current_hit = -1;
       }
 	}
 
@@ -75,12 +78,44 @@ PV_t ray_color(ray_t *r, PV_t *background, hittable_list *world, int depth, int 
 										   background,
 										   world,
 										   depth-1, i, j);
-		PV_t color_to_return = {world->sphere[current_hit].mat.emitted.x +current_ray_color.x*
+		PV_t color_to_return = {world->sphere[current_hit].mat.emitted.x + current_ray_color.x*
 								world->sphere[current_hit].mat.attenuation.x,
-								world->sphere[current_hit].mat.emitted.y +current_ray_color.y*
+								world->sphere[current_hit].mat.emitted.y + current_ray_color.y*
 								world->sphere[current_hit].mat.attenuation.y,
-								world->sphere[current_hit].mat.emitted.z +current_ray_color.z*
+								world->sphere[current_hit].mat.emitted.z + current_ray_color.z*
 								world->sphere[current_hit].mat.attenuation.z};
+		return color_to_return;
+		}
+      }
+      PV_t color = {0, 0, 0};
+      return color; 
+    }
+  else if (current_hit_rectangle > -1)     {
+      bool mat_ref = calculate_material_reflections(&(world->aarectangle[current_hit_rectangle].mat),
+													r,
+													&(world->aarectangle[current_hit_rectangle].mat.albedo),
+													&rec);
+      if (mat_ref) {
+		if (world->aarectangle[current_hit_rectangle].mat.scattered.direction.x == 0 &&
+			world->aarectangle[current_hit_rectangle].mat.scattered.direction.y == 0 &&
+			world->aarectangle[current_hit_rectangle].mat.scattered.direction.z == 0 )
+		  {
+			// if emitter was hit, return just emitter value
+		  PV_t color_to_return = world->aarectangle[current_hit_rectangle].mat.attenuation;
+		  return color_to_return;
+		}
+		else{
+		  // if emitter was not hit, calculate reflection
+		PV_t current_ray_color = ray_color(&(world->aarectangle[current_hit_rectangle].mat.scattered),
+										   background,
+										   world,
+										   depth-1, i, j);
+		PV_t color_to_return = {world->aarectangle[current_hit_rectangle].mat.emitted.x + current_ray_color.x*
+								world->aarectangle[current_hit_rectangle].mat.attenuation.x,
+								world->aarectangle[current_hit_rectangle].mat.emitted.y + current_ray_color.y*
+								world->aarectangle[current_hit_rectangle].mat.attenuation.y,
+								world->aarectangle[current_hit_rectangle].mat.emitted.z + current_ray_color.z*
+								world->aarectangle[current_hit_rectangle].mat.attenuation.z};
 		return color_to_return;
 		}
       }
@@ -91,21 +126,21 @@ PV_t ray_color(ray_t *r, PV_t *background, hittable_list *world, int depth, int 
   	return *background;
   }
   
-  PV_t unit_direction = unit_vector(&r->direction);
-  double t = 0.5*(unit_direction.y + 1.0);
-  PV_t color1;
-  color1.x = 1.0;
-  color1.y = 1.0;
-  color1.z = 1.0;
-  PV_t color2;
-  color2.x = 0.5;
-  color2.y = 0.7;
-  color2.z = 1.0;
-  PV_t scaled1 = vec_scale(&color1, 1-t);
-  PV_t scaled2 = vec_scale(&color2, t);
-  color = vec_sum(&scaled1, &scaled2);
-  //PV_t color = {0, 0, 0};
-  return color;
+  //PV_t unit_direction = unit_vector(&r->direction);
+  //double t = 0.5*(unit_direction.y + 1.0);
+  //PV_t color1;
+  //color1.x = 1.0;
+  //color1.y = 1.0;
+  //color1.z = 1.0;
+  //PV_t color2;
+  //color2.x = 0.5;
+  //color2.y = 0.7;
+  //color2.z = 1.0;
+  //PV_t scaled1 = vec_scale(&color1, 1-t);
+  //PV_t scaled2 = vec_scale(&color2, t);
+  //color = vec_sum(&scaled1, &scaled2);
+  ////PV_t color = {0, 0, 0};
+  //return color;
 }
   
 
@@ -139,7 +174,7 @@ int main(int argc, char *argv[]) {
   sphere_t sphere_center;
   sphere_center.center.x = 0; 
   sphere_center.center.y = 2;
-  sphere_center.center.z = 2;
+  sphere_center.center.z = 0;
   sphere_center.radius = 2;
   sphere_center.mat.type = 1;
   sphere_center.mat.albedo.type = 1;
@@ -150,8 +185,8 @@ int main(int argc, char *argv[]) {
   // sphere light
   sphere_t sphere_light;
   sphere_light.center.x = 0; 
-  sphere_light.center.y = 2;
-  sphere_light.center.z = -2;
+  sphere_light.center.y = 6;
+  sphere_light.center.z = 0;
   sphere_light.radius = 1.5;
   sphere_light.mat.type = 4;
   sphere_light.mat.albedo.type = 1;
@@ -159,16 +194,30 @@ int main(int argc, char *argv[]) {
   sphere_light.mat.albedo.color1.y = 0.9;
   sphere_light.mat.albedo.color1.z = 0.9;
 
+  // aarectangle light
+  aarectangle_t rectangle_light;
+  rectangle_light.x0 = 3;
+  rectangle_light.x1 = 5;
+  rectangle_light.y0 = 1;
+  rectangle_light.y1 = 3;
+  rectangle_light.k = -2;
+  rectangle_light.mat.type = 4;
+  rectangle_light.mat.albedo.type = 1;
+  rectangle_light.mat.albedo.color1.x = 0.9;
+  rectangle_light.mat.albedo.color1.y = 0.9;
+  rectangle_light.mat.albedo.color1.z = 0.9;
+  
   world.sphere[0] = sphere_ground;
   world.sphere[1] = sphere_center;
   world.sphere[2] = sphere_light;
+  world.aarectangle[0] = rectangle_light;
   
   PV_t background = {0,0,0};
 
   // Camera
   camera cam;
-  PV_t lookfrom = {20, 2, 4};
-  PV_t lookat = {0, 0, 0};
+  PV_t lookfrom = {26, 3, 6};
+  PV_t lookat = {0, 2, 0};
   PV_t vup = {0, 1, 0};
   PV_t dist_to_focus_diff = vec_diff(&lookfrom, &lookat);
   double dist_to_focus = 10;//vec_len(&dist_to_focus_diff);
