@@ -9,7 +9,7 @@ double reflectance(double cosine, double ref_idx)
   return r0 + (1.0-r0)*pow((1.0 - cosine), 5);
 }
 
-bool calculate_material_reflections(material *mat, ray_t *r_in, PV_t *albedo, hit_record *rec)
+bool calculate_material_reflections(material *mat, ray_t *r_in, texture_t *albedo, hit_record *rec)
 //takes material struct and color
 {
   switch (mat->type) {
@@ -24,8 +24,9 @@ bool calculate_material_reflections(material *mat, ray_t *r_in, PV_t *albedo, hi
       scatter_direction = rec->normal;
     }
     mat->scattered.origin = rec->p;  //ray(rec.p, scatter_direction);
+	albedo->p = rec->p;
     mat->scattered.direction = scatter_direction;
-    mat->attenuation = *albedo;
+    mat->attenuation = texture_color(albedo);
     return true;
     break;
   }
@@ -34,13 +35,14 @@ bool calculate_material_reflections(material *mat, ray_t *r_in, PV_t *albedo, hi
     PV_t reflected = reflect(&unit_vec, &rec->normal);
     ray_t scattered;
     scattered.origin = rec->p;
+	albedo->p = rec->p;
 
     PV_t unit_fuzz = random_in_unit_sphere();
     scattered.direction.x = reflected.x+mat->fuzz*unit_fuzz.x;
     scattered.direction.y = reflected.y+mat->fuzz*unit_fuzz.y;
     scattered.direction.z = reflected.z+mat->fuzz*unit_fuzz.z;
     mat->scattered = scattered;
-    mat->attenuation = *albedo;
+    mat->attenuation = texture_color(albedo);
 
     // update reflected ray
     r_in->origin = rec->p;

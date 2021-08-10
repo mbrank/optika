@@ -11,7 +11,7 @@
 #include "rtweekend.h"
 #include "material.h"
 #include <time.h>
-
+#include "texture.h"
 
 PV_t ray_color(ray_t *r, hittable_list *world, int depth, int i, int j)
 {
@@ -96,23 +96,33 @@ int main(int argc, char *argv[]) {
   // sphere ground
   sphere_t sphere_ground;
   sphere_ground.center.x = 0; 
-  sphere_ground.center.y = -1000;
+  sphere_ground.center.y = -10;
   sphere_ground.center.z = 0;
-  sphere_ground.radius = 1000;
+  sphere_ground.radius = 10;
   sphere_ground.mat.type = 1;
-  sphere_ground.mat.albedo.x = 0.8;
-  sphere_ground.mat.albedo.y = 0.8;
-  sphere_ground.mat.albedo.z = 0.0;
+  sphere_ground.mat.albedo.type = 2;
+  sphere_ground.mat.albedo.color1.x = 0.2;
+  sphere_ground.mat.albedo.color1.y = 0.3;
+  sphere_ground.mat.albedo.color1.z = 0.1;
+  sphere_ground.mat.albedo.color2.x = 0.9;
+  sphere_ground.mat.albedo.color2.y = 0.9;
+  sphere_ground.mat.albedo.color2.z = 0.9;
+  
   // sphere center
   sphere_t sphere_center;
   sphere_center.center.x = 0; 
-  sphere_center.center.y = 2;
+  sphere_center.center.y = 10;
   sphere_center.center.z = 0;
-  sphere_center.radius = 2;
-  sphere_center.mat.albedo.x = 0.1;
-  sphere_center.mat.albedo.y = 0.2;
-  sphere_center.mat.albedo.z = 0.5;
+  sphere_center.radius = 10;
   sphere_center.mat.type = 1;
+  sphere_center.mat.albedo.type = 2;
+  sphere_center.mat.albedo.color1.x = 0.2;
+  sphere_center.mat.albedo.color1.y = 0.3;
+  sphere_center.mat.albedo.color1.z = 0.1;
+  sphere_center.mat.albedo.color2.x = 0.9;
+  sphere_center.mat.albedo.color2.y = 0.9;
+  sphere_center.mat.albedo.color2.z = 0.9;
+
   //sphere_center.mat.ir = 1.5;
   
   world.sphere[0] = sphere_ground;
@@ -120,12 +130,12 @@ int main(int argc, char *argv[]) {
   // Camera
 
   camera cam;
-  PV_t lookfrom = {26, 3, 6};
-  PV_t lookat = {0, 2, 0};
+  PV_t lookfrom = {13, 2, 4};
+  PV_t lookat = {0, 0, 0};
   PV_t vup = {0, 1, 0};
   PV_t dist_to_focus_diff = vec_diff(&lookfrom, &lookat);
-  double dist_to_focus = vec_len(&dist_to_focus_diff);
-  double aperture = 1;
+  double dist_to_focus = 10;//vec_len(&dist_to_focus_diff);
+  double aperture = 0.0;
   double vfov = 20;
   initialize_camera(&cam, lookfrom, lookat, vup, vfov, aspect_ratio,
 		    aperture, dist_to_focus);

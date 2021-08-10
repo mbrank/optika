@@ -7,7 +7,7 @@ ctracedbg: main.c vector.c ray.c sphere.c constants.c hittable.c hittable_list.c
         #-g -fsanitize=address -fsanitize=undefined -Wall -Wextra
 
 
-ctrace: main_setup_v2.c vector.c ray.c sphere.c constants.c hittable.c hittable_list.c camera.c rtweekend.c color.c material.c
+ctrace: main_setup_v2.c vector.c ray.c sphere.c constants.c hittable.c hittable_list.c camera.c rtweekend.c color.c material.c texture.c
 	clang -O3 -ffast-math -o $@ $^ -lm
 
 

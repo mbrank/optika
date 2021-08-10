@@ -11,12 +11,11 @@ typedef struct hit_record_type{
   PV_t p; //point
   PV_t normal;
   double t;
-  double u; // surface coordinate
-  double v; // surface coordinate
+  double u; // texture coordinate
+  double v; // texture coordinate
   bool front_face;
   bool object_was_hit;
 } hit_record;
-
 
 //inline hit_record set_face_normal(hit_record *h_r,
 //ray_t *r, PV_t *outward_normal);

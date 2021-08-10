@@ -8,6 +8,7 @@
 #include "ray.h"
 #include "hittable.h"
 #include "material.h"
+#include "constants.h"
 
 typedef struct sphere_type{
   PV_t center;
