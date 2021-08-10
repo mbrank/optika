@@ -14,6 +14,11 @@ typedef struct aarectangle_type{
   double x1;
   double y0;
   double y1;
+  double z0;
+  double z1;
+  int xy;
+  int xz;
+  int yz;
   double k;
   material mat;
 } aarectangle_t;
