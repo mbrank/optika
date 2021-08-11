@@ -54,8 +54,9 @@ int check_aarectangle_hit(aarectangle_t *rectangle,
 						  hit_record *rec,
 						  int aarectangle_id)
 {
-
+  //printf("aa rectangle id: %i\n", aarectangle_id);
   if (rectangle->xy == 1) {
+	//printf("xy aa rectangle id: %i\n", aarectangle_id);
 	// rectangle in xy plane
   // check if rectangle is hit
   double rectangle_k = rectangle->k;
@@ -82,11 +83,13 @@ int check_aarectangle_hit(aarectangle_t *rectangle,
   set_face_normal(rec, r, &outward_normal);
   rec->p = at(r, rec->t);
   rec->object_was_hit = true;
+  //printf("aa rectangle id: %i\n", aarectangle_id);
   return aarectangle_id;
   }
 
   
   else if (rectangle->xz == 1) {
+	//printf("xz aa rectangle id: %i\n", aarectangle_id);
   // check if rectangle is hit
   double rectangle_k = rectangle->k;
   double r_origin_y = r->origin.y;
@@ -111,16 +114,19 @@ int check_aarectangle_hit(aarectangle_t *rectangle,
   set_face_normal(rec, r, &outward_normal);
   rec->p = at(r, rec->t);
   rec->object_was_hit = true;
+  //printf("aa rectangle id: %i\n", aarectangle_id);
   return aarectangle_id;
   }
 
   
   else if (rectangle->yz == 1) {
+	//printf("yz aa rectangle id: %i\n", aarectangle_id);
 	double rectangle_k = rectangle->k;
   double r_origin_x = r->origin.x;
   double r_direction_x = r->direction.x;
   double t = (rectangle_k-r_origin_x)/r_direction_x;
   if (t < *t_min || t > *t_max) {
+	//printf("12 rectangle id: %i\n", aarectangle_id);
     return -1;
   }
   double r_origin_y = r->origin.y;
@@ -130,15 +136,21 @@ int check_aarectangle_hit(aarectangle_t *rectangle,
   double r_direction_z = r->direction.z;
   double z = r_origin_z + t*r_direction_z;  
   if (y < rectangle->y0 || y > rectangle->y1 || z < rectangle->z0 || z > rectangle->z1) {
+	//printf("13 rectangle id: %i\n", aarectangle_id);
     return -1;
   }
   rec->u = (y-rectangle->y0)/(rectangle->y1-rectangle->y0);
   rec->v = (z-rectangle->z0)/(rectangle->z1-rectangle->z0);
   rec->t = t;
   PV_t outward_normal = {1, 0, 0};
-  set_face_normal(rec, r, &outward_normal);
+  //set_face_normal(rec, r, &outward_normal);
+  rec->normal.x = 1;
+  rec->normal.y = 0;
+  rec->normal.z = 0;
   rec->p = at(r, rec->t);
   rec->object_was_hit = true;
+  //printf("14 rectangle id: %i\n", aarectangle_id);
+  //printf("aa rectangle id: %i\n", aarectangle_id);
   return aarectangle_id;
   }
 }

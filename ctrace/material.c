@@ -14,6 +14,8 @@ double reflectance(double cosine, double ref_idx)
 bool calculate_material_reflections(material *mat, ray_t *r_in, texture_t *albedo, hit_record *rec)
 //takes material struct and color
 {
+  //printf("material type: %i\n", mat->type);
+  //printf("material albedo: %f\n", mat->albedo.color1.x);
   switch (mat->type) {
   case 1: { // lambertian
     PV_t scatter_direction;
@@ -31,6 +33,12 @@ bool calculate_material_reflections(material *mat, ray_t *r_in, texture_t *albed
 	albedo->p = rec->p;
     mat->scattered.direction = scatter_direction;
     mat->attenuation = texture_color(albedo);
+	if (mat->albedo.color1.z == 0.11){
+	  printf("Is reflected\n");
+	  printf("x: %f\n", rec->normal.x);
+	  printf("x: %f\n", rec->normal.y);
+	  printf("x: %f\n", rec->normal.z);
+	}
     return true;
     break;
   }
@@ -108,13 +116,12 @@ bool calculate_material_reflections(material *mat, ray_t *r_in, texture_t *albed
   }
   case 4: {
     mat->attenuation = albedo->color1;
-	printf("albedo->color1.x %f\n", albedo->color1.x);
-	printf("albedo->color1.y %f\n", albedo->color1.y);
-	printf("albedo->color1.z %f\n", albedo->color1.z);
-	
-	printf("mat->attenuation.x %f\n", mat->attenuation.x);
-	printf("mat->attenuation.y %f\n", mat->attenuation.y);
-	printf("mat->attenuation.z %f\n", mat->attenuation.z);
+	//printf("albedo->color1.x %f\n", albedo->color1.x);
+	//printf("albedo->color1.y %f\n", albedo->color1.y);
+	//printf("albedo->color1.z %f\n", albedo->color1.z);
+	//printf("mat->attenuation.x %f\n", mat->attenuation.x);
+	//printf("mat->attenuation.y %f\n", mat->attenuation.y);
+	//printf("mat->attenuation.z %f\n", mat->attenuation.z);
 	mat->scattered.origin = rec->p;
 	mat->scattered.direction.x = 0;
 	mat->scattered.direction.y = 0;
@@ -124,7 +131,7 @@ bool calculate_material_reflections(material *mat, ray_t *r_in, texture_t *albed
   }
   default:
 	{
-    printf("DEFAULT\n");
+	  printf("DEFAULT\n");
     break;
 	}
   }

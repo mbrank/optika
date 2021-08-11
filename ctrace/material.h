@@ -20,6 +20,7 @@ typedef struct material_t{
   // metal -> 2
   // dielectric -> 3
   // diffuse light -> 4
+
   PV_t emitted;
 } material;
 

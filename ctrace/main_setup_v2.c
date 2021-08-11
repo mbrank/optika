@@ -43,13 +43,14 @@ PV_t ray_color(ray_t *r, PV_t *background, hittable_list *world, int depth, int 
       }
     }
   // check if rectangle is hit before sphere
-  for (int l = 0; l < 1; l++)
+  for (int l = 0; l < 2; l++)
 	{
 	  int aarectangle_hit_checked = check_aarectangle_hit(&(world->aarectangle[l]),
 														  r,
 														  &zero,
 														  &rec.t,
 														  &rec, l);
+	  //printf("aa recrangle id: %i\n", aarectangle_hit_checked);
       if (aarectangle_hit_checked > -1) {
 		current_hit_rectangle = aarectangle_hit_checked;
 		current_hit = -1;
@@ -59,6 +60,7 @@ PV_t ray_color(ray_t *r, PV_t *background, hittable_list *world, int depth, int 
   // if object is hit, calculate reflections
   if (current_hit > -1)
     {
+	  //printf("current hit: %i\n", current_hit);
       bool mat_ref = calculate_material_reflections(&(world->sphere[current_hit].mat),
 													r,
 													&(world->sphere[current_hit].mat.albedo),
@@ -91,7 +93,8 @@ PV_t ray_color(ray_t *r, PV_t *background, hittable_list *world, int depth, int 
       return color; 
     }
   else if (current_hit_rectangle > -1)     {
-      bool mat_ref = calculate_material_reflections(&(world->aarectangle[current_hit_rectangle].mat),
+	//printf("current hit_rectangle: %i\n", current_hit_rectangle);
+	bool mat_ref = calculate_material_reflections(&(world->aarectangle[current_hit_rectangle].mat),
 													r,
 													&(world->aarectangle[current_hit_rectangle].mat.albedo),
 													&rec);
@@ -153,8 +156,8 @@ int main(int argc, char *argv[]) {
   const auto double aspect_ratio = 16.0/9.0;
   const int image_width = 400;
   const int image_height = (int)(image_width/aspect_ratio); //static_cast<int>(image_width/aspect_ratio);
-  const int samples_per_pixel = 200;
-  const int max_depth = 10;
+  const int samples_per_pixel = 500;
+  const int max_depth = 20;
   const double R = cos(pi/4);
   hittable_list world;
 
@@ -190,28 +193,49 @@ int main(int argc, char *argv[]) {
   sphere_light.radius = 1.5;
   sphere_light.mat.type = 4;
   sphere_light.mat.albedo.type = 1;
-  sphere_light.mat.albedo.color1.x = 0.9;
-  sphere_light.mat.albedo.color1.y = 0.9;
-  sphere_light.mat.albedo.color1.z = 0.9;
+  sphere_light.mat.albedo.color1.x = 15;
+  sphere_light.mat.albedo.color1.y = 15;
+  sphere_light.mat.albedo.color1.z = 15;
 
   // aarectangle light
   aarectangle_t rectangle_light;
-  rectangle_light.x0 = 3;
-  rectangle_light.x1 = 5;
-  rectangle_light.y0 = 1;
-  rectangle_light.y1 = 3;
-  rectangle_light.k = -2;
+  rectangle_light.x0 = 1;
+  rectangle_light.x1 = 9;
+  rectangle_light.y0 = 4;
+  rectangle_light.y1 = 5;
+  rectangle_light.k = -1.5;
+  rectangle_light.xy = 1;
+  rectangle_light.z0 = rectangle_light.k-1;
+  rectangle_light.z1 = rectangle_light.k+1;
   rectangle_light.mat.type = 4;
   rectangle_light.mat.albedo.type = 1;
-  rectangle_light.mat.albedo.color1.x = 0.9;
-  rectangle_light.mat.albedo.color1.y = 0.9;
-  rectangle_light.mat.albedo.color1.z = 0.9;
+  rectangle_light.mat.albedo.color1.x = 15; //0.2;
+  rectangle_light.mat.albedo.color1.y = 15; //0.5;
+  rectangle_light.mat.albedo.color1.z = 15; //0.5;
+
+
+  // aarectangle light
+  aarectangle_t rectangle_2;
+  rectangle_2.z0 = -4;
+  rectangle_2.z1 = 10;
+  rectangle_2.y0 = -3;
+  rectangle_2.y1 = 9;
+  rectangle_2.k = -10;
+  rectangle_2.yz = 1;
+  rectangle_2.x0 = rectangle_2.k-1;
+  rectangle_2.x1 = rectangle_2.k+1;
+  rectangle_2.mat.type = 1;
+  rectangle_2.mat.albedo.type = 1;
+  rectangle_2.mat.albedo.color1.x = 0.2;
+  rectangle_2.mat.albedo.color1.y = 0.3;
+  rectangle_2.mat.albedo.color1.z = 0.11;
+
   
   world.sphere[0] = sphere_ground;
   world.sphere[1] = sphere_center;
   world.sphere[2] = sphere_light;
   world.aarectangle[0] = rectangle_light;
-  
+  world.aarectangle[1] = rectangle_2;
   PV_t background = {0,0,0};
 
   // Camera
