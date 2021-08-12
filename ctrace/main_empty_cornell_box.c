@@ -23,7 +23,7 @@ PV_t ray_color(ray_t *r, PV_t *background, hittable_list *world, int depth, int 
 	return depth_exceeded;
   }
   hit_record rec;
-  PV_t color = {0, 0, 0}; // background color
+  //PV_t color = {0, 0, 0}; // background color
   rec.t = infinity;
   //PV_t color;
   int sphere_hit_checked = -1;
@@ -34,7 +34,7 @@ PV_t ray_color(ray_t *r, PV_t *background, hittable_list *world, int depth, int 
   //		 world->aarectangle[0].mat.albedo.color1.y,
   //		 world->aarectangle[0].mat.albedo.color1.z);
   // check which sphere is hit first
-  for (int k = 0; k < 1; k++)
+  for (int k = 0; k < 0; k++)
     {
       sphere_hit_checked = check_sphere_hit(&(world->sphere[k]),
 											r,
@@ -48,12 +48,13 @@ PV_t ray_color(ray_t *r, PV_t *background, hittable_list *world, int depth, int 
   // check if rectangle is hit before sphere
   for (int l = 0; l < 6; l++)
 	{
-	  //printf("beffbeforetta %f \n", world->aarectangle[0].mat.albedo.color1.y);
+	  //printf("l %i\n", l);
 	  int aarectangle_hit_checked = check_aarectangle_hit(&(world->aarectangle[l]),
 														  r,
 														  &zero,
 														  &rec.t,
 														  &rec, l);
+	  //printf("aarectangle_hit_checked %i\n", aarectangle_hit_checked);
       if (aarectangle_hit_checked > -1) {
 		current_hit_rectangle = aarectangle_hit_checked;
 		current_hit = -1;
@@ -96,10 +97,13 @@ PV_t ray_color(ray_t *r, PV_t *background, hittable_list *world, int depth, int 
       return color; 
     }
   else if (current_hit_rectangle > -1)     {
-      bool mat_ref = calculate_material_reflections(&(world->aarectangle[current_hit_rectangle].mat),
+	//printf("Depth %i\n", depth);
+	//printf("current_hit_rectangle %i\n", current_hit_rectangle);
+	bool mat_ref = calculate_material_reflections(&(world->aarectangle[current_hit_rectangle].mat),
 													r,
 													&(world->aarectangle[current_hit_rectangle].mat.albedo),
 													&rec);
+	//printf("mat_ref %d\n", mat_ref);
       if (mat_ref) {
 		//printf("beforetta %f \n", world->aarectangle[current_hit_rectangle].mat.albedo.color1.y);
 		if (world->aarectangle[current_hit_rectangle].mat.scattered.direction.x == 0 &&
@@ -110,7 +114,37 @@ PV_t ray_color(ray_t *r, PV_t *background, hittable_list *world, int depth, int 
 			//printf("ttatype %i \n", world->aarectangle[current_hit_rectangle].mat.type);
 			//printf("tta %f \n", world->aarectangle[current_hit_rectangle].mat.albedo.color1.y);
 			// if emitter was hit, return just emitter value
-		  PV_t color_to_return = world->aarectangle[current_hit_rectangle].mat.attenuation;
+			//printf("EMITTER\n");
+			//if (world->aarectangle[current_hit_rectangle].mat.type == 4)
+			//  {
+			//	printf("Is reflected 4\n");
+			//	printf("rec->p.x: %f\n", rec.p.x);
+			//	printf("rec->p.y: %f\n", rec.p.y);
+			//	printf("rec->p.z: %f\n", rec.p.z);
+			//	printf("rec->normal.x: %f\n", rec.normal.x);
+			//	printf("rec->normal.y: %f\n", rec.normal.y);
+			//	printf("rec->normal.z: %f\n", rec.normal.z);
+			//	printf("mat->scattered.origin.x: %f\n",
+			//		   world->aarectangle[current_hit_rectangle].mat.scattered.origin.x);
+			//	printf("mat->scattered.origin.y: %f\n",
+			//		   world->aarectangle[current_hit_rectangle].mat.scattered.origin.y);
+			//	printf("mat->scattered.origin.z: %f\n",
+			//		   world->aarectangle[current_hit_rectangle].mat.scattered.origin.z);
+			//	printf("mat->scattered.direction.x: %f\n",
+			//		   world->aarectangle[current_hit_rectangle].mat.scattered.direction.x);
+			//	printf("mat->scattered.direction.y: %f\n",
+			//		   world->aarectangle[current_hit_rectangle].mat.scattered.direction.y);
+			//	printf("mat->scattered.direction.z: %f\n",
+			//		   world->aarectangle[current_hit_rectangle].mat.scattered.direction.z);
+			//	printf("mat->attenuation.x: %f\n",
+			//		   world->aarectangle[current_hit_rectangle].mat.attenuation.x);
+			//	printf("mat->attenuation.y: %f\n",
+			//		   world->aarectangle[current_hit_rectangle].mat.attenuation.y);
+			//	printf("mat->attenuation.z: %f\n",
+			//		   world->aarectangle[current_hit_rectangle].mat.attenuation.z);
+			//  }
+
+			PV_t color_to_return = world->aarectangle[current_hit_rectangle].mat.attenuation;
 		  //printf("color to return.x %f\n", color_to_return.x);
 		  //printf("color to return.y %f\n", color_to_return.y);
 		  //printf("color to return.z %f\n", color_to_return.z);
@@ -168,7 +202,7 @@ int main(int argc, char *argv[]) {
   const int image_height = (int)(image_width/aspect_ratio); //static_cast<int>(image_width/aspect_ratio);
   //printf("image_width: %i\n", image_width);
   const int samples_per_pixel = 200;
-  const int max_depth = 10;
+  const int max_depth = 5;
   const double R = cos(pi/4);
   hittable_list world;
 
@@ -202,14 +236,14 @@ int main(int argc, char *argv[]) {
   // aarectangle red
   aarectangle_t rectangle_red;
   rectangle_red.y0 = 0;
-  rectangle_red.y1 = 555;
+  rectangle_red.y1 = 5550;
   rectangle_red.z0 = 0;
-  rectangle_red.z1 = 555;
+  rectangle_red.z1 = 5550;
   rectangle_red.k = 0;
   rectangle_red.yz = 1;
   rectangle_red.x0 = rectangle_red.k-10;
   rectangle_red.x1 = rectangle_red.k+10;
-  rectangle_red.mat.type = 4;
+  rectangle_red.mat.type = 1;
   rectangle_red.mat.albedo.type = 1;
   rectangle_red.mat.albedo.color1.x = 0.65;
   rectangle_red.mat.albedo.color1.y = 0.05;
@@ -241,9 +275,9 @@ int main(int argc, char *argv[]) {
   rectangle_white_bottom.z1 = 555;
   rectangle_white_bottom.k = 0;
   rectangle_white_bottom.xz = 1;
-  rectangle_white_bottom.y0 = rectangle_white_bottom.k-10;
-  rectangle_white_bottom.y1 = rectangle_white_bottom.k+10;
-  rectangle_white_bottom.mat.type = 4;
+  //rectangle_white_bottom.y0 = rectangle_white_bottom.k-10;
+  //rectangle_white_bottom.y1 = rectangle_white_bottom.k+10;
+  rectangle_white_bottom.mat.type = 1;
   rectangle_white_bottom.mat.albedo.type = 1;
   rectangle_white_bottom.mat.albedo.color1.x = 0.73;
   rectangle_white_bottom.mat.albedo.color1.y = 0.73;
@@ -259,7 +293,7 @@ int main(int argc, char *argv[]) {
   rectangle_white_top.xz = 1;
   rectangle_white_top.y0 = rectangle_white_top.k-10;
   rectangle_white_top.y1 = rectangle_white_top.k+10;
-  rectangle_white_top.mat.type = 4;
+  rectangle_white_top.mat.type = 1;
   rectangle_white_top.mat.albedo.type = 1;
   rectangle_white_top.mat.albedo.color1.x = 0.73;
   rectangle_white_top.mat.albedo.color1.y = 0.73;
@@ -276,14 +310,13 @@ int main(int argc, char *argv[]) {
   rectangle_white_back.xy = 1;
   rectangle_white_back.z0 = rectangle_white_back.k-10;
   rectangle_white_back.z1 = rectangle_white_back.k+10;
-  rectangle_white_back.mat.type = 4;
+  rectangle_white_back.mat.type = 1;
   rectangle_white_back.mat.albedo.type = 1;
   rectangle_white_back.mat.albedo.color1.x = 0.73;
   rectangle_white_back.mat.albedo.color1.y = 0.73;
   rectangle_white_back.mat.albedo.color1.z = 0.73;
   
-  
-  world.sphere[0] = sphere_center;
+  //world.sphere[0] = sphere_center;
   //world.sphere[1] = sphere_center;
   //world.sphere[2] = sphere_light;
   //world.aarectangle[0] = rectangle_green;
@@ -320,18 +353,22 @@ int main(int argc, char *argv[]) {
       pixel_color.x = 0;
       pixel_color.y = 0;
       pixel_color.z = 0;
-      for (int s = 0; s < samples_per_pixel; ++s) {
-	auto double u = ((double)i+random_double()) / (image_width-1);
-	auto double v = ((double)j+random_double()) / (image_height-1);
-	//printf("after for for : %f\n", world.aarectangle[0].mat.albedo.color1.y);
-	ray_t r = camera_get_ray(&cam, u, v);
-	//printf("after for for : %f\n", world.aarectangle[0].mat.albedo.color1.y);
-	PV_t color = ray_color(&r, &background, &world, max_depth, i, j);
-	pixel_color.x += color.x;
-	pixel_color.y += color.y;
-	pixel_color.z += color.z;
-      }
-      write_color(&pixel_color, samples_per_pixel);
+	  //if (j == 240 && i == 300) {
+		
+		for (int s = 0; s < samples_per_pixel; ++s) {
+		  auto double u = ((double)i+random_double()) / (image_width-1);
+		  auto double v = ((double)j+random_double()) / (image_height-1);
+		  //printf("after for for : %f\n", world.aarectangle[0].mat.albedo.color1.y);
+		  //printf("SAMPLE: %i\n", s);
+		  ray_t r = camera_get_ray(&cam, u, v);
+		  //printf("after for for : %f\n", world.aarectangle[0].mat.albedo.color1.y);
+		  PV_t color = ray_color(&r, &background, &world, max_depth, i, j);
+		  pixel_color.x += color.x;
+		  pixel_color.y += color.y;
+		  pixel_color.z += color.z;
+		}
+		write_color(&pixel_color, samples_per_pixel);
+		//}
     }
   }
   return 0;

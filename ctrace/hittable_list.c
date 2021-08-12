@@ -10,6 +10,11 @@ int check_sphere_hit(sphere_t *sphere,
 		     int sphere_id)
 {
   // check intersection
+  
+  //printf("inside sphere: rec normal x: %f\n", rec->normal.x);
+  //printf("inside sphere: rec normal y: %f\n", rec->normal.y);
+  //printf("inside sphere: rec normal z: %f\n", rec->normal.z);
+  //printf("inside sphere: rec t: %f\n", rec->t);
 
   PV_t oc = vec_diff(&(r->origin), &(sphere->center));
   double a = vec_dot(&r->direction, &r->direction);
@@ -22,9 +27,21 @@ int check_sphere_hit(sphere_t *sphere,
 	  // update record state
 	  rec->t = temp;
 	  rec->p = at(r, rec->t);
-	  rec->normal.x = (rec->p.x - sphere->center.x)/sphere->radius;
-	  rec->normal.y = (rec->p.y - sphere->center.y)/sphere->radius;
-	  rec->normal.z = (rec->p.z - sphere->center.z)/sphere->radius;
+	  //printf("temp1: \n");
+	  //printf("  x: %f\n", rec->normal.x);
+	  //printf("  y: %f\n", rec->normal.y);
+	  //printf("  z: %f\n", rec->normal.z);
+
+	  
+	  //rec->normal.x = (rec->p.x - sphere->center.x)/sphere->radius;
+	  //rec->normal.y = (rec->p.y - sphere->center.y)/sphere->radius;
+	  //rec->normal.z = (rec->p.z - sphere->center.z)/sphere->radius;
+	  PV_t outward_normal;
+	  outward_normal.x = (rec->p.x - sphere->center.x) / sphere->radius;
+	  outward_normal.y = (rec->p.y - sphere->center.y) / sphere->radius;
+	  outward_normal.z = (rec->p.z - sphere->center.z) / sphere->radius;
+	  set_face_normal(rec, r, &outward_normal);
+
 	  // set uv coordinates
 	  get_sphere_uv(&rec->normal, &rec->u, &rec->v);
 	  rec->object_was_hit = true;
@@ -35,9 +52,22 @@ int check_sphere_hit(sphere_t *sphere,
 	  // update record state
 	  rec->t = temp;
 	  rec->p = at(r, rec->t);
-	  rec->normal.x = (rec->p.x - sphere->center.x)/sphere->radius;
-	  rec->normal.y = (rec->p.y - sphere->center.y)/sphere->radius;
-	  rec->normal.z = (rec->p.z - sphere->center.z)/sphere->radius;
+	  //printf("temp2:\n");
+	  //printf("  x: %f\n", rec->normal.x);
+	  //printf("  y: %f\n", rec->normal.y);
+	  //printf("  z: %f\n", rec->normal.z);
+
+
+	  //rec->normal.x = (rec->p.x - sphere->center.x)/sphere->radius;
+	  //rec->normal.y = (rec->p.y - sphere->center.y)/sphere->radius;
+	  //rec->normal.z = (rec->p.z - sphere->center.z)/sphere->radius;
+	  PV_t outward_normal;
+	  outward_normal.x = (rec->p.x - sphere->center.x) / sphere->radius;
+	  outward_normal.y = (rec->p.y - sphere->center.y) / sphere->radius;
+	  outward_normal.z = (rec->p.z - sphere->center.z) / sphere->radius;
+	  set_face_normal(rec, r, &outward_normal);
+
+
 	  // set uv coordinates
 	  get_sphere_uv(&rec->normal, &rec->u, &rec->v);
 	  rec->object_was_hit = true;
@@ -45,6 +75,7 @@ int check_sphere_hit(sphere_t *sphere,
 	}
 
   }
+  //printf("sphere not hit\n");
   return -1;
 }
 int check_aarectangle_hit(aarectangle_t *rectangle,
@@ -121,7 +152,7 @@ int check_aarectangle_hit(aarectangle_t *rectangle,
   
   else if (rectangle->yz == 1) {
 	//printf("yz aa rectangle id: %i\n", aarectangle_id);
-	double rectangle_k = rectangle->k;
+  double rectangle_k = rectangle->k;
   double r_origin_x = r->origin.x;
   double r_direction_x = r->direction.x;
   double t = (rectangle_k-r_origin_x)/r_direction_x;
@@ -143,10 +174,11 @@ int check_aarectangle_hit(aarectangle_t *rectangle,
   rec->v = (z-rectangle->z0)/(rectangle->z1-rectangle->z0);
   rec->t = t;
   PV_t outward_normal = {1, 0, 0};
-  //set_face_normal(rec, r, &outward_normal);
-  rec->normal.x = 1;
-  rec->normal.y = 0;
-  rec->normal.z = 0;
+  //printf("yz entering setfacenormal\n");
+  set_face_normal(rec, r, &outward_normal);
+  //rec->normal.x = 1;
+  //rec->normal.y = 0;
+  //rec->normal.z = 0;
   rec->p = at(r, rec->t);
   rec->object_was_hit = true;
   //printf("14 rectangle id: %i\n", aarectangle_id);

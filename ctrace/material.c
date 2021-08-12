@@ -30,15 +30,36 @@ bool calculate_material_reflections(material *mat, ray_t *r_in, texture_t *albed
       scatter_direction = rec->normal;
     }
     mat->scattered.origin = rec->p;  //ray(rec.p, scatter_direction);
-	albedo->p = rec->p;
     mat->scattered.direction = scatter_direction;
+
+	// offset to avoid self-intersection
+	double offset = 0.001;
+	mat->scattered.origin.x = mat->scattered.origin.x+mat->scattered.direction.x*offset;
+	mat->scattered.origin.y = mat->scattered.origin.y+mat->scattered.direction.y*offset;
+	mat->scattered.origin.z = mat->scattered.origin.z+mat->scattered.direction.z*offset;
+	
+	albedo->p = rec->p;
     mat->attenuation = texture_color(albedo);
-	if (mat->albedo.color1.z == 0.11){
-	  printf("Is reflected\n");
-	  printf("x: %f\n", rec->normal.x);
-	  printf("x: %f\n", rec->normal.y);
-	  printf("x: %f\n", rec->normal.z);
-	}
+	//if (mat->type == 1)
+	//  {
+	//  printf("Is reflected 1\n");
+	//  printf("rec->p.x: %f\n", rec->p.x);
+	//  printf("rec->p.y: %f\n", rec->p.y);
+	//  printf("rec->p.z: %f\n", rec->p.z);
+	//  printf("rec->normal.x: %f\n", rec->normal.x);
+	//  printf("rec->normal.y: %f\n", rec->normal.y);
+	//  printf("rec->normal.z: %f\n", rec->normal.z);
+	//  printf("mat->scattered.origin.x: %f\n", mat->scattered.origin.x);
+	//  printf("mat->scattered.origin.y: %f\n", mat->scattered.origin.y);
+	//  printf("mat->scattered.origin.z: %f\n", mat->scattered.origin.z);
+	//  printf("mat->scattered.direction.x: %f\n", mat->scattered.direction.x);
+	//  printf("mat->scattered.direction.y: %f\n", mat->scattered.direction.y);
+	//  printf("mat->scattered.direction.z: %f\n", mat->scattered.direction.z);
+	//  printf("mat->attenuation.x: %f\n", mat->attenuation.x);
+	//  printf("mat->attenuation.y: %f\n", mat->attenuation.y);
+	//  printf("mat->attenuation.z: %f\n", mat->attenuation.z);
+	//
+	//	  }
     return true;
     break;
   }
@@ -115,6 +136,7 @@ bool calculate_material_reflections(material *mat, ray_t *r_in, texture_t *albed
 	return true;
   }
   case 4: {
+	//printf("Mterial 4\n");
     mat->attenuation = albedo->color1;
 	//printf("albedo->color1.x %f\n", albedo->color1.x);
 	//printf("albedo->color1.y %f\n", albedo->color1.y);
@@ -126,6 +148,26 @@ bool calculate_material_reflections(material *mat, ray_t *r_in, texture_t *albed
 	mat->scattered.direction.x = 0;
 	mat->scattered.direction.y = 0;
 	mat->scattered.direction.z = 0;
+	//if (mat->type == 4)
+	//  {
+	//  printf("Is reflected 4\n");
+	//  printf("rec->p.x: %f\n", rec->p.x);
+	//  printf("rec->p.y: %f\n", rec->p.y);
+	//  printf("rec->p.z: %f\n", rec->p.z);
+	//  printf("rec->normal.x: %f\n", rec->normal.x);
+	//  printf("rec->normal.y: %f\n", rec->normal.y);
+	//  printf("rec->normal.z: %f\n", rec->normal.z);
+	//  printf("mat->scattered.origin.x: %f\n", mat->scattered.origin.x);
+	//  printf("mat->scattered.origin.y: %f\n", mat->scattered.origin.y);
+	//  printf("mat->scattered.origin.z: %f\n", mat->scattered.origin.z);
+	//  printf("mat->scattered.direction.x: %f\n", mat->scattered.direction.x);
+	//  printf("mat->scattered.direction.y: %f\n", mat->scattered.direction.y);
+	//  printf("mat->scattered.direction.z: %f\n", mat->scattered.direction.z);
+	//  printf("mat->attenuation.x: %f\n", mat->attenuation.x);
+	//  printf("mat->attenuation.y: %f\n", mat->attenuation.y);
+	//  printf("mat->attenuation.z: %f\n", mat->attenuation.z);
+	//  }
+
 	return true;
     break;
   }

@@ -14,12 +14,12 @@
 inline void set_face_normal(hit_record *rec, ray_t *r, PV_t *outward_normal)
 {
   rec->front_face = vec_dot(&(r->direction), outward_normal) < 0;
-  //printf("set face normal before->normal: %f, %f, %f\n",
+  //printf("set face normal before->normal:\n %f,\n %f,\n %f\n",
   //	 rec->normal.x,
   //	 rec->normal.y,
   //	 rec->normal.z);
   rec->normal = rec->front_face ? *outward_normal : vec_scale(outward_normal, -1);
-  //printf("set face normal after->normal: %f, %f, %f\n",
+  //printf("set face normal after->normal\n: %f,\n %f,\n %f\n",
   //	 rec->normal.x,
   //	 rec->normal.y,
   //	 rec->normal.z);
