@@ -3,6 +3,7 @@
 //#include "hittable.h"
 #include "sphere.h"
 #include "aarectangle.h"
+#include "box.h"
 //#include <stdbool.h>
 //#include "ray.h"
 
@@ -24,5 +25,13 @@ int check_aarectangle_hit(aarectangle_t *rectangle,
 						  double *t_max,
 						  hit_record *rec,
 						  int aarectangle_id);
+
+int check_box_hit(box_t *box,
+				  ray_t *r,
+				  double *t_min,
+				  double *t_max,
+				  hit_record *rec,
+				  int box_id);
+
 
 #endif
