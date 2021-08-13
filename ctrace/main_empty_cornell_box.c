@@ -23,16 +23,12 @@ PV_t ray_color(ray_t *r, PV_t *background, hittable_list *world, int depth, int 
 	return depth_exceeded;
   }
   hit_record rec;
-  //PV_t color = {0, 0, 0}; // background color
   rec.t = infinity;
-  //PV_t color;
   int sphere_hit_checked = -1;
   int current_hit = -1;
   int current_hit_rectangle = -1;
+  int current_hit_box = -1;
   double zero = 0;
-  //printf("inside %f %f %f\n", world->aarectangle[0].mat.albedo.color1.x,
-  //		 world->aarectangle[0].mat.albedo.color1.y,
-  //		 world->aarectangle[0].mat.albedo.color1.z);
   // check which sphere is hit first
   for (int k = 0; k < 0; k++)
     {
@@ -46,22 +42,33 @@ PV_t ray_color(ray_t *r, PV_t *background, hittable_list *world, int depth, int 
       }
     }
   // check if rectangle is hit before sphere
-  for (int l = 0; l < 6; l++)
+  for (int l = 0; l < 18; l++)
 	{
-	  //printf("l %i\n", l);
 	  int aarectangle_hit_checked = check_aarectangle_hit(&(world->aarectangle[l]),
 														  r,
 														  &zero,
 														  &rec.t,
 														  &rec, l);
-	  //printf("aarectangle_hit_checked %i\n", aarectangle_hit_checked);
       if (aarectangle_hit_checked > -1) {
 		current_hit_rectangle = aarectangle_hit_checked;
 		current_hit = -1;
       }
 	}
-  //printf("current_hit_rectangle %i s\n", current_hit_rectangle);
+  // check if box is hit before sphere
+  for (int b = 0; b<0; b++) {
+    int box_hit_checked = check_box_hit(&(world->box[b]),
+										r,
+										&zero,
+										&rec.t,
+										&rec, b);
+	if (box_hit_checked > -1) {
+	  current_hit_box = box_hit_checked;
+	  current_hit_rectangle = -1;
+	  current_hit = -1;
+	}
+  }
 
+  
   // if object is hit, calculate reflections
   if (current_hit > -1)
     {
@@ -97,57 +104,18 @@ PV_t ray_color(ray_t *r, PV_t *background, hittable_list *world, int depth, int 
       return color; 
     }
   else if (current_hit_rectangle > -1)     {
-	//printf("Depth %i\n", depth);
-	//printf("current_hit_rectangle %i\n", current_hit_rectangle);
 	bool mat_ref = calculate_material_reflections(&(world->aarectangle[current_hit_rectangle].mat),
 													r,
 													&(world->aarectangle[current_hit_rectangle].mat.albedo),
 													&rec);
-	//printf("mat_ref %d\n", mat_ref);
       if (mat_ref) {
-		//printf("beforetta %f \n", world->aarectangle[current_hit_rectangle].mat.albedo.color1.y);
 		if (world->aarectangle[current_hit_rectangle].mat.scattered.direction.x == 0 &&
 			world->aarectangle[current_hit_rectangle].mat.scattered.direction.y == 0 &&
 			world->aarectangle[current_hit_rectangle].mat.scattered.direction.z == 0 )
 		  {
-			//printf("current_hit_rectangle %i\n", current_hit_rectangle);
-			//printf("ttatype %i \n", world->aarectangle[current_hit_rectangle].mat.type);
-			//printf("tta %f \n", world->aarectangle[current_hit_rectangle].mat.albedo.color1.y);
-			// if emitter was hit, return just emitter value
-			//printf("EMITTER\n");
-			//if (world->aarectangle[current_hit_rectangle].mat.type == 4)
-			//  {
-			//	printf("Is reflected 4\n");
-			//	printf("rec->p.x: %f\n", rec.p.x);
-			//	printf("rec->p.y: %f\n", rec.p.y);
-			//	printf("rec->p.z: %f\n", rec.p.z);
-			//	printf("rec->normal.x: %f\n", rec.normal.x);
-			//	printf("rec->normal.y: %f\n", rec.normal.y);
-			//	printf("rec->normal.z: %f\n", rec.normal.z);
-			//	printf("mat->scattered.origin.x: %f\n",
-			//		   world->aarectangle[current_hit_rectangle].mat.scattered.origin.x);
-			//	printf("mat->scattered.origin.y: %f\n",
-			//		   world->aarectangle[current_hit_rectangle].mat.scattered.origin.y);
-			//	printf("mat->scattered.origin.z: %f\n",
-			//		   world->aarectangle[current_hit_rectangle].mat.scattered.origin.z);
-			//	printf("mat->scattered.direction.x: %f\n",
-			//		   world->aarectangle[current_hit_rectangle].mat.scattered.direction.x);
-			//	printf("mat->scattered.direction.y: %f\n",
-			//		   world->aarectangle[current_hit_rectangle].mat.scattered.direction.y);
-			//	printf("mat->scattered.direction.z: %f\n",
-			//		   world->aarectangle[current_hit_rectangle].mat.scattered.direction.z);
-			//	printf("mat->attenuation.x: %f\n",
-			//		   world->aarectangle[current_hit_rectangle].mat.attenuation.x);
-			//	printf("mat->attenuation.y: %f\n",
-			//		   world->aarectangle[current_hit_rectangle].mat.attenuation.y);
-			//	printf("mat->attenuation.z: %f\n",
-			//		   world->aarectangle[current_hit_rectangle].mat.attenuation.z);
-			//  }
+
 
 			PV_t color_to_return = world->aarectangle[current_hit_rectangle].mat.attenuation;
-		  //printf("color to return.x %f\n", color_to_return.x);
-		  //printf("color to return.y %f\n", color_to_return.y);
-		  //printf("color to return.z %f\n", color_to_return.z);
 		  return color_to_return;
 		}
 		else{
@@ -168,26 +136,41 @@ PV_t ray_color(ray_t *r, PV_t *background, hittable_list *world, int depth, int 
       PV_t color = {0, 0, 0};
       return color; 
     }
-  else{
-	//printf("test background\n");
-  	return *background;
+  else if (current_hit_box > -1) {
+    bool mat_ref = calculate_material_reflections(&(world->box[current_hit_box].mat),
+													r,
+													&(world->box[current_hit_box].mat.albedo),
+													&rec);
+	if (mat_ref) {
+		if (world->box[current_hit_box].mat.scattered.direction.x == 0 &&
+			world->box[current_hit_box].mat.scattered.direction.y == 0 &&
+			world->box[current_hit_box].mat.scattered.direction.z == 0 )
+		  {
+			PV_t color_to_return = world->box[current_hit_box].mat.attenuation;
+		  return color_to_return;
+		}
+		else{
+		  PV_t current_ray_color = ray_color(&(world->box[current_hit_box].mat.scattered),
+										   background,
+										   world,
+										   depth-1, i, j);
+		
+		PV_t color_to_return = {world->box[current_hit_box].mat.emitted.x + current_ray_color.x*
+								world->box[current_hit_box].mat.attenuation.x,
+								world->box[current_hit_box].mat.emitted.y + current_ray_color.y*
+								world->box[current_hit_box].mat.attenuation.y,
+								world->box[current_hit_box].mat.emitted.z + current_ray_color.z*
+								world->box[current_hit_box].mat.attenuation.z};
+		return color_to_return;
+		  }
+		}
+      
+      PV_t color = {0, 0, 0};
+      return color;     
   }
-  
-  //PV_t unit_direction = unit_vector(&r->direction);
-  //double t = 0.5*(unit_direction.y + 1.0);
-  //PV_t color1;
-  //color1.x = 1.0;
-  //color1.y = 1.0;
-  //color1.z = 1.0;
-  //PV_t color2;
-  //color2.x = 0.5;
-  //color2.y = 0.7;
-  //color2.z = 1.0;
-  //PV_t scaled1 = vec_scale(&color1, 1-t);
-  //PV_t scaled2 = vec_scale(&color2, t);
-  //color = vec_sum(&scaled1, &scaled2);
-  ////PV_t color = {0, 0, 0};
-  //return color;
+ else{
+	return *background;
+	}
 }
   
 
@@ -200,22 +183,21 @@ int main(int argc, char *argv[]) {
   const auto double aspect_ratio = 1.0; //16.0/9.0;
   const int image_width = 600;
   const int image_height = (int)(image_width/aspect_ratio); //static_cast<int>(image_width/aspect_ratio);
-  //printf("image_width: %i\n", image_width);
   const int samples_per_pixel = 200;
-  const int max_depth = 5;
+  const int max_depth = 10;
   const double R = cos(pi/4);
   hittable_list world;
 
   sphere_t sphere_center;
-  sphere_center.center.x = 100; 
-  sphere_center.center.y = 200;
-  sphere_center.center.z = 500;
+  sphere_center.center.x = 300; 
+  sphere_center.center.y = 300;
+  sphere_center.center.z = 300;
   sphere_center.radius = 100;
   sphere_center.mat.type = 1;
   sphere_center.mat.albedo.type = 1;
-  sphere_center.mat.albedo.color1.x = 0.5;
-  sphere_center.mat.albedo.color1.y = 0.5;
-  sphere_center.mat.albedo.color1.z = 0.5;
+  sphere_center.mat.albedo.color1.x = 0.115;
+  sphere_center.mat.albedo.color1.y = 0.35;
+  sphere_center.mat.albedo.color1.z = 0.45;
 
   // aarectangle green
   aarectangle_t rectangle_green;
@@ -315,9 +297,35 @@ int main(int argc, char *argv[]) {
   rectangle_white_back.mat.albedo.color1.x = 0.73;
   rectangle_white_back.mat.albedo.color1.y = 0.73;
   rectangle_white_back.mat.albedo.color1.z = 0.73;
+
+  box_t box1;
+  box1.p0.x = 130;
+  box1.p0.y = 0;
+  box1.p0.z = 65;
+  box1.p1.x = 295;
+  box1.p1.y = 165;
+  box1.p1.z = 230;
+  box1.mat.type = 1;
+  box1.mat.albedo.type = 1;
+  box1.mat.albedo.color1.x = 0.73;
+  box1.mat.albedo.color1.y = 0.73;
+  box1.mat.albedo.color1.z = 0.73;
+
+  box_t box2;
+  box2.p0.x = 265;
+  box2.p0.y = 0;
+  box2.p0.z = 295;
+  box2.p1.x = 430;
+  box2.p1.y = 330;
+  box2.p1.z = 460;
+  box2.mat.type = 1;
+  box2.mat.albedo.type = 1;
+  box2.mat.albedo.color1.x = 0.73;
+  box2.mat.albedo.color1.y = 0.73;
+  box2.mat.albedo.color1.z = 0.73;
   
   //world.sphere[0] = sphere_center;
-  //world.sphere[1] = sphere_center;
+  world.sphere[0] = sphere_center;
   //world.sphere[2] = sphere_light;
   //world.aarectangle[0] = rectangle_green;
   //world.aarectangle[1] = rectangle_red;
@@ -326,8 +334,186 @@ int main(int argc, char *argv[]) {
   world.aarectangle[2] = rectangle_white_top;
   world.aarectangle[3] = rectangle_white_back;
   world.aarectangle[4] = rectangle_red;
-  world.aarectangle[5] = rectangle_white_bottom;  
+  world.aarectangle[5] = rectangle_white_bottom;
 
+  // Boxes test
+  aarectangle_t xy_rect1;
+  xy_rect1.xy = 1;
+  xy_rect1.x0 = 265;
+  xy_rect1.x1 = 430;
+  xy_rect1.y0 = 0;
+  xy_rect1.y1 = 330;
+  xy_rect1.k = 460;
+  xy_rect1.mat.type = 1;
+  xy_rect1.mat.albedo.type = 1;
+  xy_rect1.mat.albedo.color1.x = 0.73;
+  xy_rect1.mat.albedo.color1.y = 0.73;
+  xy_rect1.mat.albedo.color1.z = 0.73;
+  world.aarectangle[6] = xy_rect1;
+
+  aarectangle_t xy_rect2;
+  xy_rect2.xy = 1;
+  xy_rect2.x0 = 265;
+  xy_rect2.x1 = 430;
+  xy_rect2.y0 = 0;
+  xy_rect2.y1 = 330;
+  xy_rect2.k = 295;
+  xy_rect2.mat.type = 1;
+  xy_rect2.mat.albedo.type = 1;
+  xy_rect2.mat.albedo.color1.x = 0.73;
+  xy_rect2.mat.albedo.color1.y = 0.73;
+  xy_rect2.mat.albedo.color1.z = 0.73;
+  world.aarectangle[7] = xy_rect2;
+
+  // XZ
+  aarectangle_t xz_rect3;
+  xz_rect3.xz = 1;
+  xz_rect3.x0 = 265;
+  xz_rect3.x1 = 430;
+  xz_rect3.z0 = 295;
+  xz_rect3.z1 = 460;
+  xz_rect3.k = 330;
+  xz_rect3.mat.type = 1;
+  xz_rect3.mat.albedo.type = 1;
+  xz_rect3.mat.albedo.color1.x = 0.73;
+  xz_rect3.mat.albedo.color1.y = 0.73;
+  xz_rect3.mat.albedo.color1.z = 0.73;
+  world.aarectangle[8] = xz_rect3;
+
+  aarectangle_t xz_rect4;
+  xz_rect4.xz = 1;
+  xz_rect4.x0 = 265;
+  xz_rect4.x1 = 430;
+  xz_rect4.z0 = 295;
+  xz_rect4.z1 = 460;
+  xz_rect4.k = 0;
+  xz_rect4.mat.type = 1;
+  xz_rect4.mat.albedo.type = 1;
+  xz_rect4.mat.albedo.color1.x = 0.73;
+  xz_rect4.mat.albedo.color1.y = 0.73;
+  xz_rect4.mat.albedo.color1.z = 0.73;
+  world.aarectangle[9] = xz_rect4;
+
+  // XZ
+  aarectangle_t yz_rect5;
+  yz_rect5.yz = 1;
+  yz_rect5.y0 = 0;
+  yz_rect5.y1 = 330;
+  yz_rect5.z0 = 295;
+  yz_rect5.z1 = 460;
+  yz_rect5.k = 430;
+  yz_rect5.mat.type = 1;
+  yz_rect5.mat.albedo.type = 1;
+  yz_rect5.mat.albedo.color1.x = 0.73;
+  yz_rect5.mat.albedo.color1.y = 0.73;
+  yz_rect5.mat.albedo.color1.z = 0.73;
+  world.aarectangle[10] = yz_rect5;
+
+  aarectangle_t yz_rect6;
+  yz_rect6.yz = 1;
+  yz_rect6.y0 = 0;
+  yz_rect6.y1 = 330;
+  yz_rect6.z0 = 295;
+  yz_rect6.z1 = 460;
+  yz_rect6.k = 265;
+  yz_rect6.mat.type = 1;
+  yz_rect6.mat.albedo.type = 1;
+  yz_rect6.mat.albedo.color1.x = 0.73;
+  yz_rect6.mat.albedo.color1.y = 0.73;
+  yz_rect6.mat.albedo.color1.z = 0.73;
+  world.aarectangle[11] = yz_rect6;
+
+
+  // Boxes test - small
+  aarectangle_t xy_smallrect1;
+  xy_smallrect1.xy = 1;
+  xy_smallrect1.x0 = 130;
+  xy_smallrect1.x1 = 295;
+  xy_smallrect1.y0 = 0;
+  xy_smallrect1.y1 = 165;
+  xy_smallrect1.k = 230;
+  xy_smallrect1.mat.type = 1;
+  xy_smallrect1.mat.albedo.type = 1;
+  xy_smallrect1.mat.albedo.color1.x = 0.73;
+  xy_smallrect1.mat.albedo.color1.y = 0.73;
+  xy_smallrect1.mat.albedo.color1.z = 0.73;
+  world.aarectangle[12] = xy_smallrect1;
+
+  aarectangle_t xy_smallrect2;
+  xy_smallrect2.xy = 1;
+  xy_smallrect2.x0 = 130;
+  xy_smallrect2.x1 = 295;
+  xy_smallrect2.y0 = 0;
+  xy_smallrect2.y1 = 165;
+  xy_smallrect2.k = 65;
+  xy_smallrect2.mat.type = 1;
+  xy_smallrect2.mat.albedo.type = 1;
+  xy_smallrect2.mat.albedo.color1.x = 0.73;
+  xy_smallrect2.mat.albedo.color1.y = 0.73;
+  xy_smallrect2.mat.albedo.color1.z = 0.73;
+  world.aarectangle[13] = xy_smallrect2;
+
+  // XZ
+  aarectangle_t xz_smallrect3;
+  xz_smallrect3.xz = 1;
+  xz_smallrect3.x0 = 130;
+  xz_smallrect3.x1 = 295;
+  xz_smallrect3.z0 = 65;
+  xz_smallrect3.z1 = 230;
+  xz_smallrect3.k = 165;
+  xz_smallrect3.mat.type = 1;
+  xz_smallrect3.mat.albedo.type = 1;
+  xz_smallrect3.mat.albedo.color1.x = 0.73;
+  xz_smallrect3.mat.albedo.color1.y = 0.73;
+  xz_smallrect3.mat.albedo.color1.z = 0.73;
+  world.aarectangle[14] = xz_smallrect3;
+
+  aarectangle_t xz_smallrect4;
+  xz_smallrect4.xz = 1;
+  xz_smallrect4.x0 = 130;
+  xz_smallrect4.x1 = 295;
+  xz_smallrect4.z0 = 65;
+  xz_smallrect4.z1 = 230;
+  xz_smallrect4.k = 0;
+  xz_smallrect4.mat.type = 1;
+  xz_smallrect4.mat.albedo.type = 1;
+  xz_smallrect4.mat.albedo.color1.x = 0.73;
+  xz_smallrect4.mat.albedo.color1.y = 0.73;
+  xz_smallrect4.mat.albedo.color1.z = 0.73;
+  world.aarectangle[15] = xz_smallrect4;
+
+  // XZ
+  aarectangle_t yz_smallrect5;
+  yz_smallrect5.yz = 1;
+  yz_smallrect5.y0 = 0;
+  yz_smallrect5.y1 = 165;
+  yz_smallrect5.z0 = 295;
+  yz_smallrect5.z1 = 230;
+  yz_smallrect5.k = 295;
+  yz_smallrect5.mat.type = 1;
+  yz_smallrect5.mat.albedo.type = 1;
+  yz_smallrect5.mat.albedo.color1.x = 0.73;
+  yz_smallrect5.mat.albedo.color1.y = 0.73;
+  yz_smallrect5.mat.albedo.color1.z = 0.73;
+  world.aarectangle[16] = yz_smallrect5;
+
+  aarectangle_t yz_smallrect6;
+  yz_smallrect6.yz = 1;
+  yz_smallrect6.y0 = 0;
+  yz_smallrect6.y1 = 165;
+  yz_smallrect6.z0 = 295;
+  yz_smallrect6.z1 = 230;
+  yz_smallrect6.k = 130;
+  yz_smallrect6.mat.type = 1;
+  yz_smallrect6.mat.albedo.type = 1;
+  yz_smallrect6.mat.albedo.color1.x = 0.73;
+  yz_smallrect6.mat.albedo.color1.y = 0.73;
+  yz_smallrect6.mat.albedo.color1.z = 0.73;
+  world.aarectangle[17] = yz_smallrect6;
+  
+  //world.box[0] = box1;
+  //world.box[1] = box2;
+  
   PV_t background = {0,0,0};
 
   // Camera
@@ -339,36 +525,26 @@ int main(int argc, char *argv[]) {
   double dist_to_focus = 10;//vec_len(&dist_to_focus_diff);
   double aperture = 0.0;
   double vfov = 40;
-  //printf("after camera: %f\n", world.aarectangle[0].mat.albedo.color1.y);
   initialize_camera(&cam, lookfrom, lookat, vup, vfov, aspect_ratio,
 		    aperture, dist_to_focus);
-  //printf("after camera v2: %f\n", world.aarectangle[0].mat.albedo.color1.y);
   printf("P3\n%i %i\n255\n", image_width, image_height);
-  //printf("after for for asd: %f\n", world.aarectangle[0].mat.albedo.color1.y);
   for (int j=image_height-1; j>=0; j--) {
-	//printf("after for for img: %f\n", world.aarectangle[0].mat.albedo.color1.y);
 	for (int i=0; i<image_width; i++) {
-	  //printf("after for for img: %f\n", world.aarectangle[0].mat.albedo.color1.y);
       PV_t pixel_color;
       pixel_color.x = 0;
       pixel_color.y = 0;
       pixel_color.z = 0;
-	  //if (j == 240 && i == 300) {
 		
 		for (int s = 0; s < samples_per_pixel; ++s) {
 		  auto double u = ((double)i+random_double()) / (image_width-1);
 		  auto double v = ((double)j+random_double()) / (image_height-1);
-		  //printf("after for for : %f\n", world.aarectangle[0].mat.albedo.color1.y);
-		  //printf("SAMPLE: %i\n", s);
 		  ray_t r = camera_get_ray(&cam, u, v);
-		  //printf("after for for : %f\n", world.aarectangle[0].mat.albedo.color1.y);
 		  PV_t color = ray_color(&r, &background, &world, max_depth, i, j);
 		  pixel_color.x += color.x;
 		  pixel_color.y += color.y;
 		  pixel_color.z += color.z;
 		}
 		write_color(&pixel_color, samples_per_pixel);
-		//}
     }
   }
   return 0;

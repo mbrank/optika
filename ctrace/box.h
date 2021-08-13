@@ -1,5 +1,5 @@
-#ifndef AARECTANGLE_H
-#define AARECTANGLE_H
+#ifndef BOX_H
+#define BOX_H
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -8,6 +8,7 @@
 #include "ray.h"
 #include "hittable.h"
 #include "material.h"
+#include "aarectangle.h"
 
 typedef struct box_type{
   PV_t p0;

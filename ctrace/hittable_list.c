@@ -198,66 +198,66 @@ int check_box_hit(box_t *box,
 
   // XY
   aarectangle_t xy_rect1;
+  xy_rect1.xy = 1;
   xy_rect1.x0 = box->p0.x;
   xy_rect1.x1 = box->p1.x;
   xy_rect1.y0 = box->p0.y;
   xy_rect1.y1 = box->p1.y;
-  xy_rect1.z1 = box->p1.z;
+  xy_rect1.k = box->p1.z;
   rectangles[0] = xy_rect1;
 
   aarectangle_t xy_rect2;
+  xy_rect2.xy = 1;
   xy_rect2.x0 = box->p0.x;
   xy_rect2.x1 = box->p1.x;
   xy_rect2.y0 = box->p0.y;
   xy_rect2.y1 = box->p1.y;
-  xy_rect2.z1 = box->p0.z;
+  xy_rect2.k = box->p0.z;
   rectangles[1] = xy_rect2;
 
   // XZ
-  aarectangle_t xz_rect1;
-  xz_rect1.x0 = box->p0.x;
-  xz_rect1.x1 = box->p1.x;
-  xz_rect1.z0 = box->p0.z;
-  xz_rect1.z1 = box->p1.z;
-  xz_rect1.y0 = box->p0.y;
-  rectangles[2] = xz_rect1;
+  aarectangle_t xz_rect3;
+  xz_rect3.xz = 1;
+  xz_rect3.x0 = box->p0.x;
+  xz_rect3.x1 = box->p1.x;
+  xz_rect3.z0 = box->p0.z;
+  xz_rect3.z1 = box->p1.z;
+  xz_rect3.k = box->p1.y;
+  rectangles[2] = xz_rect3;
 
-  aarectangle_t xz_rect2;
-  xz_rect2.x0 = box->p0.x;
-  xz_rect2.x1 = box->p1.x;
-  xz_rect2.z0 = box->p0.z;
-  xz_rect2.z1 = box->p1.z;
-  xz_rect2.y1 = box->p1.y;
-  rectangles[3] = xz_rect2;
+  aarectangle_t xz_rect4;
+  xz_rect4.xz = 1;
+  xz_rect4.x0 = box->p0.x;
+  xz_rect4.x1 = box->p1.x;
+  xz_rect4.z0 = box->p0.z;
+  xz_rect4.z1 = box->p1.z;
+  xz_rect4.k = box->p0.y;
+  rectangles[3] = xz_rect4;
 
   // XZ
-  aarectangle_t yz_rect1;
-  yz_rect1.y0 = box->p0.y;
-  yz_rect1.y1 = box->p1.y;
-  yz_rect1.z0 = box->p0.z;
-  yz_rect1.z1 = box->p1.z;
-  yz_rect1.x0 = box->p0.x;
-  rectangles[4] = yz_rect1;
+  aarectangle_t yz_rect5;
+  yz_rect5.yz = 1;
+  yz_rect5.y0 = box->p0.y;
+  yz_rect5.y1 = box->p1.y;
+  yz_rect5.z0 = box->p0.z;
+  yz_rect5.z1 = box->p1.z;
+  yz_rect5.k = box->p1.x;
+  rectangles[4] = yz_rect5;
 
-  aarectangle_t yz_rect2;
-  yz_rect2.y0 = box->p0.y;
-  yz_rect2.y1 = box->p1.y;
-  yz_rect2.z0 = box->p0.z;
-  yz_rect2.z1 = box->p1.z;
-  yz_rect2.x1 = box->p1.x;
-  rectangles[5] = yz_rect2;
+  aarectangle_t yz_rect6;
+  yz_rect6.yz = 1;
+  yz_rect6.y0 = box->p0.y;
+  yz_rect6.y1 = box->p1.y;
+  yz_rect6.z0 = box->p0.z;
+  yz_rect6.z1 = box->p1.z;
+  yz_rect6.k = box->p0.x;
+  rectangles[5] = yz_rect6;
 
-  int rectangle_hit_init = -1;
   int rectangle_hit = -1;
   for (int i = 0; i < 6; ++i) {
     rectangle_hit = check_aarectangle_hit(&rectangles[i],
 										  r, t_min,
 										  t_max, rec, i);
-	if (rectangle_hit > rectangle_hit_init
-
-	 ) {
-	  
-	}
   }
   if (rectangle_hit > 0){
 	return box_id;

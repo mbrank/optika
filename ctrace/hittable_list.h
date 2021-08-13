@@ -9,8 +9,9 @@
 
 typedef struct hittable_list{
   // struct of objects in the scene
-  sphere_t sphere[0];
-  aarectangle_t aarectangle[6];
+  sphere_t sphere[1];
+  aarectangle_t aarectangle[18];
+  box_t box[2];
 } hittable_list;
 
 int check_sphere_hit(sphere_t *sphere,
