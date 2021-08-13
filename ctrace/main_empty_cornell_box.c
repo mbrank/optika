@@ -30,7 +30,7 @@ PV_t ray_color(ray_t *r, PV_t *background, hittable_list *world, int depth, int 
   int current_hit_box = -1;
   double zero = 0;
   // check which sphere is hit first
-  for (int k = 0; k < 0; k++)
+  for (int k = 0; k < 5; k++)
     {
       sphere_hit_checked = check_sphere_hit(&(world->sphere[k]),
 											r,
@@ -183,22 +183,71 @@ int main(int argc, char *argv[]) {
   const auto double aspect_ratio = 1.0; //16.0/9.0;
   const int image_width = 600;
   const int image_height = (int)(image_width/aspect_ratio); //static_cast<int>(image_width/aspect_ratio);
-  const int samples_per_pixel = 200;
-  const int max_depth = 10;
+  const int samples_per_pixel = 300;
+  const int max_depth = 15;
   const double R = cos(pi/4);
   hittable_list world;
 
-  sphere_t sphere_center;
-  sphere_center.center.x = 300; 
-  sphere_center.center.y = 300;
-  sphere_center.center.z = 300;
-  sphere_center.radius = 100;
-  sphere_center.mat.type = 1;
-  sphere_center.mat.albedo.type = 1;
-  sphere_center.mat.albedo.color1.x = 0.115;
-  sphere_center.mat.albedo.color1.y = 0.35;
-  sphere_center.mat.albedo.color1.z = 0.45;
+  sphere_t sphere_on_small_box;
+  sphere_on_small_box.center.x = 200; 
+  sphere_on_small_box.center.y = 200;
+  sphere_on_small_box.center.z = 200;
+  sphere_on_small_box.radius = 35;
+  sphere_on_small_box.mat.type = 1;
+  sphere_on_small_box.mat.albedo.type = 1;
+  sphere_on_small_box.mat.albedo.color1.x = 0.115;
+  sphere_on_small_box.mat.albedo.color1.y = 0.35;
+  sphere_on_small_box.mat.albedo.color1.z = 0.45;
 
+  sphere_t sphere_on_big_box;
+  sphere_on_big_box.center.x = 400; 
+  sphere_on_big_box.center.y = 410;
+  sphere_on_big_box.center.z = 350;
+  sphere_on_big_box.radius = 80;
+  sphere_on_big_box.mat.type = 2;
+  sphere_on_big_box.mat.fuzz = 0.03;
+  sphere_on_big_box.mat.albedo.type = 1;
+  sphere_on_big_box.mat.albedo.color1.x = 0.115;
+  sphere_on_big_box.mat.albedo.color1.y = 0.35;
+  sphere_on_big_box.mat.albedo.color1.z = 0.45;
+
+  
+  sphere_t sphere_right;
+  sphere_right.center.x = 70; 
+  sphere_right.center.y = 35;
+  sphere_right.center.z = 50;
+  sphere_right.radius = 35;
+  sphere_right.mat.type = 2;
+  sphere_right.mat.fuzz = 0.3;
+  sphere_right.mat.albedo.type = 1;
+  sphere_right.mat.albedo.color1.x = 0.315;
+  sphere_right.mat.albedo.color1.y = 0.15;
+  sphere_right.mat.albedo.color1.z = 0.45;
+
+  sphere_t sphere_up_right;
+  sphere_up_right.center.x = 70; 
+  sphere_up_right.center.y = 50;
+  sphere_up_right.center.z = 350;
+  sphere_up_right.radius = 50;
+  sphere_up_right.mat.type = 2;
+  sphere_up_right.mat.fuzz = 0.3;
+  sphere_up_right.mat.albedo.type = 1;
+  sphere_up_right.mat.albedo.color1.x = 0.615;
+  sphere_up_right.mat.albedo.color1.y = 0.45;
+  sphere_up_right.mat.albedo.color1.z = 0.25;
+
+  sphere_t sphere_left;
+  sphere_left.center.x = 400; 
+  sphere_left.center.y = 70;
+  sphere_left.center.z = 80;
+  sphere_left.radius = 70;
+  sphere_left.mat.type = 1;
+  //sphere_left.mat.fuzz = 0.3;
+  sphere_left.mat.albedo.type = 1;
+  sphere_left.mat.albedo.color1.x = 0.715;
+  sphere_left.mat.albedo.color1.y = 0.15;
+  sphere_left.mat.albedo.color1.z = 0.15;
+  
   // aarectangle green
   aarectangle_t rectangle_green;
   rectangle_green.y0 = 0;
@@ -324,9 +373,12 @@ int main(int argc, char *argv[]) {
   box2.mat.albedo.color1.y = 0.73;
   box2.mat.albedo.color1.z = 0.73;
   
-  //world.sphere[0] = sphere_center;
-  world.sphere[0] = sphere_center;
-  //world.sphere[2] = sphere_light;
+  //world.sphere[0] = sphere_on_small_box;
+  world.sphere[0] = sphere_on_small_box;
+  world.sphere[1] = sphere_right;
+  world.sphere[2] = sphere_up_right;
+  world.sphere[3] = sphere_left;
+  world.sphere[4] = sphere_on_big_box;
   //world.aarectangle[0] = rectangle_green;
   //world.aarectangle[1] = rectangle_red;
   world.aarectangle[0] = rectangle_light;

@@ -9,7 +9,7 @@
 
 typedef struct hittable_list{
   // struct of objects in the scene
-  sphere_t sphere[1];
+  sphere_t sphere[5];
   aarectangle_t aarectangle[18];
   box_t box[2];
 } hittable_list;
